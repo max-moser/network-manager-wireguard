@@ -52,6 +52,20 @@
 # define DIST_VERSION VERSION
 #endif
 
+// TODO remove me -- just for getting rid of error underlining
+#ifndef LOCALSTATEDIR
+#define LOCALSTATEDIR ""
+#endif
+#ifndef LIBEXECDIR
+#define LIBEXECDIR ""
+#endif
+#ifndef NM_OPENVPN_LOCALEDIR
+#define NM_OPENVPN_LOCALEDIR ""
+#endif
+#ifndef NM_WIREGUARD_LOCALEDIR
+#define NM_WIREGUARD_LOCALEDIR ""
+#endif
+
 #define RUNDIR  LOCALSTATEDIR"/run/NetworkManager"
 
 static struct {
@@ -66,24 +80,24 @@ static struct {
 
 /*****************************************************************************/
 
-#define NM_TYPE_OPENVPN_PLUGIN            (nm_openvpn_plugin_get_type ())
-#define NM_OPENVPN_PLUGIN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), NM_TYPE_OPENVPN_PLUGIN, NMOpenvpnPlugin))
-#define NM_OPENVPN_PLUGIN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), NM_TYPE_OPENVPN_PLUGIN, NMOpenvpnPluginClass))
-#define NM_IS_OPENVPN_PLUGIN(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NM_TYPE_OPENVPN_PLUGIN))
-#define NM_IS_OPENVPN_PLUGIN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), NM_TYPE_OPENVPN_PLUGIN))
-#define NM_OPENVPN_PLUGIN_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), NM_TYPE_OPENVPN_PLUGIN, NMOpenvpnPluginClass))
+#define NM_TYPE_WIREGUARD_PLUGIN            (nm_wireguard_plugin_get_type ())
+#define NM_WIREGUARD_PLUGIN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), NM_TYPE_WIREGUARD_PLUGIN, NMWireguardPlugin))
+#define NM_WIREGUARD_PLUGIN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), NM_TYPE_WIREGUARD_PLUGIN, NMWireguardPluginClass))
+#define NM_IS_WIREGUARD_PLUGIN(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NM_TYPE_WIREGUARD_PLUGIN))
+#define NM_IS_WIREGUARD_PLUGIN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), NM_TYPE_WIREGUARD_PLUGIN))
+#define NM_WIREGUARD_PLUGIN_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), NM_TYPE_WIREGUARD_PLUGIN, NMWireguardPluginClass))
 
 typedef struct {
 	NMVpnServicePlugin parent;
-} NMOpenvpnPlugin;
+} NMWireguardPlugin;
 
 typedef struct {
 	NMVpnServicePluginClass parent;
-} NMOpenvpnPluginClass;
+} NMWireguardPluginClass;
 
-GType nm_openvpn_plugin_get_type (void);
+GType nm_wireguard_plugin_get_type (void);
 
-NMOpenvpnPlugin *nm_openvpn_plugin_new (const char *bus_name);
+NMWireguardPlugin *nm_wireguard_plugin_new (const char *bus_name);
 
 /*****************************************************************************/
 
@@ -98,7 +112,7 @@ typedef struct {
 	GPid pid;
 	guint watch_id;
 	guint kill_id;
-	NMOpenvpnPlugin *plugin;
+	NMWireguardPlugin *plugin;
 } PidsPendingData;
 
 typedef struct {
@@ -113,20 +127,20 @@ typedef struct {
 	char *challenge_text;
 	GIOChannel *socket_channel;
 	guint socket_channel_eventid;
-} NMOpenvpnPluginIOData;
+} NMWireguardPluginIOData;
 
 typedef struct {
 	GPid pid;
 	guint connect_timer;
 	guint connect_count;
-	NMOpenvpnPluginIOData *io_data;
+	NMWireguardPluginIOData *io_data;
 	gboolean interactive;
 	char *mgt_path;
-} NMOpenvpnPluginPrivate;
+} NMWireguardPluginPrivate;
 
-G_DEFINE_TYPE (NMOpenvpnPlugin, nm_openvpn_plugin, NM_TYPE_VPN_SERVICE_PLUGIN)
+G_DEFINE_TYPE (NMWireguardPlugin, nm_wireguard_plugin, NM_TYPE_VPN_SERVICE_PLUGIN)
 
-#define NM_OPENVPN_PLUGIN_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), NM_TYPE_OPENVPN_PLUGIN, NMOpenvpnPluginPrivate))
+#define NM_WIREGUARD_PLUGIN_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), NM_TYPE_WIREGUARD_PLUGIN, NMWireguardPluginPrivate))
 
 /*****************************************************************************/
 
@@ -321,13 +335,13 @@ pids_pending_get (GPid pid)
 	g_return_val_if_reached (NULL);
 }
 
-static void openvpn_child_terminated (NMOpenvpnPlugin *plugin, GPid pid, gint status);
+static void openvpn_child_terminated (NMWireguardPlugin *plugin, GPid pid, gint status);
 
 static void
 pids_pending_child_watch_cb (GPid pid, gint status, gpointer user_data)
 {
 	PidsPendingData *pid_data = user_data;
-	NMOpenvpnPlugin *plugin;
+	NMWireguardPlugin *plugin;
 
 	if (WIFEXITED (status)) {
 		int exit_status;
@@ -360,11 +374,11 @@ pids_pending_child_watch_cb (GPid pid, gint status, gpointer user_data)
 }
 
 static void
-pids_pending_add (GPid pid, NMOpenvpnPlugin *plugin)
+pids_pending_add (GPid pid, NMWireguardPlugin *plugin)
 {
 	PidsPendingData *pid_data;
 
-	g_return_if_fail (NM_IS_OPENVPN_PLUGIN (plugin));
+	g_return_if_fail (NM_IS_WIREGUARD_PLUGIN (plugin));
 	g_return_if_fail (pid > 0);
 
 	_LOGI ("openvpn[%ld] started", (long) pid);
@@ -557,10 +571,10 @@ nm_openvpn_secrets_validate (NMSettingVpn *s_vpn, GError **error)
 }
 
 static void
-nm_openvpn_disconnect_management_socket (NMOpenvpnPlugin *plugin)
+nm_openvpn_disconnect_management_socket (NMWireguardPlugin *plugin)
 {
-	NMOpenvpnPluginPrivate *priv = NM_OPENVPN_PLUGIN_GET_PRIVATE (plugin);
-	NMOpenvpnPluginIOData *io_data = priv->io_data;
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
+	NMWireguardPluginIOData *io_data = priv->io_data;
 
 	/* This should not throw a warning since this can happen in
 	   non-password modes */
@@ -695,7 +709,7 @@ write_user_pass (GIOChannel *channel,
 }
 
 static gboolean
-handle_auth (NMOpenvpnPluginIOData *io_data,
+handle_auth (NMWireguardPluginIOData *io_data,
              const char *requested_auth,
              const char **out_message,
              char ***out_hints)
@@ -795,12 +809,12 @@ handle_auth (NMOpenvpnPluginIOData *io_data,
 }
 
 static gboolean
-handle_management_socket (NMOpenvpnPlugin *plugin,
+handle_management_socket (NMWireguardPlugin *plugin,
                           GIOChannel *source,
                           GIOCondition condition,
                           NMVpnPluginFailure *out_failure)
 {
-	NMOpenvpnPluginPrivate *priv = NM_OPENVPN_PLUGIN_GET_PRIVATE (plugin);
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
 	gboolean again = TRUE;
 	char *str = NULL, *auth = NULL;
 	const char *message = NULL;
@@ -899,7 +913,7 @@ out:
 static gboolean
 nm_openvpn_socket_data_cb (GIOChannel *source, GIOCondition condition, gpointer user_data)
 {
-	NMOpenvpnPlugin *plugin = NM_OPENVPN_PLUGIN (user_data);
+	NMWireguardPlugin *plugin = NM_WIREGUARD_PLUGIN (user_data);
 	NMVpnPluginFailure failure = NM_VPN_PLUGIN_FAILURE_CONNECT_FAILED;
 
 	if (!handle_management_socket (plugin, source, condition, &failure)) {
@@ -913,9 +927,9 @@ nm_openvpn_socket_data_cb (GIOChannel *source, GIOCondition condition, gpointer 
 static gboolean
 nm_openvpn_connect_timer_cb (gpointer data)
 {
-	NMOpenvpnPlugin *plugin = NM_OPENVPN_PLUGIN (data);
-	NMOpenvpnPluginPrivate *priv = NM_OPENVPN_PLUGIN_GET_PRIVATE (plugin);
-	NMOpenvpnPluginIOData *io_data = priv->io_data;
+	NMWireguardPlugin *plugin = NM_WIREGUARD_PLUGIN (data);
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
+	NMWireguardPluginIOData *io_data = priv->io_data;
 	struct sockaddr_un remote = { 0 };
 	int fd;
 
@@ -955,24 +969,24 @@ out:
 }
 
 static void
-nm_openvpn_schedule_connect_timer (NMOpenvpnPlugin *plugin)
+nm_openvpn_schedule_connect_timer (NMWireguardPlugin *plugin)
 {
-	NMOpenvpnPluginPrivate *priv = NM_OPENVPN_PLUGIN_GET_PRIVATE (plugin);
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
 
 	if (priv->connect_timer == 0)
 		priv->connect_timer = g_timeout_add (200, nm_openvpn_connect_timer_cb, plugin);
 }
 
 static void
-openvpn_child_terminated (NMOpenvpnPlugin *plugin, GPid pid, gint status)
+openvpn_child_terminated (NMWireguardPlugin *plugin, GPid pid, gint status)
 {
-	NMOpenvpnPluginPrivate *priv;
+	NMWireguardPluginPrivate *priv;
 	NMVpnPluginFailure failure = NM_VPN_PLUGIN_FAILURE_CONNECT_FAILED;
 	gboolean good_exit = FALSE;
 
-	g_return_if_fail (NM_IS_OPENVPN_PLUGIN (plugin));
+	g_return_if_fail (NM_IS_WIREGUARD_PLUGIN (plugin));
 
-	priv = NM_OPENVPN_PLUGIN_GET_PRIVATE (plugin);
+	priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
 	/* Reap child if needed. */
 	if (priv->pid != pid) {
 		/* the dead child is not the currently active process. Nothing to do, we just
@@ -1128,7 +1142,7 @@ add_cert_args (GPtrArray *args, NMSettingVpn *s_vpn)
 }
 
 static void
-update_io_data_from_vpn_setting (NMOpenvpnPluginIOData *io_data,
+update_io_data_from_vpn_setting (NMWireguardPluginIOData *io_data,
                                  NMSettingVpn *s_vpn,
                                  const char *default_username)
 {
@@ -1247,11 +1261,22 @@ check_chroot_dir_usability (const char *chdir, const char *user)
 }
 
 static gboolean
-nm_openvpn_start_openvpn_binary (NMOpenvpnPlugin *plugin,
+nm_wireguard_start_interface(NMWireguardPlugin *plugin,
+							 NMConnection *connection,
+							 GError **error)
+{
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE(plugin);
+	const char *wg_connection_name = NULL;
+
+	return TRUE;
+}
+
+static gboolean
+nm_openvpn_start_openvpn_binary (NMWireguardPlugin *plugin,
                                  NMConnection *connection,
                                  GError **error)
 {
-	NMOpenvpnPluginPrivate *priv = NM_OPENVPN_PLUGIN_GET_PRIVATE (plugin);
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
 	const char *openvpn_binary, *auth, *tmp, *tmp2, *tmp3, *tmp4;
 	gs_unref_ptrarray GPtrArray *args = NULL;
 	GPid pid;
@@ -1912,7 +1937,7 @@ nm_openvpn_start_openvpn_binary (NMOpenvpnPlugin *plugin,
 	    || !strcmp (connection_type, NM_OPENVPN_CONTYPE_PASSWORD_TLS)
 	    || nm_setting_vpn_get_data_item (s_vpn, NM_OPENVPN_KEY_HTTP_PROXY_USERNAME)) {
 
-		priv->io_data = g_malloc0 (sizeof (NMOpenvpnPluginIOData));
+		priv->io_data = g_malloc0 (sizeof (NMWireguardPluginIOData));
 		update_io_data_from_vpn_setting (priv->io_data, s_vpn,
 		                                 nm_setting_vpn_get_user_name (s_vpn));
 		nm_openvpn_schedule_connect_timer (plugin);
@@ -1979,11 +2004,20 @@ check_need_secrets (NMSettingVpn *s_vpn, gboolean *need_secrets)
 	return ctype;
 }
 
+// IMPLEMENT ME RIGHT
+static gboolean
+test_disconnect(NMVpnServicePlugin *plugin,
+				GError **err)
+{
+	_LOGI("Did a disconnect!");
+	return TRUE;
+}
+
 static gboolean
 real_disconnect (NMVpnServicePlugin *plugin,
                  GError **err)
 {
-	NMOpenvpnPluginPrivate *priv = NM_OPENVPN_PLUGIN_GET_PRIVATE (plugin);
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
 
 	if (priv->mgt_path) {
 		/* openvpn does not cleanup the management socket upon exit,
@@ -2000,6 +2034,39 @@ real_disconnect (NMVpnServicePlugin *plugin,
 	return TRUE;
 }
 
+// IMPLEMENT ME RIGHT
+static gboolean
+test_connect (NMVpnServicePlugin *plugin,
+				NMConnection *connection,
+				GError **error)
+{
+	_LOGI("Did a dummy connect");
+
+	/*
+	printf("I Know It!\n");
+	// FIXME find something useful
+	char **cmd = {"touch", "/home/maxmanski/iknowhwatyoudidlastsummer", NULL};
+	GPid pid = 0;
+	GSpawnFlags spawn_flags = G_SPAWN_DO_NOT_REAP_CHILD;
+	spawn_flags = G_SPAWN_DEFAULT;
+
+	if (!g_spawn_async (NULL, cmd, NULL, spawn_flags, NULL, NULL, &pid, error)){
+		return FALSE;
+	}
+	*/
+
+	return TRUE;
+}
+
+// IMPLEMENT ME RIGHT
+static gboolean
+test_connect_interactive(NMVpnServicePlugin *plugin,
+							NMConnection *connection,
+							GError **error){
+	_LOGI("Did an interactive dummy connect");
+	return TRUE;
+}
+
 static gboolean
 _connect_common (NMVpnServicePlugin   *plugin,
                  NMConnection  *connection,
@@ -2013,7 +2080,7 @@ _connect_common (NMVpnServicePlugin   *plugin,
 		g_error_free (local);
 	}
 
-	return nm_openvpn_start_openvpn_binary (NM_OPENVPN_PLUGIN (plugin),
+	return nm_openvpn_start_openvpn_binary (NM_WIREGUARD_PLUGIN (plugin),
 	                                        connection,
 	                                        error);
 }
@@ -2035,8 +2102,19 @@ real_connect_interactive (NMVpnServicePlugin   *plugin,
 	if (!_connect_common (plugin, connection, details, error))
 		return FALSE;
 
-	NM_OPENVPN_PLUGIN_GET_PRIVATE (plugin)->interactive = TRUE;
+	NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin)->interactive = TRUE;
 	return TRUE;
+}
+
+// IMPLEMENT ME RIGHT
+static gboolean
+test_need_secrets (NMVpnServicePlugin *plugin,
+					NMConnection *connection,
+					const char **setting_name,
+					GError **error)
+{
+	_LOGI("I require no secrets!");
+	return FALSE;
 }
 
 static gboolean
@@ -2081,12 +2159,22 @@ real_need_secrets (NMVpnServicePlugin *plugin,
 	return need_secrets;
 }
 
+// IMPLEMENT ME RIGHT
+static gboolean
+test_new_secrets (NMVpnServicePlugin *plugin,
+                  NMConnection *connection,
+				  GError **error)
+{
+	_LOGI("New Secrets, anyone?");
+	return TRUE;
+}
+
 static gboolean
 real_new_secrets (NMVpnServicePlugin *plugin,
                   NMConnection *connection,
                   GError **error)
 {
-	NMOpenvpnPluginPrivate *priv = NM_OPENVPN_PLUGIN_GET_PRIVATE (plugin);
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
 	NMSettingVpn *s_vpn;
 	const char *message = NULL;
 	char **hints = NULL;
@@ -2124,14 +2212,29 @@ real_new_secrets (NMVpnServicePlugin *plugin,
 }
 
 static void
-nm_openvpn_plugin_init (NMOpenvpnPlugin *plugin)
+nm_wireguard_plugin_init (NMWireguardPlugin *plugin)
 {
+	// FIXME this is only for testing if the function gets called
+	GPid pid = 0;
+	GError *error = NULL;
+	char **cmd = malloc(sizeof(char *) * 3);
+	cmd[0] = "/usr/bin/touch";
+	cmd[1] = "/home/maxmanski/givemeyournumber";
+	cmd[2] = NULL;
+	GSpawnFlags spawn_flags = G_SPAWN_DO_NOT_REAP_CHILD;
+	spawn_flags = G_SPAWN_DEFAULT;
+
+	if (!g_spawn_async (NULL, cmd, NULL, spawn_flags, NULL, NULL, &pid, &error)){
+		printf("Could not spawn:%s\n", error->message);
+	}
+
+	printf("Spawned:%d.\n", pid);
 }
 
 static void
 dispose (GObject *object)
 {
-	NMOpenvpnPluginPrivate *priv = NM_OPENVPN_PLUGIN_GET_PRIVATE (object);
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (object);
 
 	nm_clear_g_source (&priv->connect_timer);
 
@@ -2140,33 +2243,34 @@ dispose (GObject *object)
 		priv->pid = 0;
 	}
 
-	G_OBJECT_CLASS (nm_openvpn_plugin_parent_class)->dispose (object);
+	G_OBJECT_CLASS (nm_wireguard_plugin_parent_class)->dispose (object);
 }
 
 static void
-nm_openvpn_plugin_class_init (NMOpenvpnPluginClass *plugin_class)
+nm_wireguard_plugin_class_init (NMWireguardPluginClass *plugin_class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (plugin_class);
 	NMVpnServicePluginClass *parent_class = NM_VPN_SERVICE_PLUGIN_CLASS (plugin_class);
 
-	g_type_class_add_private (object_class, sizeof (NMOpenvpnPluginPrivate));
+	g_type_class_add_private (object_class, sizeof (NMWireguardPluginPrivate));
 
 	object_class->dispose = dispose;
 
 	/* virtual methods */
-	parent_class->connect      = real_connect;
-	parent_class->connect_interactive = real_connect_interactive;
-	parent_class->need_secrets = real_need_secrets;
-	parent_class->disconnect   = real_disconnect;
-	parent_class->new_secrets  = real_new_secrets;
+	// IMPLEMENT ME RIGHT
+	parent_class->connect      = test_connect;
+	parent_class->connect_interactive = test_connect_interactive;
+	parent_class->need_secrets = test_need_secrets;
+	parent_class->disconnect   = test_disconnect;
+	parent_class->new_secrets  = test_new_secrets;
 }
 
 static void
-plugin_state_changed (NMOpenvpnPlugin *plugin,
+plugin_state_changed (NMWireguardPlugin *plugin,
                       NMVpnServiceState state,
                       gpointer user_data)
 {
-	NMOpenvpnPluginPrivate *priv = NM_OPENVPN_PLUGIN_GET_PRIVATE (plugin);
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
 
 	switch (state) {
 	case NM_VPN_SERVICE_STATE_UNKNOWN:
@@ -2183,19 +2287,34 @@ plugin_state_changed (NMOpenvpnPlugin *plugin,
 	}
 }
 
-NMOpenvpnPlugin *
-nm_openvpn_plugin_new (const char *bus_name)
+NMWireguardPlugin *
+nm_wireguard_plugin_new (const char *bus_name)
 {
-	NMOpenvpnPlugin *plugin;
+	NMWireguardPlugin *plugin;
 	GError *error = NULL;
 
-	plugin =  (NMOpenvpnPlugin *) g_initable_new (NM_TYPE_OPENVPN_PLUGIN, NULL, &error,
+	// TODO rem
+	printf("%s\n", NM_VPN_SERVICE_PLUGIN_DBUS_SERVICE_NAME);
+	printf("%s\n", bus_name);
+
+	// NOTE: owning this name must be allowed in a DBUS configuration file:
+	// "/etc/dbus-1/system.d/nm-wireguard-service.conf"
+	// (an example conf file was copied to the root of this project)
+	plugin =  (NMWireguardPlugin *) g_initable_new (NM_TYPE_WIREGUARD_PLUGIN, NULL, &error,
 	                                              NM_VPN_SERVICE_PLUGIN_DBUS_SERVICE_NAME, bus_name,
 	                                              NM_VPN_SERVICE_PLUGIN_DBUS_WATCH_PEER, !gl.debug,
 	                                              NULL);
 
 	if (plugin) {
 		g_signal_connect (G_OBJECT (plugin), "state-changed", G_CALLBACK (plugin_state_changed), NULL);
+
+		// FIXME export interface
+		/*
+		void *iface = NULL;
+		void *conn = NULL;
+		g_dbus_interface_skeleton_export(iface, conn, NM_DBUS_PATH_OPENVPN, &error);
+		*/
+
 	} else {
 		_LOGW ("Failed to initialize a plugin instance: %s", error->message);
 		g_error_free (error);
@@ -2220,7 +2339,7 @@ quit_mainloop (NMVpnServicePlugin *plugin, gpointer user_data)
 int
 main (int argc, char *argv[])
 {
-	NMOpenvpnPlugin *plugin;
+	NMWireguardPlugin *plugin;
 	gboolean persist = FALSE;
 	GOptionContext *opt_ctx = NULL;
 	gchar *bus_name = NM_DBUS_SERVICE_OPENVPN;
@@ -2238,13 +2357,14 @@ main (int argc, char *argv[])
 	g_type_init ();
 #endif
 
-	if (getenv ("OPENVPN_DEBUG"))
+	// TODO rem, was: "OPENVPN_DEBUG"
+	if (getenv ("WIREGUARD_DEBUG"))
 		gl.debug = TRUE;
 
 	/* locale will be set according to environment LC_* variables */
 	setlocale (LC_ALL, "");
 
-	bindtextdomain (GETTEXT_PACKAGE, NM_OPENVPN_LOCALEDIR);
+	bindtextdomain (GETTEXT_PACKAGE, NM_WIREGUARD_LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
@@ -2255,6 +2375,7 @@ main (int argc, char *argv[])
 	g_option_context_set_help_enabled (opt_ctx, TRUE);
 	g_option_context_add_main_entries (opt_ctx, options, NULL);
 
+	// TODO translate
 	g_option_context_set_summary (opt_ctx,
 	                              _("nm-openvpn-service provides integrated "
 	                                "OpenVPN capability to NetworkManager."));
@@ -2292,15 +2413,23 @@ main (int argc, char *argv[])
 	                                              10, 0, 1,
 	                                              gl.debug ? 0 : 1);
 
-	_LOGD ("nm-openvpn-service (version " DIST_VERSION ") starting...");
+	_LOGD ("nm-wireguard-service (version " DIST_VERSION ") starting...");
 
+	// TODO what is this, rem
 	if (   !g_file_test ("/sys/class/misc/tun", G_FILE_TEST_EXISTS)
-	    && (system ("/sbin/modprobe tun") == -1))
-		exit (EXIT_FAILURE);
+	    && (system ("/sbin/modprobe tun") == -1)){
+		
+			printf("tun stuff not found :>\n");
+			exit (EXIT_FAILURE);
+		}
+	printf("tun stuff seems okay tho\n");
 
-	plugin = nm_openvpn_plugin_new (bus_name);
-	if (!plugin)
+	// TODO fails here:
+	// nm-openvpn[27808] <warn>  Failed to initialize a plugin instance: Connection ":1.598" is not allowed to own the service "org.freedesktop.NetworkManager.openvpn" due to security policies in the configuration file
+	plugin = nm_wireguard_plugin_new (bus_name);
+	if (!plugin){
 		exit (EXIT_FAILURE);
+	}
 
 	loop = g_main_loop_new (NULL, FALSE);
 
@@ -2311,12 +2440,16 @@ main (int argc, char *argv[])
 	g_unix_signal_add (SIGTERM, signal_handler, loop);
 	g_unix_signal_add (SIGINT, signal_handler, loop);
 
+	printf("Running the main loop ;>\n");
+
 	g_main_loop_run (loop);
 	g_object_unref (plugin);
 
 	pids_pending_wait_for_processes (loop);
 
 	g_main_loop_unref (loop);
+
+	printf("Exiting...\n");
 
 	exit (EXIT_SUCCESS);
 }

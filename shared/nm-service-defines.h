@@ -22,11 +22,11 @@
 #ifndef __NM_SERVICE_DEFINES_H__
 #define __NM_SERVICE_DEFINES_H__
 
-#define NM_VPN_SERVICE_TYPE_OPENVPN "org.freedesktop.NetworkManager.openvpn"
+#define NM_VPN_SERVICE_TYPE_OPENVPN "org.freedesktop.NetworkManager.wireguard"
 
-#define NM_DBUS_SERVICE_OPENVPN    "org.freedesktop.NetworkManager.openvpn"
-#define NM_DBUS_INTERFACE_OPENVPN  "org.freedesktop.NetworkManager.openvpn"
-#define NM_DBUS_PATH_OPENVPN       "/org/freedesktop/NetworkManager/openvpn"
+#define NM_DBUS_SERVICE_OPENVPN    "org.freedesktop.NetworkManager.wireguard"
+#define NM_DBUS_INTERFACE_OPENVPN  "org.freedesktop.NetworkManager.wireguard"
+#define NM_DBUS_PATH_OPENVPN       "/org/freedesktop/NetworkManager/wireguard"
 
 #define NM_OPENVPN_KEY_AUTH "auth"
 #define NM_OPENVPN_KEY_CA "ca"
