@@ -1,0 +1,14 @@
+[VPN Connection]
+name=openvpn
+service=org.freedesktop.NetworkManager.openvpn
+program=@LIBEXECDIR@/nm-openvpn-service
+supports-multiple-connections=true
+
+[libnm]
+plugin=@PLUGINDIR@/libnm-vpn-plugin-openvpn.so
+
+[GNOME]
+auth-dialog=@LIBEXECDIR@/nm-openvpn-auth-dialog
+properties=@PLUGINDIR@/libnm-openvpn-properties
+supports-external-ui-mode=true
+supports-hints=true

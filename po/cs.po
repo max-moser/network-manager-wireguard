@@ -1,0 +1,1340 @@
+# Czech translation of network-manager-openvpn.
+# Copyright (C) 2008, 2009, 2010 the author(s) of network-manager-openvpn.
+# This file is distributed under the same license as the network-manager-openvpn package.
+#
+# Jakub Friedl <jfriedl@suse.cz>, 2006.
+# Jiří Eischmann <jiri@eischmann.cz>, 2008.
+# Zdeněk Hataš <zdenek.hatas@gmail.com>, 2009 - 2017
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: network-manager-openvpn\n"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
+"product=NetworkManager&keywords=I18N+L10N&component=VPN: openvpn\n"
+"POT-Creation-Date: 2017-08-28 15:51+0000\n"
+"PO-Revision-Date: 2017-09-06 12:43+0200\n"
+"Last-Translator: Zdeněk Hataš <zdenek.hatas@gmail.com>\n"
+"Language-Team: Czech <gnome-cs-list@gnome.org>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"X-Poedit-Bookmarks: 35,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
+
+#: ../appdata/network-manager-openvpn.metainfo.xml.in.h:1
+msgid "OpenVPN client"
+msgstr "Klient OpenVPN"
+
+#: ../appdata/network-manager-openvpn.metainfo.xml.in.h:2
+msgid "Client for OpenVPN virtual private networks"
+msgstr "Klient pro virtální soukromé sítě OpenVPN"
+
+#: ../appdata/network-manager-openvpn.metainfo.xml.in.h:3
+msgid "Support for configuring OpenVPN virtual private network connections."
+msgstr "Podpora nastavení sítí OpenVPN."
+
+#: ../appdata/network-manager-openvpn.metainfo.xml.in.h:4
+msgid "OpenVPN is a popular and flexible free-software VPN solution."
+msgstr "OpenVPN je populární a flexibilní nekomerční softwarové řešení VPN."
+
+#: ../appdata/network-manager-openvpn.metainfo.xml.in.h:5
+msgid "The NetworkManager Developers"
+msgstr "Vývojáři aplikace NetworkManager"
+
+#: ../auth-dialog/main.c:175
+#, c-format
+msgid "Authenticate VPN %s"
+msgstr "Ověřit VPN %s"
+
+#: ../auth-dialog/main.c:182 ../properties/nm-openvpn-dialog.ui.h:11
+msgid "Password:"
+msgstr "Heslo:"
+
+#: ../auth-dialog/main.c:189
+msgid "Certificate password:"
+msgstr "Heslo certifikátu:"
+
+#: ../auth-dialog/main.c:196
+msgid "HTTP proxy password:"
+msgstr "Heslo proxy pro HTTP:"
+
+#: ../auth-dialog/main.c:234
+msgid "Authenticate VPN"
+msgstr "Ověřování VPN"
+
+#: ../auth-dialog/main.c:243
+msgid "Certificate pass_word:"
+msgstr "Heslo _certifikátu:"
+
+#: ../auth-dialog/main.c:249
+msgid "_HTTP proxy password:"
+msgstr "Heslo proxy pro _HTTP:"
+
+#: ../auth-dialog/main.c:513
+#, c-format
+msgid "You need to authenticate to access the Virtual Private Network “%s”."
+msgstr "Pro přístup do VPN „%s“ se musíte autentizovat."
+
+#: ../properties/auth-helpers.c:281
+msgid "Choose an OpenVPN static key…"
+msgstr "Zvolit statický klíč OpenVPN…"
+
+#: ../properties/auth-helpers.c:305 ../properties/auth-helpers.c:968
+#: ../properties/auth-helpers.c:1731 ../properties/nm-openvpn-dialog.ui.h:1
+msgid "None"
+msgstr "Žádný"
+
+#: ../properties/auth-helpers.c:719
+msgid "OpenVPN Static Keys (*.key)"
+msgstr "Statické klíče OpenVPN (*.key)"
+
+#: ../properties/auth-helpers.c:866 ../properties/auth-helpers.c:960
+msgid "Default"
+msgstr "Výchozí"
+
+#: ../properties/auth-helpers.c:970
+msgid "RSA MD-4"
+msgstr "RSA MD-4"
+
+#: ../properties/auth-helpers.c:972
+msgid "MD-5"
+msgstr "MD-5"
+
+#: ../properties/auth-helpers.c:974
+msgid "SHA-1"
+msgstr "SHA-1"
+
+#: ../properties/auth-helpers.c:976
+msgid "SHA-224"
+msgstr "SHA-224"
+
+#: ../properties/auth-helpers.c:978
+msgid "SHA-256"
+msgstr "SHA-256"
+
+#: ../properties/auth-helpers.c:980
+msgid "SHA-384"
+msgstr "SHA-384"
+
+#: ../properties/auth-helpers.c:982
+msgid "SHA-512"
+msgstr "SHA-512"
+
+#: ../properties/auth-helpers.c:984
+msgid "RIPEMD-160"
+msgstr "RIPEMD-160"
+
+#: ../properties/auth-helpers.c:1027
+msgid "Don’t verify certificate identification"
+msgstr "Neověřovat identifikaci certifikátu"
+
+#: ../properties/auth-helpers.c:1033
+msgid "Verify whole subject exactly"
+msgstr "Ověřovat akorát subjekt jako celek"
+
+#: ../properties/auth-helpers.c:1039
+msgid "Verify name exactly"
+msgstr "Ověřovat akorát název"
+
+#: ../properties/auth-helpers.c:1045
+msgid "Verify name by prefix"
+msgstr "Ověřovat název podle prefixu"
+
+#: ../properties/auth-helpers.c:1051
+msgid "Verify subject partially (legacy mode, strongly discouraged)"
+msgstr "Ověřovat subjekt po částech (zastaralý režim, důrazně nedoporučeno)"
+
+#: ../properties/auth-helpers.c:1165 ../properties/auth-helpers.c:1236
+msgid "Server"
+msgstr "Server"
+
+#: ../properties/auth-helpers.c:1170 ../properties/auth-helpers.c:1241
+msgid "Client"
+msgstr "Klient"
+
+#: ../properties/auth-helpers.c:1532 ../properties/nm-openvpn-dialog.ui.h:33
+msgid "Not required"
+msgstr "Není vyžadováno"
+
+#: ../properties/auth-helpers.c:1534
+msgid "HTTP"
+msgstr "HTTP"
+
+#: ../properties/auth-helpers.c:1536
+msgid "SOCKS"
+msgstr "SOCKS"
+
+#: ../properties/auth-helpers.c:1658
+msgid "TUN"
+msgstr "TUN"
+
+#: ../properties/auth-helpers.c:1660
+msgid "TAP"
+msgstr "TAP"
+
+#. interface name is max 15 chars
+#: ../properties/auth-helpers.c:1667
+msgid "(automatic)"
+msgstr "(automaticky)"
+
+#: ../properties/auth-helpers.c:1791
+msgid "ping-exit"
+msgstr "ping-exit"
+
+#: ../properties/auth-helpers.c:1793
+msgid "ping-restart"
+msgstr "ping-restart"
+
+#: ../properties/import-export.c:186
+#, c-format
+msgid "option %s expects between %u and %u argument"
+msgid_plural "option %s expects between %u and %u arguments"
+msgstr[0] "volba %s očekává %u až %u argumenty"
+msgstr[1] "volba %s očekává %u až %u argumenty"
+msgstr[2] "volba %s očekává %u až %u argumentů"
+
+#: ../properties/import-export.c:191
+#, c-format
+msgid "option %s expects no arguments"
+msgstr "volba %s neočekává žádný argument"
+
+#: ../properties/import-export.c:193
+#, c-format
+msgid "option %s expects exactly one argument"
+msgid_plural "option %s expects exactly %u arguments"
+msgstr[0] "volba %s očekává právě jeden argument"
+msgstr[1] "volba %s očekává přesně %u argumenty"
+msgstr[2] "volba %s očekává přesně %u argumentů"
+
+#: ../properties/import-export.c:222
+#, c-format
+msgid "argument %s of “%s” can not be empty"
+msgstr "argument „%s“ z „%s“ nesmí být prázdný"
+
+#: ../properties/import-export.c:224
+#, c-format
+msgid "argument of “%s” can not be empty"
+msgstr "argument „%s“ nesmí být prázdný"
+
+#: ../properties/import-export.c:240
+#, c-format
+msgid "argument %s of “%s” must be UTF-8 encoded"
+msgstr "argument „%s“ z „%s“ musí být kódovaný v UTF-8"
+
+#: ../properties/import-export.c:242
+#, c-format
+msgid "argument of “%s” must be UTF-8 encoded"
+msgstr "argument „%s“ musí být kódovaný v UTF-8"
+
+#: ../properties/import-export.c:266
+#, c-format
+msgid "invalid %uth argument to “%s” where number expected"
+msgstr "neplatný %u. argument pro „%s“, bylo očekáváno číslo"
+
+#. we don't support these special destinations, as they currently cannot be expressed
+#. * in a connection.
+#: ../properties/import-export.c:307
+#, c-format
+msgid "unsupported %uth argument %s to “%s”"
+msgstr "nepodporovaný %u. argument %s pro „%s“"
+
+#. we also don't support specifing a FQDN.
+#: ../properties/import-export.c:325
+#, c-format
+msgid ""
+"unsupported %uth argument to “%s” which looks like a FQDN but only IPv4 "
+"address supported"
+msgstr ""
+"nepodporovaný %u. argument pro „%s“, který vypadá jako FQDN, ale podporovaná "
+"je jen adresa IPv4"
+
+#: ../properties/import-export.c:332
+#, c-format
+msgid "invalid %uth argument to “%s” where IPv4 address expected"
+msgstr "neplatný %u. argument pro „%s“, byla očekávána adresa IPv4"
+
+#: ../properties/import-export.c:357
+#, c-format
+msgid "invalid %uth key-direction argument to “%s”"
+msgstr "neplatný %u. argument key-direction pro „%s“"
+
+#: ../properties/import-export.c:371
+#, c-format
+msgid "invalid %uth argument to “%s”"
+msgstr "neplatný %u. argument pro „%s“"
+
+#: ../properties/import-export.c:486
+#, c-format
+msgid "unterminated %s at position %lld"
+msgstr "neukončený %s na pozici %lld"
+
+#: ../properties/import-export.c:487
+msgid "double quote"
+msgstr "uvozovky"
+
+#: ../properties/import-export.c:487
+msgid "single quote"
+msgstr "apostrof"
+
+#: ../properties/import-export.c:503
+#, c-format
+msgid "trailing escaping backslash at position %lld"
+msgstr "ukončující zpětné lomítko na pozici %lld"
+
+#: ../properties/import-export.c:633
+#, c-format
+msgid "unable to read HTTP proxy auth file"
+msgstr "nepodařilo se přečíst ověřovací soubor proxy pro HTTP"
+
+#: ../properties/import-export.c:651
+#, c-format
+msgid "cannot read user/password from HTTP proxy auth file"
+msgstr "nelze čít uživatelské jméno/heslo z ověřovacího souboru proxy pro HTTP"
+
+#: ../properties/import-export.c:659
+#, c-format
+msgid "user/password from HTTP proxy auth file must be UTF-8 encoded"
+msgstr ""
+"uživatelské jméno/heslo z ověřovacího souboru proxy pro HTTP musí být "
+"kódované v UTF-8"
+
+#: ../properties/import-export.c:721
+#, c-format
+msgid "“%s” is not a directory"
+msgstr "„%s“ není složka"
+
+#: ../properties/import-export.c:729
+#, c-format
+msgid "cannot create “%s” directory"
+msgstr "nelze vytvořit složku „%s“"
+
+#: ../properties/import-export.c:749
+#, c-format
+msgid "cannot write <%s> blob from line %ld to file (%s)"
+msgstr "nelze zapsat binární data <%s> z řádku %ld do souboru (%s)"
+
+#: ../properties/import-export.c:766
+#, c-format
+msgid "cannot write <%s> blob from line %ld to file “%s”"
+msgstr "nelze zapsat binární data <%s> z řádku %ld do souboru „%s“"
+
+#: ../properties/import-export.c:935
+#, c-format
+msgid "unsupported mtu-disc argument"
+msgstr "nepodporovaný argument mtu-disc"
+
+#: ../properties/import-export.c:946 ../properties/import-export.c:1319
+#, c-format
+msgid "invalid option"
+msgstr "neplatná volba"
+
+#: ../properties/import-export.c:985
+#, c-format
+msgid "unsupported comp-lzo argument"
+msgstr "nepodporovaný argument com-lzo"
+
+#: ../properties/import-export.c:1083
+#, c-format
+msgid "remote cannot contain space"
+msgstr "remote nemůže obsahovat mezeru"
+
+#: ../properties/import-export.c:1087
+#, c-format
+msgid "remote cannot contain comma"
+msgstr "remote obsahuje čárku"
+
+#: ../properties/import-export.c:1098
+#, c-format
+msgid "remote expects protocol type like “udp” or “tcp”"
+msgstr "protistrana očekává protokol typu „tcp“ nebo „udp“"
+
+#: ../properties/import-export.c:1303
+#, c-format
+msgid "invalid verify-x509-name type"
+msgstr "neplatný typ verify-x509-name"
+
+#: ../properties/import-export.c:1445
+#, c-format
+msgid "unsupported blob/xml element"
+msgstr "nepodporovaný blob/xml element"
+
+#: ../properties/import-export.c:1474
+#, c-format
+msgid "unterminated blob element <%s>"
+msgstr "neukončený blob element <%s>"
+
+#: ../properties/import-export.c:1530
+#, c-format
+msgid "configuration error: %s (line %ld)"
+msgstr "chyba v nastavení: %s (řádek %ld)"
+
+#: ../properties/import-export.c:1531
+msgid "unknown or unsupported option"
+msgstr "neznámá nebo nepodporovaná volba"
+
+#: ../properties/import-export.c:1546
+msgid "The file to import wasn’t a valid OpenVPN client configuration"
+msgstr "Importovaný soubor nebyl platným nastavením klienta OpenVPN."
+
+#: ../properties/import-export.c:1554
+msgid "The file to import wasn’t a valid OpenVPN configure (no remote)"
+msgstr ""
+"Importovaný soubor nebyl platným nastavením OpenVPN (chybí protistrana)."
+
+#: ../properties/import-export.c:1786
+msgid "missing path argument"
+msgstr "chybí argument s cestou"
+
+#: ../properties/import-export.c:1796
+msgid "connection is not a valid OpenVPN connection"
+msgstr "připojení není platné připojení OpenVPN"
+
+#: ../properties/import-export.c:1805
+msgid "connection was incomplete (missing gateway)"
+msgstr "připojení nebylo úplné (chybí brána)"
+
+#: ../properties/import-export.c:2137
+#, c-format
+msgid "failed to write file: %s"
+msgstr "selhal zápis do souboru: %s"
+
+#: ../properties/nm-openvpn-editor-plugin.c:44
+msgid "OpenVPN"
+msgstr "OpenVPN"
+
+#: ../properties/nm-openvpn-editor-plugin.c:45
+msgid "Compatible with the OpenVPN server."
+msgstr "Kompatibilní s OpenVPN serverem."
+
+#: ../properties/nm-openvpn-editor-plugin.c:81
+msgid "unknown OpenVPN file extension"
+msgstr "neznámá přípona souboru OpenVPN"
+
+#: ../properties/nm-openvpn-editor.c:278
+msgid "Certificates (TLS)"
+msgstr "Certifikáty (TLS)"
+
+#: ../properties/nm-openvpn-editor.c:289
+msgid "Password"
+msgstr "Heslo"
+
+#: ../properties/nm-openvpn-editor.c:302
+msgid "Password with Certificates (TLS)"
+msgstr "Heslo s certifikáty (TLS)"
+
+#: ../properties/nm-openvpn-editor.c:314
+msgid "Static Key"
+msgstr "Statický klíč"
+
+#: ../properties/nm-openvpn-editor.c:468
+msgid "could not create openvpn object"
+msgstr "nelze vytvořit objekt openvpn"
+
+#: ../properties/nm-openvpn-editor.c:485
+msgid "could not load UI widget"
+msgstr "nelze nahrát widget uživatelského rozhraní"
+
+#: ../shared/nm-utils/nm-shared-utils.c:345
+#, c-format
+msgid "object class '%s' has no property named '%s'"
+msgstr "objektová třída „%s“ nemá vlastnost s názvem „%s“"
+
+#: ../shared/nm-utils/nm-shared-utils.c:352
+#, c-format
+msgid "property '%s' of object class '%s' is not writable"
+msgstr "vlastnost „%s“ objektové třídy „%s“ není zapisovatelná"
+
+#: ../shared/nm-utils/nm-shared-utils.c:359
+#, c-format
+msgid ""
+"construct property \"%s\" for object '%s' can't be set after construction"
+msgstr ""
+"vytvoření vlastnosti „%s“ objektu „%s“ nemůže být nastaveno po vytvoření"
+
+#: ../shared/nm-utils/nm-shared-utils.c:367
+#, c-format
+msgid "'%s::%s' is not a valid property name; '%s' is not a GObject subtype"
+msgstr "„%s::%s“ není platný název vlastnosti; „%s“ není podtyp GObject"
+
+#: ../shared/nm-utils/nm-shared-utils.c:376
+#, c-format
+msgid "unable to set property '%s' of type '%s' from value of type '%s'"
+msgstr "nelze nastavit vlastnost „%s“ typu „%s“ z hodnoty typu „%s“"
+
+#: ../shared/nm-utils/nm-shared-utils.c:387
+#, c-format
+msgid ""
+"value \"%s\" of type '%s' is invalid or out of range for property '%s' of "
+"type '%s'"
+msgstr ""
+"hodnota „%s“ typu „%s“ je neplatná nebo mimo rozmezí pro vlastnost „%s“ u "
+"typu „%s“"
+
+#: ../shared/nm-utils/nm-vpn-plugin-utils.c:80
+#, c-format
+msgid "missing plugin file \"%s\""
+msgstr "chybí souboer se zásuvným modulem „%s“"
+
+#: ../shared/nm-utils/nm-vpn-plugin-utils.c:86
+#, c-format
+msgid "cannot load editor plugin: %s"
+msgstr "nelze načíst zásuvný modul edotoru: %s"
+
+#: ../shared/nm-utils/nm-vpn-plugin-utils.c:95
+#, c-format
+msgid "cannot load factory %s from plugin: %s"
+msgstr "nelze načíst generátor %s ze zásuvného modulu: %s"
+
+#: ../shared/nm-utils/nm-vpn-plugin-utils.c:121
+msgid "unknown error creating editor instance"
+msgstr "neznámá chyba při vytváření instance editoru"
+
+#: ../shared/utils.c:159
+#, c-format
+msgid "invalid delimiter character '%c'"
+msgstr "neplatný znak „%c“ v oddělovači"
+
+#: ../shared/utils.c:166
+#, c-format
+msgid "invalid non-utf-8 character"
+msgstr "neplatný znak nepatřící do UTF-8"
+
+#: ../shared/utils.c:194
+#, c-format
+msgid "empty host"
+msgstr "neuvedený hostitel"
+
+#: ../shared/utils.c:204
+#, c-format
+msgid "invalid port"
+msgstr "neplatný port"
+
+#: ../shared/utils.c:215
+#, c-format
+msgid "invalid protocol"
+msgstr "neplatný protokol"
+
+#: ../src/nm-openvpn-service.c:477
+#, c-format
+msgid "invalid address “%s”"
+msgstr "neplatná adresa „%s“"
+
+#: ../src/nm-openvpn-service.c:489
+#, c-format
+msgid "invalid integer property “%s” or out of range [%d -> %d]"
+msgstr "celočíselná volba „%s“ není platná nebo je mimo rozsah [%d -> %d]"
+
+#. Translators: keep "yes" and "no" untranslated!
+#: ../src/nm-openvpn-service.c:500
+#, c-format
+msgid "invalid boolean property “%s” (not yes or no)"
+msgstr "pravdivostní volba „%s“ není platná (není yes nebo no)"
+
+#: ../src/nm-openvpn-service.c:507
+#, c-format
+msgid "unhandled property “%s” type %s"
+msgstr "neošetřená volba „%s“ typu %s"
+
+#: ../src/nm-openvpn-service.c:518
+#, c-format
+msgid "property “%s” invalid or not supported"
+msgstr "volba „%s“ není platná nebo podporovaná"
+
+#: ../src/nm-openvpn-service.c:534
+msgid "No VPN configuration options."
+msgstr "Žádné volby nastavení VPN."
+
+#: ../src/nm-openvpn-service.c:739
+msgid "A username is required."
+msgstr "Je požadováno uživatelské jméno."
+
+#: ../src/nm-openvpn-service.c:743
+msgid "A password is required."
+msgstr "Je požadováno heslo."
+
+#: ../src/nm-openvpn-service.c:746
+msgid "A username and password are required."
+msgstr "Je požadováno uživatelské jméno a heslo."
+
+#: ../src/nm-openvpn-service.c:768
+msgid "A private key password is required."
+msgstr "Heslo soukromého klíče je požadováno."
+
+#: ../src/nm-openvpn-service.c:781
+msgid "An HTTP Proxy username is required."
+msgstr "Je požadováno uživatelské jméno k HTTP proxy."
+
+#: ../src/nm-openvpn-service.c:785
+msgid "An HTTP Proxy password is required."
+msgstr "Je požadováno heslo k HTTP proxy."
+
+#: ../src/nm-openvpn-service.c:788
+msgid "An HTTP Proxy username and password are required."
+msgstr "Je požadováno uživatelské jméno a heslo k HTTP proxy."
+
+#: ../src/nm-openvpn-service.c:1275 ../src/nm-openvpn-service.c:2065
+#: ../src/nm-openvpn-service.c:2099
+msgid ""
+"Could not process the request because the VPN connection settings were "
+"invalid."
+msgstr "Nelze zpracovat požadavek, protože nastavení VPN nejsou platná."
+
+#: ../src/nm-openvpn-service.c:1284 ../src/nm-openvpn-service.c:2074
+msgid "Invalid connection type."
+msgstr "Neplatný typ připojení."
+
+#: ../src/nm-openvpn-service.c:1302
+msgid "Could not find the openvpn binary."
+msgstr "Nelze nalézt program openvpn."
+
+#: ../src/nm-openvpn-service.c:1312
+msgid "Invalid HMAC auth."
+msgstr "Neplatná autentizace HMAC."
+
+#: ../src/nm-openvpn-service.c:1357 ../src/nm-openvpn-service.c:1365
+#, c-format
+msgid "Invalid port number “%s”."
+msgstr "Neplatné číslo portu „%s“."
+
+#: ../src/nm-openvpn-service.c:1385
+#, c-format
+msgid "Invalid proto “%s”."
+msgstr "Neplatný protokol „%s“."
+
+#: ../src/nm-openvpn-service.c:1427
+#, c-format
+msgid "Invalid proxy type “%s”."
+msgstr "Neplatný typ proxy „%s“."
+
+#: ../src/nm-openvpn-service.c:1475
+#, c-format
+msgid "Invalid ping duration “%s”."
+msgstr "Neplatná doba trvání pinknutí „%s“."
+
+#: ../src/nm-openvpn-service.c:1488
+#, c-format
+msgid "Invalid ping-exit duration “%s”."
+msgstr "Neplatná doba trvání ukončení pinknutí ping-exit „%s“."
+
+#: ../src/nm-openvpn-service.c:1501
+#, c-format
+msgid "Invalid ping-restart duration “%s”."
+msgstr "Neplatná doba trvání restartu pinknutí ping-restart „%s“."
+
+#: ../src/nm-openvpn-service.c:1520
+#, c-format
+msgid "Invalid max-routes argument “%s”."
+msgstr "Neplatný argument max-routes „%s“"
+
+#: ../src/nm-openvpn-service.c:1575
+#, c-format
+msgid "Invalid keysize “%s”."
+msgstr "Neplatná délka klíče „%s“."
+
+#: ../src/nm-openvpn-service.c:1632
+#, c-format
+msgid "Invalid configuration with tls-remote and verify-x509-name."
+msgstr "Neplatná konfugurace s tls-remote a verify-x509-name."
+
+#: ../src/nm-openvpn-service.c:1646
+#, c-format
+msgid "Invalid verify-x509-name."
+msgstr "Neplatné verify-x509-name."
+
+#: ../src/nm-openvpn-service.c:1680
+#, c-format
+msgid "Invalid reneg seconds “%s”."
+msgstr "Neplatná počet sekund opětovného vyjednávání „%s“."
+
+#: ../src/nm-openvpn-service.c:1712
+#, c-format
+msgid "Invalid TUN MTU size “%s”."
+msgstr "Neplatná velikost TUN MTU „%s“."
+
+#: ../src/nm-openvpn-service.c:1726
+#, c-format
+msgid "Invalid fragment size “%s”."
+msgstr "Neplatná velikost fragmentu „%s“."
+
+#: ../src/nm-openvpn-service.c:1838
+#, c-format
+msgid "Unknown connection type “%s”."
+msgstr "Neznámý typ připojení „%s“."
+
+#: ../src/nm-openvpn-service.c:1857
+#, c-format
+msgid "User “%s” not found, check NM_OPENVPN_USER."
+msgstr "Uživatel „%s“ nebyl nalezen, zkontrolujte proměnnou NM_OPENVPN_USER."
+
+#: ../src/nm-openvpn-service.c:1870
+#, c-format
+msgid "Group “%s” not found, check NM_OPENVPN_GROUP."
+msgstr "Skupina „%s“ nebyla nalezena, zkontrolujte proměnnou NM_OPENVPN_GROUP."
+
+#: ../src/nm-openvpn-service.c:2112
+msgid "Unhandled pending authentication."
+msgstr "Neošetřená čekající autentizace."
+
+#: ../src/nm-openvpn-service.c:2231
+msgid "Don’t quit when VPN connection terminates"
+msgstr "Neukončovat během ukončování spojení VPN"
+
+#: ../src/nm-openvpn-service.c:2232
+msgid "Enable verbose debug logging (may expose passwords)"
+msgstr "Povolit podrobný ladicí výpis (může prozradit hesla)"
+
+#: ../src/nm-openvpn-service.c:2233
+msgid "D-Bus name to use for this instance"
+msgstr "Název použitý pro tuto instanci v D-Bus"
+
+#: ../src/nm-openvpn-service.c:2259
+msgid ""
+"nm-openvpn-service provides integrated OpenVPN capability to NetworkManager."
+msgstr ""
+"nm-openvpn-service umožňuje NetworkManageru poskytovat služby pro "
+"připojování k OpenVPN."
+
+#: ../properties/nm-openvpn-dialog.ui.h:2
+msgid "TLS-Auth"
+msgstr "TLS-Auth"
+
+#: ../properties/nm-openvpn-dialog.ui.h:3
+msgid "TLS-Crypt"
+msgstr "TLS-Crypt"
+
+#: ../properties/nm-openvpn-dialog.ui.h:4
+msgid "Maybe"
+msgstr "Možná"
+
+#: ../properties/nm-openvpn-dialog.ui.h:5
+msgid "Yes"
+msgstr "Ano"
+
+#: ../properties/nm-openvpn-dialog.ui.h:6
+msgid "General"
+msgstr "Obecné"
+
+#: ../properties/nm-openvpn-dialog.ui.h:7
+msgid "_Gateway:"
+msgstr "_Brána:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:8
+msgid ""
+"Remote gateway(s), with optional port and protocol (e.g. ovpn.corp.com:1234:"
+"tcp). You can specify multiple hosts for redundancy (use commas or spaces as "
+"delimiters).\n"
+"config: remote"
+msgstr ""
+"Vzdálená brána(y), volitelně s portem a protokolem (např. ovpn.corp.com:1234:"
+"tcp). Kvůli redundanci je možné zadat více položek (oddělených mezerou nebo "
+"čárkou).\n"
+"config: remote"
+
+#: ../properties/nm-openvpn-dialog.ui.h:10
+msgid "Authentication"
+msgstr "Autentizace"
+
+#: ../properties/nm-openvpn-dialog.ui.h:12
+msgid "User name:"
+msgstr "Uživatelské jméno:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:13
+msgid ""
+"Password passed to OpenVPN when prompted for it.\n"
+"config: auth-user-pass"
+msgstr ""
+"Heslo předané na požadavek OpenVPN.\n"
+"config: auth-user-pass"
+
+#: ../properties/nm-openvpn-dialog.ui.h:15
+msgid ""
+"Username passed to OpenVPN when prompted for it.\n"
+"config: auth-user-pass"
+msgstr ""
+"Uživatelské jméno předané na požadavek OpenVPN.\n"
+"config: auth-user-pass"
+
+#: ../properties/nm-openvpn-dialog.ui.h:17
+msgid "Remote IP Address:"
+msgstr "Vzdálená adresa IP:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:18
+msgid "Local IP Address:"
+msgstr "Místní adresa IP:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:19
+msgid "Key Direction:"
+msgstr "Směr klíče:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:20
+msgid "Static Key:"
+msgstr "Statický klíč:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:21
+msgid ""
+"Pre-shared file for Static Key encryption mode (non-TLS).\n"
+"config: static <file>"
+msgstr ""
+"Sdílený soubor pro režim šifrování statickým klíčem (non-TLS).\n"
+"config: static <soubor>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:23
+msgid ""
+"IP address of the remote VPN endpoint.\n"
+"config: ifconfig <l> <rn>"
+msgstr ""
+"Adresa IP vzdáleného uzlu VPN.\n"
+"config: ifconfig <l> <rn>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:25
+msgid ""
+"IP address of the local VPN endpoint.\n"
+"config: ifconfig <l> <rn>"
+msgstr ""
+"Adresa IP místního uzlu VPN.\n"
+"config: ifconfig <l> <rn>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:27
+msgid ""
+"Direction for Static Key encryption mode (non-TLS).\n"
+"If key direction is used, it must be the opposite of that used on the VPN "
+"peer. For example, if the peer uses “1”, this connection must use “0”. If "
+"you are unsure what value to use, contact your system administrator.\n"
+"config: static <file> [direction]"
+msgstr ""
+"Směr pro režim šifrování statickým klíčem (non-TLS).\n"
+"Pokud se používá směr klíče, musí být opačný k protějšku VPN. Například, "
+"když protějšek používá „1“, toto připojení musí použít „0“. Pokud si nejste "
+"jisti, jakou hodnotu použít, kontaktujte správce svého systému.\n"
+"config: static <soubor> [směr]"
+
+#: ../properties/nm-openvpn-dialog.ui.h:30
+msgid "Type:"
+msgstr "Typ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:31
+msgid "Select an authentication mode."
+msgstr "Zvolete způsob autentizace."
+
+#: ../properties/nm-openvpn-dialog.ui.h:32
+msgid "Ad_vanced…"
+msgstr "P_okročilé…"
+
+#: ../properties/nm-openvpn-dialog.ui.h:34
+msgid "OpenVPN Advanced Options"
+msgstr "Pokročilé volby OpenVPN"
+
+#: ../properties/nm-openvpn-dialog.ui.h:35
+msgid "Use custom gateway p_ort:"
+msgstr "P_oužít vlastní port brány:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:36
+msgid ""
+"TCP/UDP port number for peer. (Default value when there is no port for "
+"gateway).\n"
+"config: port"
+msgstr ""
+"Číslo portu TCP/UDP místního zakončení. (Výchozí volba pokud není pro bránu "
+"zadán port.)\n"
+"config: port"
+
+#: ../properties/nm-openvpn-dialog.ui.h:38
+msgid "Use custom _renegotiation interval:"
+msgstr "Použít vlastní interval opětovného _připojení:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:39
+msgid ""
+"Renegotiate data channel key after the specified number of seconds.\n"
+"config: reneg-sec"
+msgstr ""
+"Vyjednat nové klíče datového kanálu po zadaném počtu sekund.\n"
+"config: reneg-sec"
+
+#: ../properties/nm-openvpn-dialog.ui.h:41
+msgid "Use L_ZO data compression"
+msgstr "Použít komprimaci L_ZO"
+
+#: ../properties/nm-openvpn-dialog.ui.h:42
+msgid ""
+"Use fast LZO compression.\n"
+"config: comp-lzo"
+msgstr ""
+"Použít rychlou kompresi LZO.\n"
+"config: comp-lzo"
+
+#: ../properties/nm-openvpn-dialog.ui.h:44
+msgid ""
+"Select the LZO data compression mode.\n"
+"config: comp-lzo"
+msgstr ""
+"Použít režim komprimace dat LZO.\n"
+"config: comp-lzo"
+
+#: ../properties/nm-openvpn-dialog.ui.h:46
+msgid "Use a _TCP connection"
+msgstr "Použít spojení _TCP"
+
+#: ../properties/nm-openvpn-dialog.ui.h:47
+msgid ""
+"Use TCP for communicating with remote host.\n"
+"(This is a default setting only used when no protocol is specified for the "
+"gateway.)\n"
+"config: proto tcp-client | udp"
+msgstr ""
+"Pro komunikaci se vzdáleným uzlem použít TCP.\n"
+"(Toto je výchozí volba. Je použita pouze v případě, že pro bránu není "
+"specifikován žádný protokol.)\n"
+"config: proto tcp-client | udp"
+
+#: ../properties/nm-openvpn-dialog.ui.h:50
+msgid "Set virtual _device type:"
+msgstr "Nastavit typ virtuálního _zařízení:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:51
+msgid "Explicitly set virtual device type and name (TUN/TAP)."
+msgstr "Výslovně nastavit typ a název virtuálního zařízení (TUN/TAP)."
+
+#: ../properties/nm-openvpn-dialog.ui.h:52
+msgid ""
+"Explicitly set virtual device type (TUN/TAP).\n"
+"config: dev-type tun | tap"
+msgstr ""
+"Výslovně nastavit typ virtuálního zařízení (TUN/TAP).\n"
+"config: dev-type tun | tap"
+
+#: ../properties/nm-openvpn-dialog.ui.h:54
+msgid " and _name:"
+msgstr "a _název:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:55
+msgid ""
+"Use custom name for TUN/TAP virtual device (instead of default “tun” or "
+"“tap”).\n"
+"config: dev <name>"
+msgstr ""
+"Použít vlastní název virtuálního zařízení TUN/TAP (místo výchozího „tun“ "
+"nebo „tap“).\n"
+"config: dev <název>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:57
+msgid "Use custom tunnel Maximum Transmission _Unit (MTU):"
+msgstr "Použít vlastní maximální velikost přenosové _jednotky (MTU):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:58
+msgid ""
+"Take the TUN device MTU to be the specified value and derive the link MTU "
+"from it.\n"
+"config: tun-mtu"
+msgstr ""
+"Odvodit MTU linky z MTU zařízení TUN.\n"
+"config: tun-mtu"
+
+#: ../properties/nm-openvpn-dialog.ui.h:60
+msgid "Use custom UDP _fragment size:"
+msgstr "Použít vlastní velikost UDP _fragmentu:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:61
+msgid ""
+"Enable internal datagram fragmentation with this maximum size.\n"
+"config: fragment"
+msgstr ""
+"Povolit interní fragmentaci datagramů touto maximální délkou.\n"
+"config: fragment"
+
+#: ../properties/nm-openvpn-dialog.ui.h:63
+msgid "Restrict tunnel TCP Maximum _Segment Size (MSS)"
+msgstr "Omezit maximální velikost _segmentu TCP u tunelu (MSS)"
+
+#: ../properties/nm-openvpn-dialog.ui.h:64
+msgid ""
+"Restrict tunnel TCP MSS.\n"
+"config: mssfix"
+msgstr ""
+"Omezit TCP MSS tunelu.\n"
+"config: mssfix"
+
+#: ../properties/nm-openvpn-dialog.ui.h:66
+msgid "Rando_mize remote hosts"
+msgstr "_Náhodně seřadit vzdálené uzly"
+
+#: ../properties/nm-openvpn-dialog.ui.h:67
+msgid ""
+"Randomize the order of gateways list (remote) as a kind of basic load-"
+"balancing measure.\n"
+"config: remote-random"
+msgstr ""
+"Náhodně seřadit seznam bran (vzdálených) jako způsob rozložení zátěže.\n"
+"config: remote-random"
+
+#: ../properties/nm-openvpn-dialog.ui.h:69
+msgid "IPv6 tun link"
+msgstr "Linka IPv6 tun"
+
+#: ../properties/nm-openvpn-dialog.ui.h:70
+msgid ""
+"Build a tun link capable of forwarding IPv6 traffic\n"
+"config: tun-ipv6"
+msgstr ""
+"Vytvořit linku tun schopnou přeposílání provozu IPv6\n"
+"config: tun-ipv6"
+
+#: ../properties/nm-openvpn-dialog.ui.h:72
+msgid "Specify _exit or restart ping:"
+msgstr "Nastavit ukončení nebo restart pinkání:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:73
+msgid ""
+"Exit or restart after n seconds pass without reception of a ping or other "
+"packet from remote.\n"
+"config: ping-exit | ping-restart <n>"
+msgstr ""
+"Ukončit nebo restartovat po n sekundách bez přijetí jakéhokoliv paketu nebo "
+"pinknutí od protistrany.\n"
+"config: ping-exit | ping-restart <n>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:75
+msgid "Specify pin_g interval:"
+msgstr "Nastavit interval pin_knutí:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:76
+msgid ""
+"Ping remote over the TCP/UDP control channel if no packets have been sent "
+"for at least n seconds.\n"
+"config: ping <n>"
+msgstr ""
+"Poslat protistraně pinknutí přes řídící kanál TCP/UDP, pokud nebyly v "
+"posledních n sekundách poslány žádné pakety.\n"
+"config: ping <n>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:78
+msgid "Accept authenticated packets from any address (F_loat)"
+msgstr "Přijmout autentizované pakety z jakékoli adresy (F_loat)"
+
+#: ../properties/nm-openvpn-dialog.ui.h:79
+msgid ""
+"Allow remote peer to change its IP address and/or port number, such as due "
+"to DHCP (this is the default if --remote is not used). --float when "
+"specified with --remote allows an OpenVPN session to initially connect to a "
+"peer at a known address, however if packets arrive from a new address and "
+"pass all authentication tests, the new address will take control of the "
+"session. This is useful when you are connecting to a peer which holds a "
+"dynamic address such as a dial-in user or DHCP client.\n"
+"\n"
+"Essentially, --float tells OpenVPN to accept authenticated packets from any "
+"address, not only the address which was specified in the --remote option.\n"
+"\n"
+"config: float"
+msgstr ""
+"Povolit protějšímu uzlu změnit svoji IP adresu a/nebo číslo portu; např. "
+"DHCP (toto je výchozí chování pokud je použit parametr --remote). Pokud je "
+"spolu s --remote zadáno --float, dovolí úvodní připojení relace OpenVPN k "
+"uzlu na známé adrese. Pokud ale pakety přijdou z nové adresy a projdou všemi "
+"autentizačními testy, nová adresa převezme kontrolu nad spojením. To je "
+"užitečné, pokud se připojujete k uzlu, který má přiřazenu danamickou adresu. "
+"Například uživatel vytáčeného spojení nebo klient DHCP.\n"
+"\n"
+"Parametr --float v podstatě říká OpenVPN, aby přijalo autentizované pakety z "
+"jakékoli adresy, ne pouze z adresy specifikované parametrem --remote.\n"
+"\n"
+"config: float"
+
+#: ../properties/nm-openvpn-dialog.ui.h:84
+msgid "Specify max routes:"
+msgstr "Zadejte max. počet cest:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:85
+msgid ""
+"Specify the maximum number of routes the server is allowed to specify.\n"
+"config: max-routes <n>"
+msgstr ""
+"Zadejte maximální počet směrovacích cest, které server může určit.\n"
+"config: max-routes <n>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:87
+msgid ""
+"Encrypt packets with cipher algorithm. The default is BF-CBC (Blowfish in "
+"Cipher Block Chaining mode).\n"
+"config: cipher"
+msgstr ""
+"Šifrovací algoritmus pro kódování paketů. Výchozí je BF-CBC (Blowfish v "
+"režimu Cipher Blok Chaining).\n"
+"config: cipher"
+
+#: ../properties/nm-openvpn-dialog.ui.h:89
+msgid "Use custom _size of cipher key:"
+msgstr "Použít vlastní délku klíče šifry:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:90
+msgid ""
+"Set cipher key size to a custom value. If unspecified, it defaults to cipher-"
+"specific size.\n"
+"config: keysize <n>"
+msgstr ""
+"Nastavit délku klíče šifry na vlastní hodnotu. Pokud není specifikována, "
+"bude použita výchozí pro danou šifru.\n"
+"config: keysize <n>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:92
+msgid ""
+"Authenticate packets with HMAC using message digest algorithm. The default "
+"is SHA1.\n"
+"config: auth"
+msgstr ""
+"Autentizovat pakety pomocí HMAC použitím algoritmu message digest. Výchozí "
+"je SHA1.\n"
+"config: auth"
+
+#: ../properties/nm-openvpn-dialog.ui.h:94
+msgid "Ci_pher:"
+msgstr "Šifra:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:95
+msgid "_HMAC Authentication:"
+msgstr "Autentizace HMAC:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:96
+msgid "Security"
+msgstr "Zabezpečení"
+
+#: ../properties/nm-openvpn-dialog.ui.h:97
+msgid "_Subject Match:"
+msgstr "Subjekt odpovídá:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:98
+msgid ""
+"Subject or Common Name to verify server certificate information against.\n"
+"\n"
+"config: verify-x509-name subject-or-name [mode]\n"
+"config (legacy mode): tls-remote subject-or-name"
+msgstr ""
+"Subjekt nebo běžný název „Common Name“, vůči kterému se mají ověřovat "
+"informace serverového certifikátu.\n"
+"\n"
+"config: verify-x509-name předmět-nebo-název [režim]\n"
+"config (zastaralý režim): tls-remote předmět-nebo-název"
+
+#: ../properties/nm-openvpn-dialog.ui.h:102
+msgid "Server _Certificate Check:"
+msgstr "Kontrola serverového _certifikátu:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:103
+msgid ""
+"Verify server certificate identification.\n"
+"\n"
+"When enabled, connection will only succeed if the server certificate matches "
+"some expected properties.\n"
+"Matching can either apply to the whole certificate subject (all the "
+"fields),\n"
+"or just the Common Name (CN field).\n"
+"\n"
+"The legacy option tls-remote is deprecated and removed from OpenVPN 2.4 and "
+"newer. Do not use it anymore.\n"
+"\n"
+"config: verify-x509-name subject-or-name [mode]\n"
+"config (legacy mode): tls-remote subject-or-name"
+msgstr ""
+"Ověřovat identifikaci serverového certifikátu.\n"
+"\n"
+"Když je zapnuto, bude připojení úspěšné jen tehdy, pokud serverový "
+"certifikát vyhovuje některým očekávaným vlastnostem.\n"
+"Vyhodnocuje se buď subjekt certifikátu jako celek (všechna pole),\n"
+"nebo jen běžný název „Common Name“ (pole CN).\n"
+"\n"
+"Dřívější předvolba tls-remote je zastaralá a z OpenVPN 2.4 a novjější byla "
+"odstraněna. Dále ji nepoužívejte.\n"
+"\n"
+"config: verify-x509-name předmět-nebo-název [režim]\n"
+"config (zastaralý režim): tls-remote předmět-nebo-název"
+
+#: ../properties/nm-openvpn-dialog.ui.h:113
+msgid "_Verify peer (server) certificate usage signature"
+msgstr "O_věřit podpis použití certifikátu protistrany (serveru)"
+
+#: ../properties/nm-openvpn-dialog.ui.h:114
+msgid ""
+"Require that peer certificate was signed with an explicit key usage and "
+"extended key usage based on RFC3280 TLS rules."
+msgstr ""
+"Vyžaduje, aby certifikát protistrany byl podepsán a definoval jednoznačné "
+"hodnoty atributů použití a rozšířeného použití klíče dle pravidel TLS "
+"(RFC3289)."
+
+#: ../properties/nm-openvpn-dialog.ui.h:115
+msgid "_Remote peer certificate TLS type:"
+msgstr "Typ TLS certifikátu p_rotistrany:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:116
+msgid ""
+"Require that peer certificate was signed with an explicit key usage and "
+"extended key usage based on RFC3280 TLS rules.\n"
+"config: remote-cert-tls client|server"
+msgstr ""
+"Vyžaduje, aby certifikát protistrany byl podepsán a definoval jednoznačné "
+"hodnoty atributů použití a rozšířeného použití klíče dle pravidel TLS "
+"(RFC3289).\n"
+"config: remote-cert-tls client|server"
+
+#: ../properties/nm-openvpn-dialog.ui.h:118
+msgid "_Verify peer (server) certificate nsCertType designation"
+msgstr "O_věřit označení nsCertType certifikátu protistrany (serveru)"
+
+#: ../properties/nm-openvpn-dialog.ui.h:119
+msgid ""
+"Require that peer certificate was signed with an explicit nsCertType "
+"designation."
+msgstr ""
+"Vyžaduje, aby certifikát protistrany byl podepsán s jednoznačným ozančením "
+"nsCertType"
+
+#: ../properties/nm-openvpn-dialog.ui.h:120
+msgid "_Remote peer certificate nsCert designation:"
+msgstr "Označení nsCert certifikátu p_rotistrany:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:121
+msgid ""
+"Require that peer certificate was signed with an explicit nsCertType "
+"designation.\n"
+"config: ns-cert-type client|server"
+msgstr ""
+"Vyžaduje, aby certifikát protistrany byl podepsán s jednoznačným označením "
+"nsCertType.\n"
+"config: ns-cert-type client|server"
+
+#: ../properties/nm-openvpn-dialog.ui.h:123
+msgid "Key _Direction:"
+msgstr "Směr klíče:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:124
+msgid ""
+"Add an additional layer of HMAC authentication on top of the TLS control "
+"channel to protect against DoS attacks.\n"
+"config: tls-auth <file> [direction]"
+msgstr ""
+"Chránit příkazový kanál TLS před útoky typu DoS přidáním další úrovně "
+"autentizace HMAC.\n"
+"config: tls-auth <soubor> [směr]"
+
+#: ../properties/nm-openvpn-dialog.ui.h:126
+msgid ""
+"Direction parameter for static key mode.\n"
+"If key direction is used, it must be the opposite of that used on the VPN "
+"peer. For example, if the peer uses “1”, this connection must use “0”. If "
+"you are unsure what value to use, contact your system administrator.\n"
+"config: tls-auth <file> [direction]"
+msgstr ""
+"Parametr směru pro režim statického klíče.\n"
+"Pokud se používá směr klíče, musí být opačný k protějšku VPN. Například, "
+"když protějšek používá „1“, toto připojení musí použít „0“. Pokud si nejste "
+"jisti, jakou hodnotu použít, kontaktujte správce svého systému.\n"
+"config: tls-auth <soubor> [směr]"
+
+#: ../properties/nm-openvpn-dialog.ui.h:129
+msgid "Key _File:"
+msgstr "Soubor klíče:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:130
+msgid "Mode"
+msgstr "Režim"
+
+#: ../properties/nm-openvpn-dialog.ui.h:131
+msgid "Add an additional layer of encryption or HMAC authentication."
+msgstr "Přidat další úroveň šifrování nebo autentizace HMAC."
+
+#: ../properties/nm-openvpn-dialog.ui.h:132
+msgid "Additional TLS authentication or encryption"
+msgstr "Použít dodatečnou autentizaci TLS nebo šifrování"
+
+#: ../properties/nm-openvpn-dialog.ui.h:133
+msgid "TLS Authentication"
+msgstr "Autentizace TLS"
+
+#: ../properties/nm-openvpn-dialog.ui.h:134
+msgid ""
+"Proxy type: HTTP or Socks.\n"
+"config: http-proxy or socks-proxy"
+msgstr ""
+"Typ proxy: HTTP nebo Socks.\n"
+"config: http-proxy nebo socks-proxy"
+
+#: ../properties/nm-openvpn-dialog.ui.h:136
+msgid "Proxy _Type:"
+msgstr "Typ proxy:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:137
+msgid ""
+"<i>Select this option if your organization requires the use of a proxy "
+"server to access the Internet.</i>"
+msgstr ""
+"<i>Zvolte tuto možnost, pokud vaše organizace používá pro přístup do "
+"Internetu server proxy.</i>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:138
+msgid "Server _Address:"
+msgstr "Adresa serveru:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:139
+msgid ""
+"Connect to remote host through a proxy with this address.\n"
+"config: http-proxy or socks-proxy"
+msgstr ""
+"Připojit ke vzdálenému uzlu prostřednictvím proxy s touto adresou.\n"
+"config: http-proxy nebo socks-proxy"
+
+#: ../properties/nm-openvpn-dialog.ui.h:141
+msgid "_Port:"
+msgstr "Port:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:142
+msgid ""
+"Connect to remote host through a proxy with this port.\n"
+"config: http-proxy or socks-proxy"
+msgstr ""
+"Připojit ke vzdálenému uzlu prostřednictvím proxy s tímto portem.\n"
+"config: http-proxy nebo socks-proxy"
+
+#: ../properties/nm-openvpn-dialog.ui.h:144
+msgid "_Retry indefinitely when errors occur"
+msgstr "Neustále o_pakovat pokud nastane chyba"
+
+#: ../properties/nm-openvpn-dialog.ui.h:145
+msgid ""
+"Retry indefinitely on proxy errors. It simulates a SIGUSR1 reset.\n"
+"config: http-proxy-retry or socks-proxy-retry"
+msgstr ""
+"Při chybě proxy opakovat do nekonečna. Simuluje reset signálem SIGUSR1.\n"
+"config: http-proxy-retry nebo socks-proxy-retry"
+
+#: ../properties/nm-openvpn-dialog.ui.h:147
+msgid "Proxy _Username:"
+msgstr "Uživatelské jméno proxy:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:148
+msgid "Proxy Passwor_d:"
+msgstr "Heslo proxy:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:149
+msgid "HTTP/Socks proxy username passed to OpenVPN when prompted for it."
+msgstr "Uživatelské jméno proxy HTTP/Socks předané na požadavek OpenVPN."
+
+#: ../properties/nm-openvpn-dialog.ui.h:150
+msgid "HTTP/Socks proxy password passed to OpenVPN when prompted for it."
+msgstr "Heslo proxy HTTP/Socks předané na požadavek OpenVPN."
+
+#: ../properties/nm-openvpn-dialog.ui.h:151
+msgid "_Show password"
+msgstr "Zobrazit heslo"
+
+#: ../properties/nm-openvpn-dialog.ui.h:152
+msgid "Proxies"
+msgstr "Servery proxy"
+
+#: ../properties/nm-openvpn-dialog.ui.h:153
+msgid "Path mtu discovery"
+msgstr "Zjištění MTU cesty"
+
+#: ../properties/nm-openvpn-dialog.ui.h:154
+msgid "Misc"
+msgstr "Různé"

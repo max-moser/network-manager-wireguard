@@ -1,0 +1,759 @@
+# Punjabi translation of network-manager-openconnect.
+# Copyright (C) 2009 network-manager-openconnect's COPYRIGHT HOLDER
+# This file is distributed under the same license as the network-manager-openconnect package.
+#
+# A S Alam <aalam@users.sf.net>, 2009, 2010, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: network-manager-openconnect master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=NetworkManager&keywords=I18N+L10N&component=VPN: openvpn\n"
+"POT-Creation-Date: 2012-08-07 17:01+0000\n"
+"PO-Revision-Date: 2012-08-19 15:58+0530\n"
+"Last-Translator: A S Alam <aalam@users.sf.net>\n"
+"Language-Team: Punjabi/Panjabi <kde-i18n-doc@kde.org>\n"
+"Language: pa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.4\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: ../auth-dialog/vpn-password-dialog.c:95
+msgid "_Password:"
+msgstr "ਪਾਸਵਰਡ(_P):"
+
+#: ../auth-dialog/vpn-password-dialog.c:97
+msgid "_Secondary Password:"
+msgstr "ਸੈਕੰਡਰੀ ਪਾਸਵਰਡ(_S):"
+
+#: ../auth-dialog/vpn-password-dialog.c:239
+msgid "Sh_ow passwords"
+msgstr "ਪਾਸਵਰਡ ਵੇਖੋ(_o)"
+
+#. In other_ui mode, we don't actually show the dialog. Instead we pass back everything
+#. that is needed to build it
+#: ../auth-dialog/main.c:158
+#, c-format
+msgid "You need to authenticate to access the Virtual Private Network '%s'."
+msgstr ""
+"ਤੁਹਾਨੂੰ ਵੁਰਚੁਅਲ ਪ੍ਰਾਈਵੇਟ ਨੈੱਟਵਰਕ (VPN) '%s' ਦੀ ਵਰਤੋਂ ਵਾਸਤੇ ਪਰਮਾਣਿਤ ਹੋਣ ਦੀ ਲੋੜ "
+"ਹੈ।"
+
+#: ../auth-dialog/main.c:167 ../auth-dialog/main.c:191
+msgid "Authenticate VPN"
+msgstr "ਪਰਮਾਣਿਤ VPN"
+
+#: ../auth-dialog/main.c:170 ../properties/nm-openvpn-dialog.ui.h:92
+msgid "Password:"
+msgstr "ਪਾਸਵਰਡ:"
+
+#: ../auth-dialog/main.c:172 ../auth-dialog/main.c:210
+#| msgid "_CA Certificate:"
+msgid "Certificate password:"
+msgstr "ਸਰਟੀਫਿਕੇਟ ਪਾਸਵਰਡ:"
+
+#: ../auth-dialog/main.c:196
+#| msgid "_CA Certificate:"
+msgid "Certificate pass_word:"
+msgstr "ਸਰਟੀਫਿਕੇਟ ਪਾਸਵਰਡ(_w):"
+
+#: ../properties/auth-helpers.c:148
+msgid "Choose your personal certificate..."
+msgstr "ਆਪਣਾ ਨਿੱਜੀ ਸਰਟੀਫਿਕੇਟ ਚੁਣੋ।"
+
+#: ../properties/auth-helpers.c:166
+msgid "Choose your private key..."
+msgstr "ਆਪਣੀ ਪ੍ਰਾਈਵੇਟ ਕੁੰਜੀ ਚੁਣੋ..."
+
+#: ../properties/auth-helpers.c:238
+msgid "Saved"
+msgstr "ਸੰਭਾਲਿਆ"
+
+#: ../properties/auth-helpers.c:246
+msgid "Always Ask"
+msgstr "ਹਮੇਸ਼ਾ ਪੁੱਛੋ"
+
+#: ../properties/auth-helpers.c:251
+msgid "Not Required"
+msgstr "ਲੋੜੀਦਾ ਨਹੀਂ"
+
+#: ../properties/auth-helpers.c:341
+msgid "Choose a Certificate Authority certificate..."
+msgstr "ਸਰਟੀਫਿਕੇਟ ਅਥਾਰਟੀ ਸਰਫੀਟਿਕੇਟ ਚੁਣੋ।"
+
+#: ../properties/auth-helpers.c:385
+#| msgid "Choose your private key..."
+msgid "Choose an OpenVPN static key..."
+msgstr "OpenVPN ਸਟੇਟਿਕ ਕੁੰਜੀ ਚੁਣੋ..."
+
+#: ../properties/auth-helpers.c:409 ../properties/auth-helpers.c:1170
+#: ../properties/auth-helpers.c:1578
+msgid "None"
+msgstr "ਕੋਈ ਨਹੀਂ"
+
+#: ../properties/auth-helpers.c:865
+#| msgid "PEM certificates (*.pem, *.crt, *.key)"
+msgid "PEM or PKCS#12 certificates (*.pem, *.crt, *.key, *.cer, *.p12)"
+msgstr "PEM ਜਾਂ PKCS#12 ਸਰਟੀਫਿਕੇਟ (*.pem, *.crt, *.key, *.cer, *.p12)"
+
+#: ../properties/auth-helpers.c:866
+#| msgid "PEM certificates (*.pem, *.crt, *.key)"
+msgid "PEM certificates (*.pem, *.crt, *.key, *.cer)"
+msgstr "PEM ਸਰਟੀਫਿਕੇਟ (*.pem, *.crt, *.key, *.cer)"
+
+#: ../properties/auth-helpers.c:926
+msgid "OpenVPN Static Keys (*.key)"
+msgstr "OpenVPN ਸਟੇਟਿਕ ਕੁੰਜੀਆਂ (*.key)"
+
+#: ../properties/auth-helpers.c:1086 ../properties/auth-helpers.c:1162
+msgid "Default"
+msgstr "ਡਿਫਾਲਟ"
+
+#: ../properties/auth-helpers.c:1172
+msgid "RSA MD-4"
+msgstr "RSA MD-4"
+
+#: ../properties/auth-helpers.c:1174
+msgid "MD-5"
+msgstr "MD-5"
+
+#: ../properties/auth-helpers.c:1176
+msgid "SHA-1"
+msgstr "SHA-1"
+
+#: ../properties/auth-helpers.c:1178
+msgid "SHA-224"
+msgstr "SHA-੨੨੪"
+
+#: ../properties/auth-helpers.c:1180
+msgid "SHA-256"
+msgstr "SHA-੨੫੬"
+
+#: ../properties/auth-helpers.c:1182
+msgid "SHA-384"
+msgstr "SHA-੩੮੪"
+
+#: ../properties/auth-helpers.c:1184
+msgid "SHA-512"
+msgstr "SHA-੫੧੨"
+
+#: ../properties/auth-helpers.c:1186
+msgid "RIPEMD-160"
+msgstr "RIPEMD-੧੬੦"
+
+#: ../properties/auth-helpers.c:1361 ../properties/nm-openvpn-dialog.ui.h:2
+msgid "Not required"
+msgstr "ਲੋੜੀਦਾ ਨਹੀਂ"
+
+#: ../properties/auth-helpers.c:1363
+msgid "HTTP"
+msgstr "HTTP"
+
+#: ../properties/auth-helpers.c:1365
+msgid "SOCKS"
+msgstr "SOCKS"
+
+#: ../properties/nm-openvpn.c:52
+msgid "OpenVPN"
+msgstr "OpenVPN"
+
+#: ../properties/nm-openvpn.c:53
+msgid "Compatible with the OpenVPN server."
+msgstr "OpenVPN ਸਰਵਰ ਨਾਲ ਅਨੁਕੂਲ"
+
+#: ../properties/nm-openvpn.c:317
+#| msgid "Certificate (TLS)"
+msgid "Certificates (TLS)"
+msgstr "ਸਰਟੀਫਿਕੇਟ (TLS)"
+
+#: ../properties/nm-openvpn.c:328
+#| msgid "Password / SecurID"
+msgid "Password"
+msgstr "ਪਾਸਵਰਡ"
+
+#: ../properties/nm-openvpn.c:341
+#| msgid "Certificate (TLS)"
+msgid "Password with Certificates (TLS)"
+msgstr "ਸਰਟੀਫਿਕੇਟ (TLS) ਨਾਲ ਪਾਸਵਰਡ"
+
+#: ../properties/nm-openvpn.c:353
+msgid "Static Key"
+msgstr "ਸਟੇਟਿਕ ਕੁੰਜੀ"
+
+#: ../properties/nm-openvpn-dialog.ui.h:1
+msgid " "
+msgstr " "
+
+#: ../properties/nm-openvpn-dialog.ui.h:3
+msgid "OpenVPN Advanced Options"
+msgstr "OpenVPN ਮਾਹਰ ਚੋਣਾਂ"
+
+#: ../properties/nm-openvpn-dialog.ui.h:4
+msgid "Use custom gateway p_ort:"
+msgstr "ਕਸਟਮ ਗੇਟਵੇ ਪੋਰਟ ਵਰਤੋਂ(_o):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:5
+msgid ""
+"TCP/UDP port number for local peer.\n"
+"config: port"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:7
+msgid "Use custom _renegotiation interval:"
+msgstr "ਪਸੰਦੀਦਾ ਰੀਨੈਗੋਸ਼ੀਏਸ਼ਨ ਅੰਤਰਾਲ ਵਰਤੋਂ(_r):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:8
+msgid ""
+"Renegotiate data channel key after the specified number of seconds.\n"
+"config: reneg-sec"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:10
+msgid "Use L_ZO data compression"
+msgstr "L_ZO ਡਾਟਾ ਕੰਪਰੈਸ਼ਨ ਵਰਤੋਂ"
+
+#: ../properties/nm-openvpn-dialog.ui.h:11
+msgid ""
+"Use fast LZO compression.\n"
+"config: comp-lzo"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:13
+msgid "Use a _TCP connection"
+msgstr "_TCP ਕੁਨੈਕਸ਼ਨ ਵਰਤੋਂ"
+
+#: ../properties/nm-openvpn-dialog.ui.h:14
+msgid ""
+"Use TCP for communicating with remote host.\n"
+"config: proto tcp-client | udp"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:16
+msgid "Use a TA_P device"
+msgstr "TA_P ਜੰਤਰ ਵਰਤੋਂ"
+
+#: ../properties/nm-openvpn-dialog.ui.h:17
+msgid ""
+"Use TAP virtual network device instead of TUN.\n"
+"config: dev tap | tun"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:19
+msgid "Use custom tunnel Maximum Transmission _Unit (MTU):"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:20
+msgid ""
+"Take the TUN device MTU to be the specified value and derive the link MTU "
+"from it.\n"
+"config: tun-mtu"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:22
+msgid "Use custom UDP _fragment size:"
+msgstr "ਪਸੰਦੀਦਾ ਰੀਨੈਗੋਸ਼ੀਏਸ਼ਨ ਅੰਤਰਾਲ ਵਰਤੋਂ(_r):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:23
+msgid ""
+"Enable internal datagram fragmentation with this maximum size.\n"
+"config: fragment"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:25
+msgid "Restrict tunnel TCP Maximum _Segment Size (MSS)"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:26
+msgid ""
+"Restrict tunnel TCP MSS.\n"
+"config: mssfix"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:28
+msgid "Rando_mize remote hosts"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:29
+msgid ""
+"Randomize the order of gateways list (remote) as a kind of basic load-"
+"balancing measure.\n"
+"config: remote-random"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:31
+#| msgid "<b>General</b>"
+msgid "General"
+msgstr "ਆਮ"
+
+#: ../properties/nm-openvpn-dialog.ui.h:32
+msgid ""
+"Encrypt packets with cipher algorithm. The default is BF-CBC (Blowfish in "
+"Cipher Block Chaining mode).\n"
+"config: cipher"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:34
+msgid ""
+"Authenticate packets with HMAC using message digest algorithm. The default "
+"is SHA1.\n"
+"config: auth"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:36
+msgid "Ci_pher:"
+msgstr "ਸੀਫ਼ਰ(_p):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:37
+msgid "_HMAC Authentication:"
+msgstr "_HMAC ਪਰਮਾਣਕਿਤਾ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:38
+msgid "Security"
+msgstr "ਸੁਰੱਖਿਆ"
+
+#: ../properties/nm-openvpn-dialog.ui.h:39
+msgid "_Subject Match:"
+msgstr "ਵਿਸ਼ਾ ਮੇਲ(_S):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:40
+msgid ""
+"<i>Connect only to servers whose certificate matches the given subject.\n"
+"Example: /CN=myvpn.company.com</i>"
+msgstr ""
+"<i>ਕੇਵਲ ਸਰਵਰਾਂ ਨਾਲ ਕੁਨੈਕਟ ਕਰੋ, ਜਿਸ ਦੇ ਸਰਟੀਫਿਕੇਟ ਨਾਲ ਦਿੱਤਾ ਵਿਸ਼ਾ ਮਿਲਦਾ ਹੋਵੇ।\n"
+"ਜਿਵੇਂ: /CN=myvpn.company.com</i>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:42
+msgid ""
+"Accept connections only from a host with X509 name or common name equal to "
+"the specified one.\n"
+"config: tls-remote"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:44
+msgid "Use additional _TLS authentication"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:45
+msgid "Add an additional layer of HMAC authentication."
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:46
+msgid "Key _Direction:"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:47
+msgid ""
+"<i>If key direction is used, it must be the opposite of that used on the VPN "
+"peer.  For example, if the peer uses '1', this connection must use '0'.  If "
+"you are unsure what value to use, contact your system administrator.</i>"
+msgstr ""
+"<i>ਜੇ ਕੁੰਜੀ ਦਿਸ਼ਾ ਵਰਤੀ ਗਈ ਤਾਂ ਇਹ VPN ਪੀਅਰ ਲਈ ਵਰਤੋਂ ਦੇ ਉਲਟ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ। "
+"ਜਿਵੇਂ ਕਿ, ਜੇ "
+"ਪੀਅਰ '1' ਵਰਤਦਾ ਹੈ ਤਾਂ ਇਹ ਕੁਨੈਕਸ਼ਨ '0' ਵਰਤਦਾ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ। ਜੇ ਤੁਸੀਂ ਇਸ ਦੇ "
+"ਮੁੱਲ ਵਰਤਣ ਬਾਰੇ "
+"ਯਕੀਨੀ ਨਹੀਂ ਹੋ ਤਾਂ ਆਪਣੇ ਪਰਸ਼ਾਸ਼ਕ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।</i>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:48
+msgid ""
+"Add an additional layer of HMAC authentication on top of the TLS control "
+"channel to protect against DoS attacks.\n"
+"config: tls-auth <file> [direction]"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:50
+msgid ""
+"Direction parameter for static key mode.\n"
+"config: tls-auth <file> [direction]"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:52
+msgid "Key _File:"
+msgstr "ਕੁੰਜੀ ਫਾਇਲ(_F):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:53
+msgid "TLS Authentication"
+msgstr "TLS ਪਰਮਾਣਕਿਤਾ"
+
+#: ../properties/nm-openvpn-dialog.ui.h:54
+msgid ""
+"Proxy type: HTTP or Socks.\n"
+"config: http-proxy or socks-proxy"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:56
+#| msgid "_Proxy:"
+msgid "Proxy _Type:"
+msgstr "ਪਰਾਕਸੀ ਕਿਸਮ(_t):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:57
+msgid ""
+"<i>Select this option if your organization requires the use of a proxy "
+"server to access the Internet.</i>"
+msgstr ""
+"<i>ਇਹ ਚੋਣ ਕਰੋ, ਜੇ ਤੁਹਾਡੇ ਸੰਗਠਨ ਵਿੱਚ ਇੰਟਰਨੈੱਟ ਵਰਤਣ ਲਈ ਪਰਾਕਸੀ ਸਰਵਰ ਵਰਤਣ ਦੀ "
+"ਲੋੜ ਹੈ।</i>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:58
+msgid "Server _Address:"
+msgstr "ਸਰਵਰ ਐਡਰੈੱਸ(_A):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:59
+msgid ""
+"Connect to remote host through a proxy with this address.\n"
+"config: http-proxy or socks-proxy"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:61
+msgid "_Port:"
+msgstr "ਪੋਰਟ(_P):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:62
+msgid ""
+"Connect to remote host through a proxy with this port.\n"
+"config: http-proxy or socks-proxy"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:64
+msgid "_Retry indefinitely when errors occur"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:65
+msgid ""
+"Retry indefinitely on proxy errors. It simulates a SIGUSR1 reset.\n"
+"config: http-proxy-retry or socks-proxy-retry"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:67
+#| msgid "User name:"
+msgid "Proxy _Username:"
+msgstr "ਪਰਾਕਸੀ ਯੂਜ਼ਰ ਨਾਂ(_U):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:68
+msgid "Proxy Passwor_d:"
+msgstr "ਪਰਾਸਕੀ ਪਾਸਵਰਡ(_d):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:69
+msgid "HTTP/Socks proxy username passed to OpenVPN when prompted for it."
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:70
+msgid "HTTP/Socks proxy password passed to OpenVPN when prompted for it."
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:71
+msgid "_Show password"
+msgstr "ਪਾਸਵਰਡ ਵੇਖੋ(_S)"
+
+#: ../properties/nm-openvpn-dialog.ui.h:72
+msgid "Proxies"
+msgstr "ਪਰਾਕਸੀ"
+
+#: ../properties/nm-openvpn-dialog.ui.h:73
+msgid "<b>General</b>"
+msgstr "<b>ਆਮ</b>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:74
+msgid "_Gateway:"
+msgstr "ਗੇਟਵੇ(_G):"
+
+#: ../properties/nm-openvpn-dialog.ui.h:75
+msgid ""
+"Remote host name or IP address. You can specify multiple items for "
+"redundancy (use commas to separate the entries).\n"
+"config: remote"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:77
+#| msgid "<b>Certificate Authentication</b>"
+msgid "<b>Authentication</b>"
+msgstr "<b>ਪਰਮਾਣਕਿਤਾ</b>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:78
+msgid "_Show passwords"
+msgstr "ਪਾਸਵਰਡ ਵੇਖੋ(_S)"
+
+#: ../properties/nm-openvpn-dialog.ui.h:79
+#| msgid "Choose your private key..."
+msgid "Password for private key"
+msgstr "ਪ੍ਰਾਈਵੇਟ ਕੁੰਜੀ ਲਈ ਪਾਸਵਰਡ"
+
+#: ../properties/nm-openvpn-dialog.ui.h:80
+#| msgid "Private _Key:"
+msgid "Private Key Password:"
+msgstr "ਪ੍ਰਾਈਵੇਟ ਕੁੰਜੀ ਪਾਸਵਰਡ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:81
+msgid ""
+"Local peer's private key in .pem format.\n"
+"config: key"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:83
+#| msgid "Private _Key:"
+msgid "Private Key:"
+msgstr "ਪ੍ਰਾਈਵੇਟ ਕੁੰਜੀ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:84
+msgid ""
+"Certificate authority (CA) file in .pem format.\n"
+"config: ca"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:86
+#| msgid "_CA Certificate:"
+msgid "CA Certificate:"
+msgstr "CA ਸਰਟੀਫਕੇਟ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:87
+#| msgid "_User Certificate:"
+msgid "User Certificate:"
+msgstr "ਯੂਜ਼ਰ ਸਰਟੀਫਿਕੇਟ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:88
+msgid ""
+"Local peer's signed certificate in .pem format (signed by CA of CA "
+"Certificate).\n"
+"config: cert"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:90
+msgid ""
+"Password passed to OpenVPN when prompted for it.\n"
+"config: auth-user-pass"
+msgstr ""
+"ਜਦੋਂ ਪੁੱਛਿਆ ਜਾਵੇ ਤਾਂ OpenVPN ਲਈ ਪਾਸਵਰਡ ਦਿਉ।\n"
+"ਸੰਰਚਨਾ: auth-user-pass"
+
+#: ../properties/nm-openvpn-dialog.ui.h:93
+msgid "User name:"
+msgstr "ਯੂਜ਼ਰ ਨਾਂ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:94
+msgid ""
+"Username passed to OpenVPN when prompted for it.\n"
+"config: auth-user-pass"
+msgstr ""
+"ਜਦੋਂ ਪੁੱਛਿਆ ਜਾਵੇ ਤਾਂ OpenVPN ਲਈ ਯੂਜ਼ਰ-ਨਾਂ ਦਿਉ।\n"
+"ਸੰਰਚਨਾ: auth-user-pass"
+
+#: ../properties/nm-openvpn-dialog.ui.h:96
+msgid ""
+"IP address of the local VPN endpoint.\n"
+"config: ifconfig <l> <rn>"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:98
+msgid "Remote IP Address:"
+msgstr "ਰਿਮੋਟ IP ਐਡਰੈੱਸ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:99
+msgid "Local IP Address:"
+msgstr "ਲੋਕਲ IP ਐਡਰੈੱਸ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:100
+msgid ""
+"IP address of the remote VPN endpoint.\n"
+"config: ifconfig <l> <rn>"
+msgstr ""
+"ਰਿਮੋਟ VPN ਐਂਡ-ਪੁਆਇੰਟ ਲਈ IP ਐਡਰੈਸ।\n"
+"ਸੰਰਚਨਾ: ifconfig <l> <rn>"
+
+#: ../properties/nm-openvpn-dialog.ui.h:102
+msgid "Key Direction:"
+msgstr "ਕੁੰਜੀ ਦਿਸ਼ਾ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:103
+msgid "Static Key:"
+msgstr "ਸਟੇਟਿਕ ਕੁੰਜੀ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:104
+msgid ""
+"Pre-shared file for Static Key encryption mode (non-TLS).\n"
+"config: static <file>"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:106
+msgid ""
+"Direction for Static Key encryption mode (non-TLS).\n"
+"config: static <file> [direction]"
+msgstr ""
+
+#: ../properties/nm-openvpn-dialog.ui.h:108
+msgid "Type:"
+msgstr "ਟਾਈਪ:"
+
+#: ../properties/nm-openvpn-dialog.ui.h:109
+msgid "Select an authentication mode."
+msgstr "ਪਰਮਾਣਕਿਤਾ ਢੰਗ ਚੁਣੋ।"
+
+#: ../properties/nm-openvpn-dialog.ui.h:110
+msgid "Ad_vanced..."
+msgstr "...ਮਾਹਰ(_v)"
+
+#: ../src/nm-openvpn-service.c:193
+#, c-format
+msgid "invalid address '%s'"
+msgstr "ਗਲਤ ਐਡਰੈੱਸ '%s'"
+
+#: ../src/nm-openvpn-service.c:205
+#, c-format
+msgid "invalid integer property '%s' or out of range [%d -> %d]"
+msgstr "ਗਲਤ ਪੂਰਨ-ਅੰਕ ਵਿਸ਼ੇਸ਼ਤਾ '%s' ਜਾਂ [%d -> %d] ਹੱਦ ਤੋਂ ਬਾਹਰ"
+
+#. Translators: keep "yes" and "no" untranslated!
+#: ../src/nm-openvpn-service.c:216
+#, c-format
+msgid "invalid boolean property '%s' (not yes or no)"
+msgstr "ਗਲਤ ਬੁਲੀਅਨ ਵਿਸ਼ੇਸ਼ਤਾ '%s' (ਹਾਂ ਜਾਂ ਨਹੀਂ ਨਹੀਂ)"
+
+#: ../src/nm-openvpn-service.c:223
+#, c-format
+msgid "unhandled property '%s' type %s"
+msgstr "ਨਾ-ਹੈਂਡਲ ਵਿਸ਼ੇਸ਼ਤਾ '%s' ਕਿਸਮ %s"
+
+#: ../src/nm-openvpn-service.c:234
+#, c-format
+msgid "property '%s' invalid or not supported"
+msgstr "ਵਿਸ਼ੇਸ਼ਤਾ '%s' ਗਲਤ ਹੈ ਜਾਂ ਸਹਾਇਕ ਨਹੀਂ ਹੈ"
+
+#: ../src/nm-openvpn-service.c:251
+msgid "No VPN configuration options."
+msgstr "ਕੋਈ VPN ਸੰਰਚਨਾ ਚੋਣਾਂ ਨਹੀਂ।"
+
+#: ../src/nm-openvpn-service.c:274
+msgid "No VPN secrets!"
+msgstr "ਕੋਈ VPN ਭੇਦ ਨਹੀਂ!"
+
+#: ../src/nm-openvpn-service.c:747
+#| msgid "Could not find openconnect binary."
+msgid "Could not find the openvpn binary."
+msgstr "openvpn ਬਾਈਨਰੀ ਨਹੀਂ ਲੱਭੀ ਨਹੀਂ ਜਾ ਸਕੀ।"
+
+#: ../src/nm-openvpn-service.c:758
+msgid "Invalid HMAC auth."
+msgstr ""
+
+#: ../src/nm-openvpn-service.c:770 ../src/nm-openvpn-service.c:1176
+#: ../src/nm-openvpn-service.c:1246
+msgid "Invalid connection type."
+msgstr "ਗਲਤ ਕੁਨੈਕਸ਼ਨ ਕਿਸਮ ਹੈ।"
+
+#: ../src/nm-openvpn-service.c:815
+#, c-format
+#| msgid "unhandled property '%s' type %s"
+msgid "Invalid proxy type '%s'."
+msgstr "ਗਲਤ ਪਰਾਕਸੀ ਕਿਸਮ '%s' ਹੈ।"
+
+#: ../src/nm-openvpn-service.c:851
+#, c-format
+msgid "Invalid port number '%s'."
+msgstr "ਗਲਤ ਪੋਰਟ ਨੰਬਰ '%s'।"
+
+#: ../src/nm-openvpn-service.c:901
+#, c-format
+msgid "Invalid reneg seconds '%s'."
+msgstr ""
+
+#: ../src/nm-openvpn-service.c:925
+#, c-format
+msgid "Invalid TUN MTU size '%s'."
+msgstr ""
+
+#: ../src/nm-openvpn-service.c:940
+#, c-format
+msgid "Invalid fragment size '%s'."
+msgstr ""
+
+#: ../src/nm-openvpn-service.c:1008
+msgid "Missing required local IP address for static key mode."
+msgstr ""
+
+#: ../src/nm-openvpn-service.c:1021
+msgid "Missing required remote IP address for static key mode."
+msgstr ""
+
+#: ../src/nm-openvpn-service.c:1046
+#, c-format
+msgid "Unknown connection type '%s'."
+msgstr "ਅਣਜਾਣ ਕੁਨੈਕਸ਼ਨ ਕਿਸਮ '%s'"
+
+#: ../src/nm-openvpn-service.c:1165 ../src/nm-openvpn-service.c:1236
+msgid ""
+"Could not process the request because the VPN connection settings were "
+"invalid."
+msgstr ""
+
+#: ../src/nm-openvpn-service.c:1190
+msgid "Could not process the request because no username was provided."
+msgstr ""
+
+#: ../src/nm-openvpn-service.c:1380
+msgid "Don't quit when VPN connection terminates"
+msgstr "ਜਦੋਂ VPN ਕੁਨੈਕਸ਼ਨ ਖਤਮ ਹੋਵੇ ਤਾਂ ਬੰਦ ਨਾ ਕਰੋ"
+
+#: ../src/nm-openvpn-service.c:1381
+msgid "Enable verbose debug logging (may expose passwords)"
+msgstr ""
+
+#: ../src/nm-openvpn-service.c:1395
+msgid ""
+"nm-openvpn-service provides integrated OpenVPN capability to NetworkManager."
+msgstr ""
+"nm-openvpn-service NetworkManager ਲਈ ਵਿਚੇ-ਉਪਲੱਬਧ ਓਪਨਵੀਪੀਐਨ (OpenVPN) ਸਮੱਰਥਾ "
+"ਦਿੰਦਾ ਹੈ।"
+
+#~ msgid ""
+#~ "Certificate from VPN server \"%s\" failed verification.\n"
+#~ "Reason: %s\n"
+#~ "Do you want to accept it?"
+#~ msgstr ""
+#~ "VPN ਸਰਵਰ \"%s\" ਤੋਂ ਸਰਟੀਫਿਕੇਟ ਦੀ ਜਾਂਚ ਫੇਲ੍ਹ ਹੋਈ।\n"
+#~ "ਕਾਰਨ: %s\n"
+#~ "ਕੀ ਤੁਸੀਂ ਇਹ ਮਨਜ਼ੂਰ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
+
+#~ msgid "VPN host"
+#~ msgstr "VPN ਹੋਸਟ"
+
+#~ msgid "Automatically start connecting next time"
+#~ msgstr "ਅਗਲੀ ਵਾਰ ਆਪਣੇ-ਆਪ ਹੀ ਕੁਨੈਕਟ ਕਰਨਾ ਸ਼ੁਰੂ ਕਰੋ"
+
+#~ msgid "Select a host to fetch the login form"
+#~ msgstr "ਲਾਗ ਫਾਰਮ ਲੈਣ ਲਈ ਹੋਸਟ ਚੁਣੋ"
+
+#~ msgid "Contacting host, please wait..."
+#~ msgstr "ਹੋਸਟ ਨਾਲ ਸੰਪਰਕ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ, ਉਡੀਕੋ ਜੀ..."
+
+#~ msgid "_Login"
+#~ msgstr "ਲਾਗਇਨ(_L)"
+
+#~ msgid "Log"
+#~ msgstr "ਲਾਗ"
+
+#~ msgid "Cisco AnyConnect Compatible VPN (openconnect)"
+#~ msgstr "Cisco ਐਨੀ-ਕੁਨੈਕਟ ਅਨੁਕੂਲ VPN (openconnect)"
+
+#~ msgid "Compatible with Cisco AnyConnect SSL VPN."
+#~ msgstr "Cisco AnyConnect SSL VPN ਨਾਲ ਅਨੁਕੂਲ।"
+
+#~ msgid "Allow Cisco Secure Desktop _trojan"
+#~ msgstr "ਸਿਸਕੋ ਸੁਰੱਖਿਅਤ ਡੈਸਕਟਾਪ ਟਰੋਜਨ ਮਨਜ਼ੂਰ(_t)"
+
+#~ msgid "CSD _Wrapper Script:"
+#~ msgstr "CSD _Wrapper ਸਕ੍ਰਿਪਟ:"
+
+#~ msgid "Select A File"
+#~ msgstr "ਫਾਇਲ ਚੁਣੋ"
+
+#~ msgid "Use _FSID for key passphrase"
+#~ msgstr "ਕੁੰਜੀ ਪ੍ਹੈਰੇ ਲਈ _FSID ਵਰਤੋਂ"
+
+#~ msgid "No VPN gateway specified."
+#~ msgstr "ਕੋਈ VPN ਗੇਟਵੇ ਦਿੱਤਾ ਗਿਆ ਹੈ।"
+
+#~ msgid "No WebVPN cookie provided."
+#~ msgstr "ਕੋਈ WebVPN ਕੂਕੀਜ਼ ਨਹੀਂ ਦਿੱਤਾ।"
+
+#~ msgid "Certificate (TLS) with TPM"
+#~ msgstr "TPM ਨਾਲ ਸਰਟੀਫਿਕੇਟ (TLS)"

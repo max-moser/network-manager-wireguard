@@ -1,0 +1,252 @@
+=======================================================
+NetworkManager-openvpn-1.8.0
+Overview of changes since NetworkManager-openvpn-1.2.10
+=======================================================
+
+This is a new stable release of NetworkManager-openvpn.  Notable changes include:
+
+* Use gresources for ui files.
+* Use NMACertChooser for PKCS#11 support.
+* Support --ifconfig option not only for static key connections (bgo#774727).
+* Fix import for key-direction to make it independent of the order (bgo#778154).
+* Extend support for address family specifier for remote protocol (bgo#731620).
+* Updated Brazilian Portuguese, Catalan, Czech, Hungarian, Indonesian, Italian,
+  Lithuanian, Polish, Serbian, Spanish, Swedish translations.
+
+=======================================================
+NetworkManager-openvpn-1.2.10
+Overview of changes since NetworkManager-openvpn-1.2.8
+=======================================================
+
+This is a new stable release of NetworkManager-openvpn.  Notable changes include:
+
+* Add support for "tls-crypt" and "mtu-disc" options
+* Add support for dynamic challenge-response protocol
+* Allow choosing Adaptive or None LZO compression methods in the connection
+  properties dialog
+* Avoid passing the obsolete "tls-remote" option to OpenVPN versions that no
+  longer support it and discourage its use in the properties dialog
+* Updated the build system to use non-recursive make
+* Many bug fixes
+* Updated Brazilian, Danish, Hungarian, Indonesian, Lithuanian, Polish, Serbian
+  and Swedish translations
+
+=======================================================
+NetworkManager-openvpn-1.2.8
+Overview of changes since NetworkManager-openvpn-1.2.6
+=======================================================
+
+This is a new stable release of NetworkManager-openvpn.  Notable changes include:
+
+* Treat cipher and hmac options case insensitive in the properties GUI
+* Support numeric argument to mssfix option
+* Fixes to translatable strings and use Unicode
+* Updated Czech, German, Hungarian, Polish, Spanish translations
+
+=======================================================
+NetworkManager-openvpn-1.2.6
+Overview of changes since NetworkManager-openvpn-1.2.4
+=======================================================
+
+This is a new stable release of NetworkManager-openvpn.  Notable changes include:
+
+* Restore previous behavior for handling empty "comp-lzo" (bgo#769177)
+* Support verify-x509-name (bgo#770922)
+* Support max-routes (bgo#720097)
+* Updated Brazilian Portuguese, Czech, German, Hungarian, Lithuanian,
+  Polish, Serbian, Serbian Latin translations
+* Fix invalid free when parsing remote option
+* Various cleanups
+
+=======================================================
+NetworkManager-openvpn-1.2.4
+Overview of changes since NetworkManager-openvpn-1.2.2
+=======================================================
+
+This is a new stable release of NetworkManager-openvpn.  Notable changes include:
+
+* Prefer building against stable libsecret API
+* Split libnm-vpn-plugin-openvpn.so into a GTK-free core plugin
+  usable by nmcli and a UI plugin for nm-applet and gnome components.
+* Support NM_VPN_LOG_LEVEL environment variable to control debug
+  logging from NetworkManager.
+* Updated Catalan, German, Spanish, Indonesian, Polish, Brazilian Portuguese,
+  Swedish, Serbian, Serbian Latin translations
+* Fix handling comp-lzo option
+* Add support for tls-cipher option
+* Add support for IPv6 DNS servers
+* Fix handling quotes and comments when parsing ovpn files
+* Hide internal ABI from properties libraries
+* Preserve IP routing configuration on restart
+* Various cleanups
+
+
+=======================================================
+NetworkManager-openvpn-1.2.2
+Overview of changes since NetworkManager-openvpn-1.2
+=======================================================
+
+This is a new stable release of NetworkManager-openvpn.  Notable changes include:
+
+* Fixed validation of proxy port
+* Use a proper name for the AppStream metadata
+* Updated Hungarian translation
+
+
+=======================================================
+NetworkManager-openvpn-1.2
+Overview of changes since network-manager-openvpn-1.0
+=======================================================
+
+This is a new stable release of network-manager-openvpn.  Notable changes include:
+
+* Ported to libnm, libnma and GDBus
+* Support multiple concurrent OpenVPN connections
+* Various import/export fixes
+* Add support for --ping option to backend
+* Add support for --ns-cert-type option
+* Translation updates
+* Add support for importing inline keys, secrets and PKCS12 certificates
+* Treate the file names as opaque strings as opposed to UTF-8
+* Allow disabling the internal fragmentation in properties dialog
+
+The following features were backported to 1.0.x releases from 1.0.0 to 1.0.8
+are also present in NetworkManager-openvpn-1.2:
+
+* Fix operations in IPv6-only configurations
+* Add support for importing configurations with inline certificates
+* Do not require password if user chose not to store it
+* Cosmetic UI fixes
+* Enhanced the GUI to support agent-owned and always-ask passwords
+* Support running unprivileged
+* Default to disabling periodic renegotioation. This avoids renegotiating
+  unnecessarily if the server doesn't specify a renegotiation timeout,
+  improving usability for OTP users
+
+
+=======================================================
+network-manager-openvpn-1.0
+Overview of changes since network-manager-openvpn-0.9.10
+=======================================================
+
+This is a new stable release of network-manager-openvpn.  Notable changes include:
+
+* Updated translations
+* Use Unix socket for management instead of local TCP socket
+* Make password requests more robust
+* Allow specifying port and protocol for multiple remotes (VPN gateways)
+
+
+=======================================================
+network-manager-openvpn-0.9.10
+Overview of changes since network-manager-openvpn-0.9.8
+=======================================================
+
+This is a new stable release of network-manager-openvpn.  Notable changes include:
+
+* Allow specifying custom interface name and key size
+* Better handle --up-restart
+* Use libsecret for password storage instead of gnome-keyring
+* Add support for interactive password queries from openvpn
+* Add support for IPv6 tunnels
+
+
+=======================================================
+network-manager-openvpn-0.9.8
+Overview of changes since network-manager-openvpn-0.9.6
+=======================================================
+
+This is a new stable release of network-manager-openvpn.  Notable changes include:
+
+* Updated translations
+* Builds against the GNOME 3.8 versions of GLib and Gtk+
+* nm-openvpn-service now returns translated error messages
+* Add support for the 'remote-cert-tls' method for verifying the
+  server certificate
+* Fixed import/export to handle multiple remote servers
+* No longer asks for a password when using a passwordless auth mode
+
+
+=======================================================
+network-manager-openvpn-0.9.6
+Overview of changes since network-manager-openvpn-0.9.4
+=======================================================
+
+This is a new stable release of network-manager-openvpn.  Notable changes include:
+
+* Updated translations
+* Add option to randomize connect order to openvpn servers/peers
+
+
+=======================================================
+network-manager-openvpn-0.9.4
+Overview of changes since network-manager-openvpn-0.9.2
+=======================================================
+
+This is a new stable release of network-manager-openvpn.  Notable changes include:
+
+* Updated translations
+* Fix issues with password dialog width on recent GTK+ versions
+* Allow cipher and HMAC options to be set for Static Key mode
+* Support for "external UI mode" for DE-native dialogs (ie, GNOME Shell and others)
+
+
+=======================================================
+network-manager-openvpn-0.9.2
+Overview of changes since network-manager-openvpn-0.9.0
+=======================================================
+
+This is a new stable release of network-manager-openvpn.  Notable changes include:
+
+* Updated translations
+
+
+=======================================================
+network-manager-openvpn-0.9.0
+Overview of changes since network-manager-openvpn-0.8.x
+=======================================================
+
+This is a new stable release of network-manager-openvpn.  Notable changes include:
+
+* Updated for NM 0.9 simplified configuration and secrets handling
+* Allow passwords to be explicitly asked for every time
+
+
+=======================================================
+network-manager-openvpn-0.8.6
+Overview of changes since network-manager-openvpn-0.8.4
+=======================================================
+
+This is a new stable release of network-manager-openvpn.  Notable changes include:
+
+* Updated translations
+* Added support for the RSA-MD4 HMAC digest algorithm
+
+
+=======================================================
+network-manager-openvpn-0.8.4
+Overview of changes since network-manager-openvpn-0.8.2
+=======================================================
+
+This is a new stable release of network-manager-openvpn.  Notable changes include:
+
+* Updated translations
+* Convert to GtkBuilder; glade is not longer a build requirement
+* Show unencrypted private keys in private key selection file chooser
+* Allow larger renegotiation intervals
+* Handle secrets for system connections
+* Fix handling of various HTTP proxy password issues
+* Export HTTP and SOCKS proxy authentication files
+
+=======================================================
+network-manager-openvpn-0.8.2
+Overview of changes since network-manager-openvpn-0.8.1
+=======================================================
+
+This is a new stable release of network-manager-openvpn.  Notable changes include:
+
+* Updated translations
+* Fixes to ensure correct IP configuration of tunnels
+* Support for HTTP and SOCKS proxies
+* Better debugging options
+
