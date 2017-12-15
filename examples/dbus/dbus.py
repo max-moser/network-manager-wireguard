@@ -19,6 +19,8 @@ from pydbus import SessionBus, SystemBus
 from gi.repository import GLib
 
 (rows, cols) = subprocess.check_output(["stty", "size"]).split()
+show_introspect = True
+
 
 def send_desktop_notification(title="Hello World", msg="pydbus works!"):
     """Send a notification to the desktop environment to display"""
@@ -77,7 +79,42 @@ def hibernate():
     except GLib.Error as e:
         print("Could not get PowerManager from DBUS")
 
+
+def get_wg_plugin(bus_name="org.freedesktop.NetworkManager.wireguard",
+                  object_path="/org/freedesktop/NetworkManager/VPN/Plugin"):
+    """Retrieve the wireguard VPN plugin from the System Bus.
+
+    Arguments:
+    bus_name -- the bus name of the object to import
+    object_path -- the object path of hte object (= where to find the interface)
+    """
+
+    # since our wireguard plugin implements the VPN plugin and does not export
+    # an interface on its own, we need to use the VPN plugin interfce
+    bus = SystemBus()
+    wg = bus.get(bus_name, object_path)
+    return wg
+
+
+def wg_disconnect(wg_plugin):
+    """Disconnect the WG VPN plugin"""
+    wg_plugin.Disconnect()
+
+
+show_introspect = False
+
 if __name__ == "__main__":
-    send_desktop_notification("Guten Tag", "pydbus funktioniert, mein Herr!")
+    # send_desktop_notification("Guten Tag", "pydbus funktioniert, mein Herr!")
     # list_systemd_units()
-    hibernate()
+    # hibernate()
+    try:
+        wg = get_wg_plugin()
+        
+        if show_introspect:
+            print(wg.Introspect())
+            help(wg)
+
+        wg_disconnect(wg)
+
+    except Exception as ex:
+        print(str(ex))
