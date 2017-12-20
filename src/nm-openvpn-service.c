@@ -237,6 +237,28 @@ _LOGD_enabled (void)
 /*****************************************************************************/
 
 static const char *
+wg_quick_find_exepath (void)
+{
+	static const char *paths[] = {
+		"/usr/sbin/wg-quick",
+		"/usr/bin/wg-quick",
+		"/sbin/wg-quick",
+		"/bin/wg-quick",
+		"/usr/local/sbin/wg-quick",
+		"/usr/local/bin/wg-quick",
+	};
+	int i;
+
+	for (i = 0; i < G_N_ELEMENTS(paths); i++) {
+		if (g_file_test (paths[i], G_FILE_TEST_EXISTS)) {
+			return paths[i];
+		}
+	}
+
+	return NULL;
+}
+
+static const char *
 openvpn_binary_find_exepath (void)
 {
 	static const char *paths[] = {
@@ -387,6 +409,59 @@ pids_pending_add (GPid pid, NMWireguardPlugin *plugin)
 	pid_data->pid = pid;
 	pid_data->kill_id = 0;
 	pid_data->watch_id = g_child_watch_add (pid, pids_pending_child_watch_cb, pid_data);
+	pid_data->plugin = plugin;
+	g_object_add_weak_pointer ((GObject *) plugin, (gpointer *) &pid_data->plugin);
+
+	gl.pids_pending_list = g_slist_prepend (gl.pids_pending_list, pid_data);
+}
+
+// TODO implement me right
+wg_quick_closed(GPid pid, gint status, gpointer user_data){
+	PidsPendingData *pid_data = user_data;
+	NMWireguardPlugin *plugin;
+
+	if (WIFEXITED (status)) {
+		int exit_status;
+
+		exit_status = WEXITSTATUS (status);
+		if (exit_status != 0)
+			_LOGW ("wg-quick[%ld] exited with error code %d", (long) pid, exit_status);
+		else
+			_LOGI ("wg-quick[%ld] exited with success", (long) pid);
+	}
+	else if (WIFSTOPPED (status))
+		_LOGW ("wg-quick[%ld] stopped unexpectedly with signal %d", (long) pid, WSTOPSIG (status));
+	else if (WIFSIGNALED (status))
+		_LOGW ("wg-quick[%ld] died with signal %d", (long) pid, WTERMSIG (status));
+	else
+		_LOGW ("wg-quick[%ld] died from an unnatural cause", (long) pid);
+
+	g_return_if_fail (pid_data);
+	g_return_if_fail (pid_data->pid == pid);
+	g_return_if_fail (g_slist_find (gl.pids_pending_list, pid_data));
+
+	plugin = pid_data->plugin;
+
+	pid_data->watch_id = 0;
+	gl.pids_pending_list = g_slist_remove (gl.pids_pending_list , pid_data);
+	pids_pending_data_free (pid_data);
+}
+
+// TODO implement me right
+static void
+pids_pending_add_wg (GPid pid, NMWireguardPlugin *plugin)
+{
+	PidsPendingData *pid_data;
+
+	g_return_if_fail (NM_IS_WIREGUARD_PLUGIN (plugin));
+	g_return_if_fail (pid > 0);
+
+	_LOGI ("wg-quick[%ld] started", (long) pid);
+
+	pid_data = g_slice_new (PidsPendingData);
+	pid_data->pid = pid;
+	pid_data->kill_id = 0;
+	pid_data->watch_id = g_child_watch_add (pid, wg_quick_closed, pid_data);
 	pid_data->plugin = plugin;
 	g_object_add_weak_pointer ((GObject *) plugin, (gpointer *) &pid_data->plugin);
 
@@ -2038,23 +2113,47 @@ real_disconnect (NMVpnServicePlugin *plugin,
 static gboolean
 test_connect (NMVpnServicePlugin *plugin,
 				NMConnection *connection,
-				GError **error)
+				GError **err)
 {
-	_LOGI("Did a dummy connect");
 
-	/*
-	printf("I Know It!\n");
-	// FIXME find something useful
-	char **cmd = {"touch", "/home/maxmanski/iknowhwatyoudidlastsummer", NULL};
-	GPid pid = 0;
-	GSpawnFlags spawn_flags = G_SPAWN_DO_NOT_REAP_CHILD;
-	spawn_flags = G_SPAWN_DEFAULT;
+	NMSettingVpn *setting = nm_connection_get_setting_vpn(connection);
+	char *secret = nm_setting_vpn_get_secret(setting, "name");
+	char *str_setting = nm_setting_to_string(setting);
+	char *wg_quick_path = wg_quick_find_exepath();
+	//char *
 
-	if (!g_spawn_async (NULL, cmd, NULL, spawn_flags, NULL, NULL, &pid, error)){
+	if(wg_quick_path == NULL){
+		_LOGW("Error: Could not find wg-quick!");
 		return FALSE;
 	}
-	*/
 
+	printf("Setting to String: %s\n", str_setting);
+	printf("Secret: %s\n", secret);
+	
+	//char **cmd = {wg_quick_path, "up", "mullvad", NULL};
+	char **cmd = {"/usr/bin/touch", "/home/maxmanski/uwotm8", NULL};
+	GPid pid = 0;
+	GSpawnFlags spawn_flags = G_SPAWN_DO_NOT_REAP_CHILD;
+	spawn_flags = G_SPAWN_STDERR_TO_DEV_NULL | G_SPAWN_STDOUT_TO_DEV_NULL;
+	spawn_flags = G_SPAWN_DEFAULT | G_SPAWN_DO_NOT_REAP_CHILD;
+
+//	if (!g_spawn_async (NULL, cmd, NULL, spawn_flags, NULL, NULL, &pid, err)){
+	int exit_code = 0;
+	*err = NULL; // TODO remove?
+
+	if (!g_spawn_async(NULL, cmd, NULL, spawn_flags, NULL, NULL, &pid, err)){
+		_LOGW("An error occured while spawning wg-quick! (Error: %s)", (*err)->message);
+		return FALSE;
+	}
+
+	pids_pending_add_wg(pid, plugin);
+	printf("PID of spawned command: %d\n", pid);
+	// note: exit code 139 means SIGSEV (program died because of segfault or so)
+	{ 
+		printf("WG set up and ready to go!\n");
+	}
+
+	_LOGI("Did a dummy connect");
 	return TRUE;
 }
 
