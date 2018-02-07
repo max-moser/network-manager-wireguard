@@ -28,6 +28,13 @@
 #define NM_DBUS_INTERFACE_OPENVPN  "org.freedesktop.NetworkManager.wireguard"
 #define NM_DBUS_PATH_OPENVPN       "/org/freedesktop/NetworkManager/wireguard"
 
+#define NM_WG_KEY_ADDR_IP4 "local-ip4"
+#define NM_WG_KEY_LISTEN_PORT "local-listen-port"
+#define NM_WG_KEY_PRIVATE_KEY "local-private-key"
+#define NM_WG_KEY_PUBLIC_KEY "peer-public-key"
+#define NM_WG_KEY_ALLOWED_IPS "peer-allowed-ips"
+#define NM_WG_KEY_ENDPOINT "peer-endpoint"
+
 #define NM_OPENVPN_KEY_AUTH "auth"
 #define NM_OPENVPN_KEY_CA "ca"
 #define NM_OPENVPN_KEY_CERT "cert"
