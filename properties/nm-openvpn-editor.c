@@ -66,6 +66,85 @@ typedef struct {
 #define COL_AUTH_TYPE 2
 
 static gboolean
+check_interface_ip4_entry(const char *str)
+{
+	gs_free char *str_clone = NULL;
+	char *str_iter;
+	const char *tok;
+	int count = 0;
+
+	if(!str || !str[0]) {
+		return FALSE;
+	}
+
+	str_clone = g_strdup(str);
+	str_iter = str_clone;
+	while((tok = strsep(&str_iter, "."))){
+		count ++;
+		// each number in an IP4 must be: 0 <= X <= 255
+		if(!g_ascii_string_to_unsigned(tok, 10, 0, 255, NULL, NULL)){
+			return FALSE;
+		}
+	}
+
+	// an IP4 consists of 4 segments
+	if(count != 4){
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static gboolean
+check_interface_private_key(const char *str)
+{
+	gs_free char *str_clone = NULL;
+	str_clone = g_strdup(str);
+	str_clone = g_strstrip(str_clone);
+
+	if(!g_strcmp0("", str_clone)){
+		return FALSE;
+	}
+	
+	// TODO
+	return TRUE;
+}
+
+static gboolean
+check_interface_listen_port(const char *str)
+{
+	gs_free char *str_clone = NULL;
+	str_clone = g_strdup(str);
+
+	if(!g_ascii_string_to_unsigned(str_clone, 10, 0, 65535, NULL, NULL)){
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static gboolean
+check_peer_public_key(const char *str)
+{
+	// TODO
+	return check_interface_private_key(str);
+}
+
+static gboolean
+check_peer_allowed_ips(const char *str)
+{
+	// TODO
+	return check_interface_ip4_entry(str);
+}
+
+static gboolean
+check_peer_endpoint(const char *str)
+{
+	// TODO
+	return check_interface_ip4_entry(str);
+}
+
+static gboolean
 check_gateway_entry (const char *str)
 {
 	gs_free char *str_clone = NULL;
@@ -92,30 +171,64 @@ check_gateway_entry (const char *str)
 	return success;
 }
 
+typedef gboolean (*CheckFunc)(const char *str);
+
+// helper function to reduce boilerplate code in 'check_validity()'
+static gboolean
+check (OpenvpnEditorPrivate *priv, char *widget_name, CheckFunc chk, GError **error)
+{
+	const char *str;
+	GtkWidget *widget;
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, widget_name));
+	str = gtk_entry_get_text (GTK_ENTRY (widget));
+	if (str && chk(str))
+		gtk_style_context_remove_class (gtk_widget_get_style_context (widget), "error");
+	else {
+		gtk_style_context_add_class (gtk_widget_get_style_context (widget), "error");
+		// only set the error if it's NULL
+		if(error == NULL){
+			g_set_error (error,
+						NMV_EDITOR_PLUGIN_ERROR,
+						NMV_EDITOR_PLUGIN_ERROR_INVALID_PROPERTY,
+						NM_WG_KEY_ADDR_IP4);
+		}
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 static gboolean
 check_validity (OpenvpnEditor *self, GError **error)
 {
 	OpenvpnEditorPrivate *priv = OPENVPN_EDITOR_GET_PRIVATE (self);
-	GtkWidget *widget;
 	const char *str;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	const char *contype = NULL;
 	gboolean success;
 
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "gateway_entry"));
-	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && check_gateway_entry (str))
-		gtk_style_context_remove_class (gtk_widget_get_style_context (widget), "error");
-	else {
-		gtk_style_context_add_class (gtk_widget_get_style_context (widget), "error");
-		g_set_error (error,
-		             NMV_EDITOR_PLUGIN_ERROR,
-		             NMV_EDITOR_PLUGIN_ERROR_INVALID_PROPERTY,
-		             NM_OPENVPN_KEY_REMOTE);
-		return FALSE;
+	// check the various input fields for errors
+	if(!check(priv, "interface_ip4_entry", check_interface_ip4_entry, error)){
+		success = FALSE;
+	}
+	if(!check(priv, "interface_private_key_entry", check_interface_private_key, error)){
+		success = FALSE;
+	}
+	if(!check(priv, "interface_port_entry", check_interface_listen_port, error)){
+		success = FALSE;
+	}
+	if(!check(priv, "peer_public_key_entry", check_peer_public_key, error)){
+		success = FALSE;
+	}
+	if(!check(priv, "peer_allowed_ips_entry", check_peer_allowed_ips, error)){
+		success = FALSE;
+	}
+	if(!check(priv, "peer_endpoint_entry", check_peer_endpoint, error)){
+		success = FALSE;
 	}
 
+	/*
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "auth_combo"));
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
 	g_return_val_if_fail (model, FALSE);
@@ -124,8 +237,9 @@ check_validity (OpenvpnEditor *self, GError **error)
 	gtk_tree_model_get (model, &iter, COL_AUTH_TYPE, &contype, -1);
 	if (!auth_widget_check_validity (priv->builder, contype, error))
 		return FALSE;
+	*/
 
-	return TRUE;
+	return success;
 }
 
 static void
@@ -243,20 +357,76 @@ init_editor_plugin (OpenvpnEditor *self, NMConnection *connection, GError **erro
 
 	s_vpn = nm_connection_get_setting_vpn (connection);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "gateway_entry"));
+	// Local IPv4 address
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_ip4_entry"));
 	g_return_val_if_fail (widget != NULL, FALSE);
 	if (s_vpn) {
-		value = nm_setting_vpn_get_data_item (s_vpn, NM_OPENVPN_KEY_REMOTE);
+		value = nm_setting_vpn_get_data_item (s_vpn, NM_WG_KEY_ADDR_IP4);
 		if (value)
 			gtk_entry_set_text (GTK_ENTRY (widget), value);
 	}
 	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (stuff_changed_cb), self);
 
+	// Interface Private Key
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_private_key_entry"));
+	g_return_val_if_fail (widget != NULL, FALSE);
+	if (s_vpn) {
+		value = nm_setting_vpn_get_data_item (s_vpn, NM_WG_KEY_ADDR_IP4);
+		if (value)
+			gtk_entry_set_text (GTK_ENTRY (widget), value);
+	}
+	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (stuff_changed_cb), self);
+
+	// Interface Listening Port
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_port_entry"));
+	g_return_val_if_fail (widget != NULL, FALSE);
+	if (s_vpn) {
+		value = nm_setting_vpn_get_data_item (s_vpn, NM_WG_KEY_ADDR_IP4);
+		if (value)
+			gtk_entry_set_text (GTK_ENTRY (widget), value);
+	}
+	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (stuff_changed_cb), self);
+
+	
+	// Peer Public Key
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_public_key_entry"));
+	g_return_val_if_fail (widget != NULL, FALSE);
+	if (s_vpn) {
+		value = nm_setting_vpn_get_data_item (s_vpn, NM_WG_KEY_ADDR_IP4);
+		if (value)
+			gtk_entry_set_text (GTK_ENTRY (widget), value);
+	}
+	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (stuff_changed_cb), self);
+
+	// Peer Allowed IPs
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_allowed_ips_entry"));
+	g_return_val_if_fail (widget != NULL, FALSE);
+	if (s_vpn) {
+		value = nm_setting_vpn_get_data_item (s_vpn, NM_WG_KEY_ADDR_IP4);
+		if (value)
+			gtk_entry_set_text (GTK_ENTRY (widget), value);
+	}
+	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (stuff_changed_cb), self);
+
+	// Peer Endpoint
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_endpoint_entry"));
+	g_return_val_if_fail (widget != NULL, FALSE);
+	if (s_vpn) {
+		value = nm_setting_vpn_get_data_item (s_vpn, NM_WG_KEY_ADDR_IP4);
+		if (value)
+			gtk_entry_set_text (GTK_ENTRY (widget), value);
+	}
+	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (stuff_changed_cb), self);
+
+	
+	/*
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "auth_combo"));
 	g_return_val_if_fail (widget != NULL, FALSE);
 
 	store = gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
+	*/
 
+	/*
 	if (s_vpn) {
 		contype = nm_setting_vpn_get_data_item (s_vpn, NM_OPENVPN_KEY_CONNECTION_TYPE);
 		if (contype) {
@@ -268,8 +438,10 @@ init_editor_plugin (OpenvpnEditor *self, NMConnection *connection, GError **erro
 		} else
 			contype = NM_OPENVPN_CONTYPE_TLS;
 	}
+	*/
 
 	/* TLS auth widget */
+	/*
 		tls_pw_init_auth_widget (priv->builder, s_vpn,
 	                         NM_OPENVPN_CONTYPE_TLS, "tls",
 	                         stuff_changed_cb, self);
@@ -279,8 +451,10 @@ init_editor_plugin (OpenvpnEditor *self, NMConnection *connection, GError **erro
 	                    COL_AUTH_PAGE, 0,
 	                    COL_AUTH_TYPE, NM_OPENVPN_CONTYPE_TLS,
 	                    -1);
+						*/
 
 	/* Password auth widget */
+	/*
 	tls_pw_init_auth_widget (priv->builder, s_vpn,
 	                         NM_OPENVPN_CONTYPE_PASSWORD, "pw",
 	                         stuff_changed_cb, self);
@@ -292,8 +466,10 @@ init_editor_plugin (OpenvpnEditor *self, NMConnection *connection, GError **erro
 	                    -1);
 	if ((active < 0) && !strcmp (contype, NM_OPENVPN_CONTYPE_PASSWORD))
 		active = 1;
+		*/
 
 	/* Password+TLS auth widget */
+	/*
 	tls_pw_init_auth_widget (priv->builder, s_vpn,
 	                         NM_OPENVPN_CONTYPE_PASSWORD_TLS, "pw_tls",
 	                         stuff_changed_cb, self);
@@ -305,8 +481,10 @@ init_editor_plugin (OpenvpnEditor *self, NMConnection *connection, GError **erro
 	                    -1);
 	if ((active < 0) && !strcmp (contype, NM_OPENVPN_CONTYPE_PASSWORD_TLS))
 		active = 2;
+		*/
 
 	/* Static key auth widget */
+	/*
 	sk_init_auth_widget (priv->builder, s_vpn, stuff_changed_cb, self);
 
 	gtk_list_store_append (store, &iter);
@@ -325,6 +503,7 @@ init_editor_plugin (OpenvpnEditor *self, NMConnection *connection, GError **erro
 
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "advanced_button"));
 	g_signal_connect (G_OBJECT (widget), "clicked", G_CALLBACK (advanced_button_clicked_cb), self);
+	*/
 
 	return TRUE;
 }
@@ -391,22 +570,58 @@ update_connection (NMVpnEditor *iface,
 	s_vpn = NM_SETTING_VPN (nm_setting_vpn_new ());
 	g_object_set (s_vpn, NM_SETTING_VPN_SERVICE_TYPE, NM_VPN_SERVICE_TYPE_OPENVPN, NULL);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "gateway_entry"));
+	// local ip4
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_ip4_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
 	if (str && str[0])
-		nm_setting_vpn_add_data_item (s_vpn, NM_OPENVPN_KEY_REMOTE, str);
+		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_ADDR_IP4, str);
 
+	// private key
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_private_key_entry"));
+	str = gtk_entry_get_text (GTK_ENTRY (widget));
+	if (str && str[0])
+		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_PRIVATE_KEY, str);
+
+	// listen port
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_port_entry"));
+	str = gtk_entry_get_text (GTK_ENTRY (widget));
+	if (str && str[0])
+		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_LISTEN_PORT, str);
+
+	// peer public key
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_public_key_entry"));
+	str = gtk_entry_get_text (GTK_ENTRY (widget));
+	if (str && str[0])
+		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_PUBLIC_KEY, str);
+
+	// allowed IPs
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_allowed_ips_entry"));
+	str = gtk_entry_get_text (GTK_ENTRY (widget));
+	if (str && str[0])
+		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_ALLOWED_IPS, str);
+
+	// endpoint
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_endpoint_entry"));
+	str = gtk_entry_get_text (GTK_ENTRY (widget));
+	if (str && str[0])
+		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_ENDPOINT, str);
+
+	/*
 	auth_type = get_auth_type (priv->builder);
 	if (auth_type) {
 		nm_setting_vpn_add_data_item (s_vpn, NM_OPENVPN_KEY_CONNECTION_TYPE, auth_type);
 		auth_widget_update_connection (priv->builder, auth_type, s_vpn);
 		g_free (auth_type);
 	}
+	*/
 
+	/*
 	if (priv->advanced)
 		g_hash_table_foreach (priv->advanced, hash_copy_advanced, s_vpn);
+	*/
 
 	/* Default to agent-owned secrets for new connections */
+	/*
 	if (priv->new_connection) {
 		if (nm_setting_vpn_get_secret (s_vpn, NM_OPENVPN_KEY_HTTP_PROXY_PASSWORD)) {
 			nm_setting_set_secret_flags (NM_SETTING (s_vpn),
@@ -429,6 +644,7 @@ update_connection (NMVpnEditor *iface,
 			                             NULL);
 		}
 	}
+	*/
 
 	nm_connection_add_setting (connection, NM_SETTING (s_vpn));
 	valid = TRUE;
@@ -480,7 +696,7 @@ openvpn_editor_new (NMConnection *connection, GError **error)
 		g_return_val_if_reached (NULL);
 	}
 
-	priv->widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "openvpn-vbox"));
+	priv->widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "wg-vbox"));
 	if (!priv->widget) {
 		g_set_error_literal (error, NMV_EDITOR_PLUGIN_ERROR, 0, _("could not load UI widget"));
 		g_object_unref (object);
@@ -491,6 +707,7 @@ openvpn_editor_new (NMConnection *connection, GError **error)
 	priv->window_group = gtk_window_group_new ();
 
 	s_vpn = nm_connection_get_setting_vpn (connection);
+	// if there is at least one item to iterate over, the connection can't be new
 	if (s_vpn)
 		nm_setting_vpn_foreach_data_item (s_vpn, is_new_func, &new);
 	priv->new_connection = new;
@@ -500,11 +717,13 @@ openvpn_editor_new (NMConnection *connection, GError **error)
 		return NULL;
 	}
 
+	/*
 	priv->advanced = advanced_dialog_new_hash_from_connection (connection, error);
 	if (!priv->advanced) {
 		g_object_unref (object);
 		return NULL;
 	}
+	*/
 
 	return object;
 }
