@@ -828,24 +828,25 @@ parse_endpoint(const char **line, char **endpoint, char **out_error)
 }
 
 static gboolean
-parse_listen_port(const char **line, char **port, char **out_error)
+parse_listen_port(const char **line, guint64 *port, char **out_error)
 {
 	int idx = 0;
+	char *tmp = NULL;
+	gboolean success = TRUE;
 
 	if(!_parse_common(line, &idx, out_error)){
 		return FALSE;
 	}
 
-	*port = g_strdup(line[idx]);
-
-	if(!g_ascii_string_to_unsigned(*port, 10, 0, 65535, NULL, NULL)){
-		*out_error = g_strdup_printf("'%s' is not a valid port assignment!", *port);
-		g_free(*port);
-		*port = NULL;
-		return FALSE;
+	tmp = g_strdup(line[idx]);
+	if(!g_ascii_string_to_unsigned(tmp, 10, 0, 65535, port, NULL)){
+		*out_error = g_strdup_printf("'%s' is not a valid port assignment!", tmp);
+		*port = -1;
+		success = FALSE;
 	}
 
-	return TRUE;
+	g_free(tmp);
+	return success;
 }
 
 static gboolean
@@ -888,6 +889,16 @@ _is_ip4(char *addr)
 {
 	int idx = 0;
 	int dots = 0;
+	gchar **parts;
+	gchar **tmp;
+	gchar **tmp2;
+	gchar *lastpart;
+	gboolean success = TRUE;
+
+	if(!addr){
+		return FALSE;
+	}
+
 	while(addr && addr[idx]){
 		if(addr[idx] == '.'){
 			dots++;
@@ -899,22 +910,156 @@ _is_ip4(char *addr)
 		return FALSE;
 	}
 
+	parts = g_strsplit(addr, ".", 0);
+
+	// iterate over the first three parts, which cannot be anything else than numbers
+	for(idx = 0; idx < 3; idx++){
+		if(!g_ascii_string_to_unsigned(parts[idx], 10, 0, 255, NULL, NULL)){
+			success = FALSE;
+			goto ip4end;
+		}
+	}
+
+	// if the last part is a number, we're fine
+	lastpart = parts[3];
+	if(g_ascii_string_to_unsigned(lastpart, 10, 0, 255, NULL, NULL)){
+		success = TRUE;
+		goto ip4end;
+	}
+
 	// might have a subnet suffix after a slash (e.g. 192.168.1.254/24)
-
-
 	// might have a port suffix after a colon (e.g. 192.168.1.254:8080)
+	if(g_strrstr(lastpart, ":") && g_strrstr(lastpart, "/")){
+		tmp = g_strsplit(lastpart, ":", 2);
+		tmp2 = g_strsplit(tmp[1], "/", 2);
 
-	return TRUE;
+		if(!g_ascii_string_to_unsigned(tmp[0], 10, 0, 255, NULL, NULL)){
+			// the last part of the IP
+			success = FALSE;
+		}
+
+		if(!g_ascii_string_to_unsigned(tmp2[0], 10, 0, 65535, NULL, NULL)){
+			// the port
+			success = FALSE;
+		}
+
+		if(!g_ascii_string_to_unsigned(tmp2[1], 10, 0, 32, NULL, NULL)){
+			// the subnet portion
+			success = FALSE;
+		}
+
+		g_strfreev(tmp);
+		g_strfreev(tmp2);
+	}
+	else if(g_strrstr(lastpart, "/")){
+		tmp = g_strsplit(lastpart, "/", 2);
+
+		if(!g_ascii_string_to_unsigned(tmp[0], 10, 0, 255, NULL, NULL)){
+			// the last part of the IP
+			success = FALSE;
+		}
+
+		if(!g_ascii_string_to_unsigned(tmp[1], 10, 0, 32, NULL, NULL)){
+			// the subnet portion
+			success = FALSE;
+		}
+
+		g_strfreev(tmp);
+	}
+	else if(g_strrstr(lastpart, ":")){
+		tmp = g_strsplit(lastpart, ":", 2);
+
+		if(!g_ascii_string_to_unsigned(tmp[0], 10, 0, 255, NULL, NULL)){
+			// the last part of the IP
+			success = FALSE;
+		}
+
+		if(!g_ascii_string_to_unsigned(tmp[1], 10, 0, 65535, NULL, NULL)){
+			// the port
+			success = FALSE;
+		}
+
+		g_strfreev(tmp);
+	}
+	else{
+		// we have neither a port nor a subnet suffix, but it's not a number either
+		success = FALSE;
+	}
+
+ip4end:
+	g_strfreev(parts);
+	return success;
 }
 
 static gboolean
 _is_ip6(char *addr)
 {
-	return TRUE;
+	gchar **parts;
+	gchar **tmp;
+	gchar *lastpart;
+	int len = 0;
+	int i = 0;
+	int num_empty = 0;
+	gboolean success = TRUE;
+
+	if(!addr){
+		return FALSE;
+	}
+	else if(!g_strrstr(addr, ":")){
+		return FALSE;
+	}
+
+	parts = g_strsplit(addr, ":", 0);
+	while(parts && parts[len]){
+		len++;
+	}
+
+	num_empty = 0;
+	for(i = 0; i < (len-1); i++){
+		if((i == 0) && (!g_strcmp0("", parts[i]))){
+			// the beginning may be empty (e.g. in "::1")
+			continue;
+		}
+
+		if(!g_strcmp0("", parts[i]) && (num_empty < 1)){
+			// there may be one "skipped" part in the IP6
+			num_empty++;
+		}
+		else if(!g_ascii_string_to_unsigned(parts[i], 16, 0, 65536, NULL, NULL)){
+			// the rest of the parts have to be numerals between 0 and 16^4 in hex
+			success = FALSE;
+			goto ip6end;
+		}
+	}
+
+	lastpart = parts[len-1];
+	if(g_strrstr(lastpart, "/")){
+		// we have a subnet portion
+		tmp = g_strsplit(lastpart, "/", 2);
+
+		if(g_strcmp0("", tmp[0]) && !g_ascii_string_to_unsigned(tmp[0], 16, 0, 65536, NULL, NULL)){
+			success = FALSE;
+		}
+		else if(!g_ascii_string_to_unsigned(tmp[1], 10, 0, 128, NULL, NULL)){
+			success = FALSE;
+		}
+
+		g_strfreev(tmp);
+	}
+	else{
+		// there is only a number, or an empty string (e.g. in the case of "::")
+		if(g_strcmp0("", lastpart) && !g_ascii_string_to_unsigned(lastpart, 16, 0, 65536, NULL, NULL)){
+			success = FALSE;
+		}
+	}
+
+ip6end:
+	g_strfreev(parts);
+	return success;
 }
 
 static char *
-_parse_ip4_address(char *address)
+_parse_ip4_address(const char *address)
 {
 	char *ip4 = g_strdup(address);
 	size_t len = strlen(ip4);
@@ -934,7 +1079,7 @@ _parse_ip4_address(char *address)
 }
 
 static char *
-_parse_ip6_address(char *address)
+_parse_ip6_address(const char *address)
 {
 	char *ip6 = g_strdup(address);
 	size_t len = strlen(ip6);
@@ -958,6 +1103,7 @@ parse_address(const char **line, char **ip4_address, char **ip6_address, char **
 	int idx = 0;
 	char *ip4 = NULL;
 	char *ip6 = NULL;
+	gboolean success = FALSE;
 
 	if(!_parse_common(line, &idx, out_error)){
 		*ip4_address = NULL;
@@ -968,24 +1114,138 @@ parse_address(const char **line, char **ip4_address, char **ip6_address, char **
 	while(line && line[idx]){
 		ip4 = _parse_ip4_address(line[idx]);
 		if(ip4){
-			printf("Found IP4: %s\n", ip4);
 			*ip4_address = ip4;
 			idx++;
+			success = TRUE;
 			continue;
 		}
 
 		ip6 = _parse_ip6_address(line[idx]);
 		if(ip6){
-			printf("Found IP6: %s\n", ip6);
 			*ip6_address = ip6;
+			success = TRUE;
 		}
 		
+		idx++;
+	}
+
+	return success;
+}
+
+static gboolean
+parse_allowed_ips(const char **line, GArray **addresses, char **out_error)
+{
+	int idx = 0;
+	char *ip4 = NULL;
+	char *ip6 = NULL;
+	gboolean success = FALSE;
+
+	if(!_parse_common(line, &idx, out_error)){
+		*addresses = NULL;
+		return FALSE;
+	}
+
+	*addresses = g_array_new(TRUE, TRUE, sizeof(char *));
+	while(line && line[idx]){
+		ip4 = _parse_ip4_address(line[idx]);
+		if(ip4){
+			g_array_append_val(*addresses, ip4);
+			success = TRUE;
+			goto ip4next;
+		}
+
+		ip6 = _parse_ip6_address(line[idx]);
+		if(ip6){
+			g_array_append_val(*addresses, ip6);
+			success = TRUE;
+		}
+
+ip4next:
+		idx++;
+	}
+
+	if(!success){
+		g_array_free(*addresses, TRUE);
+	}
+	return success;
+}
+
+static gboolean
+parse_script(const char **line, char **script, char **out_error)
+{
+	int idx = 0;
+	char *tmp = NULL;
+	int len = 0;
+	int idx2 = 0;
+
+	if(!_parse_common(line, &idx, out_error)){
+		*script = NULL;
+		return FALSE;
+	}
+
+	// calculate how much space we are going to need
+	idx2 = idx;
+	while(line && line[idx2]){
+		// one extra character for the space between the commands
+		len += strlen(line[idx2]) + 1;
+		idx2++;
+	}
+
+	// the last extra slot isn't taken by a space, but by a NULL-byte
+	*script = g_malloc(len);
+	tmp = g_stpcpy(*script, "");
+	while(line && line[idx]){
+		tmp = g_stpcpy(tmp, line[idx]);
+		if(line[idx+1]){
+			tmp = g_stpcpy(tmp, " ");
+		}
 		idx++;
 	}
 
 	return TRUE;
 }
 
+static gchar *
+concatenate_strings(const GArray *string_array, char *separator)
+{
+	int i = 0;
+	int len = 0;
+	int sep_len = 0;
+	char *result;
+	char *tmp;
+
+	if(!string_array){
+		return NULL;
+	}
+
+	if(!separator){
+		separator = ",";
+	}
+
+	// check how much space we are going to need
+	sep_len = strlen(separator);
+	for(i = 0; i < string_array->len; i++){
+		len += strlen(g_array_index(string_array, char *, i));
+		if(i < (string_array->len - 1)){
+			len += sep_len;
+		}
+	}
+
+	// space for the trailing NULL-byte
+	len += 1;
+
+	// allocate memory and do the appending
+	result = g_malloc(len);
+	tmp = g_stpcpy(result, "");
+	for(i = 0; i < string_array->len; i++){
+		tmp = g_stpcpy(tmp, g_array_index(string_array, char *, i));
+		if(i < (string_array->len - 1)){
+			tmp = g_stpcpy(tmp, separator);
+		}
+	}
+
+	return result;
+}
 
 NMConnection *
 do_import (const char *path, const char *contents, gsize contents_len, GError **error)
@@ -1071,18 +1331,18 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 		// interface section
 
 		if (NM_IN_STRSET (params[0], NMV_WG_TAG_INTERFACE)){
-			printf("contgrats! you found the %s section!\n", params[0]);
+			printf("%s\n", params[0]);
 			continue;
 		}
 
 		if (NM_IN_STRSET (params[0], NMV_WG_TAG_LISTEN_PORT)){
-			char *port = NULL;
+			guint64 port = 0;
 			if(!parse_listen_port(params, &port, &line_error)){
 				goto handle_line_error;
 			}
 
-			// TODO
-			printf("Port: %s\n", port);
+			setting_vpn_add_data_item_int64(s_vpn, NM_WG_KEY_LISTEN_PORT, port);
+			printf("%s = %ld\n", NMV_WG_TAG_LISTEN_PORT, port);
 			continue;
 		}
 
@@ -1093,11 +1353,20 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 				goto handle_line_error;
 			}
 
-			printf("You have IP4: %s\n", addr4);
-			printf("You have IP6: %s\n", addr6);
-			// TODO probably needs further processing because format is
-			// Address = 0.0.0.1, ::1
-			// i.e. there might be a comma after the first address
+			if(addr4 && addr6){
+				setting_vpn_add_data_item(s_vpn, NM_WG_KEY_ADDR_IP4, addr4);
+				setting_vpn_add_data_item(s_vpn, NM_WG_KEY_ADDR_IP6, addr6);
+				printf("%s = %s, %s\n", NMV_WG_TAG_ADDRESS, addr4, addr6);
+			}
+			else if(addr4){
+				setting_vpn_add_data_item(s_vpn, NM_WG_KEY_ADDR_IP4, addr4);
+				printf("%s = %s\n", NMV_WG_TAG_ADDRESS, addr4);
+			}
+			else if(addr6){
+				setting_vpn_add_data_item(s_vpn, NM_WG_KEY_ADDR_IP6, addr6);
+				printf("%s = %s\n", NMV_WG_TAG_ADDRESS, addr6);
+			}
+
 			continue;
 		}
 
@@ -1107,7 +1376,8 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 				goto handle_line_error;
 			}
 
-			printf("gonna leak your private key now: %s\n", key);
+			setting_vpn_add_data_item(s_vpn, NM_WG_KEY_PRIVATE_KEY, key);
+			printf("%s = %s\n", NMV_WG_TAG_PRIVATE_KEY, key);
 			continue;
 		}
 
@@ -1117,33 +1387,60 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 				goto handle_line_error;
 			}
 
-			printf("*gasp* your secret really is: %s?\n", psk);
+			setting_vpn_add_data_item(s_vpn, NM_WG_KEY_PRESHARED_KEY, psk);
+			printf("%s = %s\n", NMV_WG_TAG_PRESHARED_KEY, psk);
 			continue;
 		}
 
 		if (NM_IN_STRSET (params[0], NMV_WG_TAG_POST_UP)){
 			char *script = NULL;
-			// TODO
-			printf("PostUp: %s\n", params[2]);
+			if(!parse_script(params, &script, &line_error)){
+				goto handle_line_error;
+			}
+
+			setting_vpn_add_data_item(s_vpn, NM_WG_KEY_POST_UP, script);
+			printf("%s = %s\n", NMV_WG_TAG_POST_UP, script);
 			continue;
 		}
 
 		if (NM_IN_STRSET (params[0], NMV_WG_TAG_POST_DOWN)){
-			// TODO
-			printf("PostDown: %s\n", params[2]);
+			char *script = NULL;
+			if(!parse_script(params, &script, &line_error)){
+				goto handle_line_error;
+			}
+
+			setting_vpn_add_data_item(s_vpn, NM_WG_KEY_POST_DOWN, script);
+			printf("%s = %s\n", NMV_WG_TAG_POST_DOWN, script);
 			continue;
 		}
 
 		// peer section
 
 		if (NM_IN_STRSET (params[0], NMV_WG_TAG_PEER)){
-			printf("congrats! you found the %s section!\n", params[0]);
+			printf("%s\n", params[0]);
 			continue;
 		}
 
 		if(NM_IN_STRSET (params[0], NMV_WG_TAG_ALLOWED_IPS)){
-			printf("Allowed IPs: %s\n", params[2]);
-			// TODO
+			GArray *addrs = NULL;
+			int i = 0;
+			int len = 0;
+			char *ip_string = NULL;
+			char *allowed_ips = NULL;
+
+			if(!parse_allowed_ips(params, &addrs, &line_error)){
+				goto handle_line_error;
+			}
+
+			for(i = 0; i < addrs->len; i++){
+				len += strlen(g_array_index(addrs, char *, i)) + 2;
+			}
+
+			ip_string = concatenate_strings(addrs, ", ");
+			allowed_ips = concatenate_strings(addrs, ",");
+
+			setting_vpn_add_data_item(s_vpn, NM_WG_KEY_ALLOWED_IPS, allowed_ips);
+			printf("%s = %s\n", NMV_WG_TAG_ALLOWED_IPS, ip_string);
 			continue;
 		}
 
@@ -1152,7 +1449,9 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 			if(!parse_public_key(params, &key, &line_error)){
 				goto handle_line_error;
 			}
-			printf("Public Key of the peer: %s\n", key);
+
+			setting_vpn_add_data_item(s_vpn, NM_WG_KEY_PUBLIC_KEY, key);
+			printf("%s = %s\n", NMV_WG_TAG_PUBLIC_KEY, key);
 			continue;
 		}
 
@@ -1161,23 +1460,9 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 			if(!parse_endpoint(params, &endpoint, &line_error)){
 				goto handle_line_error;
 			}
-			/*
-			if (params[1] && !g_strcmp0("=", params[1])){
-				if(!params[2]){
-					line_error = g_strdup_printf("Endpoint expects at least one IP address");
-					goto handle_line_error;
-				}
-			} else {
-				printf("There was no equals sign.\n");
-			}
 
-			printf("Have you heard the one about Wireguard and Endpoints already?\n");
-			printf("%s...\n", params[1]);
-			if(params[1] && params[2]){
-				printf("> %s...\n", params[2]);
-			}
-			*/
-			printf("Endpoint: %s\n", endpoint);
+			setting_vpn_add_data_item(s_vpn, NM_WG_KEY_ENDPOINT, endpoint);
+			printf("%s = %s\n", NMV_WG_TAG_ENDPOINT, endpoint);
 			continue;
 		}
 
