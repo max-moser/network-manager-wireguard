@@ -22,6 +22,18 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#define NMV_WG_TAG_INTERFACE			"[Interface]"
+#define NMV_WG_TAG_PRIVATE_KEY			"PrivateKey"
+#define NMV_WG_TAG_LISTEN_PORT			"ListenPort"
+#define NMV_WG_TAG_ADDRESS				"Address"
+#define NMV_WG_TAG_POST_UP				"PostUp"
+#define NMV_WG_TAG_POST_DOWN			"PostDown"
+#define NMV_WG_TAG_PRESHARED_KEY		"PresharedKey"
+#define NMV_WG_TAG_PEER					"[Peer]"
+#define NMV_WG_TAG_PUBLIC_KEY			"PublicKey"
+#define NMV_WG_TAG_ALLOWED_IPS			"AllowedIPs"
+#define NMV_WG_TAG_ENDPOINT				"Endpoint"
+
 #define NMV_OVPN_TAG_AUTH               "auth"
 #define NMV_OVPN_TAG_AUTH_NOCACHE       "auth-nocache"
 #define NMV_OVPN_TAG_AUTH_USER_PASS     "auth-user-pass"
