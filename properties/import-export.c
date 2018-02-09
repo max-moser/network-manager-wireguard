@@ -777,6 +777,216 @@ inline_blob_write_out (const InlineBlobData *data, GError **error)
 
 /*****************************************************************************/
 
+static gboolean
+_parse_common (const char **line, int *idx, char **out_error)
+{
+	int len = 0;
+	while(line && line[len]){
+		len++;
+	}
+
+	// TODO what happens when we have KEY=VALUE?
+
+	if(!line[0]){
+		*out_error = g_strdup_printf("Nothing found in the line");
+		return FALSE;
+	}
+	else if(!line[1]){
+		*out_error = g_strdup_printf("No value found for setting '%s'", line[0]);
+		return FALSE;
+	}
+	else if(!g_strcmp0("=", line[1])){
+		// we have an equals sign included
+		// KEY = VALUE
+		if(!line[2]){
+			*out_error = g_strdup_printf("Expected line to be of form KEY = VALUE");
+			return FALSE;
+		}
+
+		*idx = 2;
+	}
+	else{
+		// we don't have an equals sign included
+		// KEY VALUE
+		*idx = 1;
+	}
+
+	return TRUE;
+}
+
+static gboolean
+parse_endpoint(const char **line, char **endpoint, char **out_error)
+{
+	int idx = 0;
+	if(!_parse_common(line, &idx, out_error)){
+		*endpoint = NULL;
+		return FALSE;
+	}
+
+	*endpoint = g_strdup(line[idx]);
+	return TRUE;
+}
+
+static gboolean
+parse_listen_port(const char **line, char **port, char **out_error)
+{
+	int idx = 0;
+
+	if(!_parse_common(line, &idx, out_error)){
+		return FALSE;
+	}
+
+	*port = g_strdup(line[idx]);
+
+	if(!g_ascii_string_to_unsigned(*port, 10, 0, 65535, NULL, NULL)){
+		*out_error = g_strdup_printf("'%s' is not a valid port assignment!", *port);
+		g_free(*port);
+		*port = NULL;
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static gboolean
+parse_private_key(const char **line, char **key, char **out_error)
+{
+	int idx = 0;
+	if(!_parse_common(line, &idx, out_error)){
+		*key = NULL;
+		return FALSE;
+	}
+
+	*key = g_strdup(line[idx]);
+
+	// TODO check if base64?
+	// TOOD check length?
+
+	return TRUE;
+}
+
+#define parse_public_key(line, key, out_error) parse_private_key(line, key, out_error)
+
+static gboolean
+parse_preshared_key(const char **line, char **key, char **out_error)
+{
+	int idx = 0;
+	if(!_parse_common(line, &idx, out_error)){
+		*key = NULL;
+		return FALSE;
+	}
+
+	*key = g_strdup(line[idx]);
+
+	// TODO any checks?
+
+	return TRUE;
+}
+
+static gboolean
+_is_ip4(char *addr)
+{
+	int idx = 0;
+	int dots = 0;
+	while(addr && addr[idx]){
+		if(addr[idx] == '.'){
+			dots++;
+		}
+		idx++;
+	}
+
+	if(dots != 3){
+		return FALSE;
+	}
+
+	// might have a subnet suffix after a slash (e.g. 192.168.1.254/24)
+
+
+	// might have a port suffix after a colon (e.g. 192.168.1.254:8080)
+
+	return TRUE;
+}
+
+static gboolean
+_is_ip6(char *addr)
+{
+	return TRUE;
+}
+
+static char *
+_parse_ip4_address(char *address)
+{
+	char *ip4 = g_strdup(address);
+	size_t len = strlen(ip4);
+
+	// if there is a trailing comma, remove it
+	// -- might be, because the config can have an IP4 and IP6
+	if(ip4[len - 1] == ','){
+		ip4[len - 1] = '\0';
+	}
+
+	if(!_is_ip4(ip4)){
+		g_free(ip4);
+		ip4 = NULL;
+	}
+
+	return ip4;
+}
+
+static char *
+_parse_ip6_address(char *address)
+{
+	char *ip6 = g_strdup(address);
+	size_t len = strlen(ip6);
+
+	// same as for IP4
+	if(ip6[len - 1] == ','){
+		ip6[len - 1] = '\0';
+	}
+
+	if(!_is_ip6(ip6)){
+		g_free(ip6);
+		ip6 = NULL;
+	}
+
+	return ip6;
+}
+
+static gboolean
+parse_address(const char **line, char **ip4_address, char **ip6_address, char **out_error)
+{
+	int idx = 0;
+	char *ip4 = NULL;
+	char *ip6 = NULL;
+
+	if(!_parse_common(line, &idx, out_error)){
+		*ip4_address = NULL;
+		*ip6_address = NULL;
+		return FALSE;
+	}
+
+	while(line && line[idx]){
+		ip4 = _parse_ip4_address(line[idx]);
+		if(ip4){
+			printf("Found IP4: %s\n", ip4);
+			*ip4_address = ip4;
+			idx++;
+			continue;
+		}
+
+		ip6 = _parse_ip6_address(line[idx]);
+		if(ip6){
+			printf("Found IP6: %s\n", ip6);
+			*ip6_address = ip6;
+		}
+		
+		idx++;
+	}
+
+	return TRUE;
+}
+
+
 NMConnection *
 do_import (const char *path, const char *contents, gsize contents_len, GError **error)
 {
@@ -857,6 +1067,121 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 		}
 
 		g_assert (params[0]);
+
+		// interface section
+
+		if (NM_IN_STRSET (params[0], NMV_WG_TAG_INTERFACE)){
+			printf("contgrats! you found the %s section!\n", params[0]);
+			continue;
+		}
+
+		if (NM_IN_STRSET (params[0], NMV_WG_TAG_LISTEN_PORT)){
+			char *port = NULL;
+			if(!parse_listen_port(params, &port, &line_error)){
+				goto handle_line_error;
+			}
+
+			// TODO
+			printf("Port: %s\n", port);
+			continue;
+		}
+
+		if (NM_IN_STRSET (params[0], NMV_WG_TAG_ADDRESS)){
+			char *addr4 = NULL;
+			char *addr6 = NULL;
+			if(!parse_address(params, &addr4, &addr6, &line_error)){
+				goto handle_line_error;
+			}
+
+			printf("You have IP4: %s\n", addr4);
+			printf("You have IP6: %s\n", addr6);
+			// TODO probably needs further processing because format is
+			// Address = 0.0.0.1, ::1
+			// i.e. there might be a comma after the first address
+			continue;
+		}
+
+		if (NM_IN_STRSET (params[0], NMV_WG_TAG_PRIVATE_KEY)){
+			char *key = NULL;
+			if(!parse_private_key(params, &key, &line_error)){
+				goto handle_line_error;
+			}
+
+			printf("gonna leak your private key now: %s\n", key);
+			continue;
+		}
+
+		if (NM_IN_STRSET (params[0], NMV_WG_TAG_PRESHARED_KEY)){
+			char *psk = NULL;
+			if(!parse_preshared_key(params, &psk, &line_error)){
+				goto handle_line_error;
+			}
+
+			printf("*gasp* your secret really is: %s?\n", psk);
+			continue;
+		}
+
+		if (NM_IN_STRSET (params[0], NMV_WG_TAG_POST_UP)){
+			char *script = NULL;
+			// TODO
+			printf("PostUp: %s\n", params[2]);
+			continue;
+		}
+
+		if (NM_IN_STRSET (params[0], NMV_WG_TAG_POST_DOWN)){
+			// TODO
+			printf("PostDown: %s\n", params[2]);
+			continue;
+		}
+
+		// peer section
+
+		if (NM_IN_STRSET (params[0], NMV_WG_TAG_PEER)){
+			printf("congrats! you found the %s section!\n", params[0]);
+			continue;
+		}
+
+		if(NM_IN_STRSET (params[0], NMV_WG_TAG_ALLOWED_IPS)){
+			printf("Allowed IPs: %s\n", params[2]);
+			// TODO
+			continue;
+		}
+
+		if(NM_IN_STRSET (params[0], NMV_WG_TAG_PUBLIC_KEY)){
+			char *key = NULL;
+			if(!parse_public_key(params, &key, &line_error)){
+				goto handle_line_error;
+			}
+			printf("Public Key of the peer: %s\n", key);
+			continue;
+		}
+
+		if (NM_IN_STRSET (params[0], NMV_WG_TAG_ENDPOINT)){
+			char *endpoint;
+			if(!parse_endpoint(params, &endpoint, &line_error)){
+				goto handle_line_error;
+			}
+			/*
+			if (params[1] && !g_strcmp0("=", params[1])){
+				if(!params[2]){
+					line_error = g_strdup_printf("Endpoint expects at least one IP address");
+					goto handle_line_error;
+				}
+			} else {
+				printf("There was no equals sign.\n");
+			}
+
+			printf("Have you heard the one about Wireguard and Endpoints already?\n");
+			printf("%s...\n", params[1]);
+			if(params[1] && params[2]){
+				printf("> %s...\n", params[2]);
+			}
+			*/
+			printf("Endpoint: %s\n", endpoint);
+			continue;
+		}
+
+		/*************************************************************************************/
 
 		/* allow for a leading double-dash and skip over it (bypass_doubledash). */
 		if (g_str_has_prefix (params[0], "--"))
