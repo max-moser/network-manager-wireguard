@@ -41,8 +41,8 @@
 
 #include "import-export.h"
 
-#define OPENVPN_PLUGIN_NAME    _("OpenVPN")
-#define OPENVPN_PLUGIN_DESC    _("Compatible with the OpenVPN server.")
+#define OPENVPN_PLUGIN_NAME    _("Wireguard")
+#define OPENVPN_PLUGIN_DESC    _("Used to set up client-side Wireguard connections.")
 
 /*****************************************************************************/
 
@@ -71,14 +71,14 @@ import (NMVpnEditorPlugin *iface, const char *path, GError **error)
 
 	ext = strrchr (path, '.');
 
-	if (!ext || (   !g_str_has_suffix (ext, ".ovpn")
-	             && !g_str_has_suffix (ext, ".conf")
+	if (!ext || (   !g_str_has_suffix (ext, ".wireguard")
+	             && !g_str_has_suffix (ext, ".wg")
 	             && !g_str_has_suffix (ext, ".cnf")
-	             && !g_str_has_suffix (ext, ".ovpntest"))) {   /* Special extension for testcases */
+	             && !g_str_has_suffix (ext, ".conf"))) {   /* Special extension for testcases */
 		g_set_error_literal (error,
 		                     NMV_EDITOR_PLUGIN_ERROR,
 		                     NMV_EDITOR_PLUGIN_ERROR_FILE_NOT_VPN,
-		                     _("unknown OpenVPN file extension"));
+		                     "Unknown Wireguard file extension");
 		goto out;
 	}
 
@@ -115,15 +115,15 @@ get_suggested_filename (NMVpnEditorPlugin *iface, NMConnection *connection)
 	id = nm_setting_connection_get_id (s_con);
 	g_return_val_if_fail (id != NULL, NULL);
 
-	return g_strdup_printf ("%s (openvpn).conf", id);
+	return g_strdup_printf ("%s.conf", id);
 }
 
 static guint32
 get_capabilities (NMVpnEditorPlugin *iface)
 {
 	return (NM_VPN_EDITOR_PLUGIN_CAPABILITY_IMPORT |
-	        NM_VPN_EDITOR_PLUGIN_CAPABILITY_EXPORT |
-	        NM_VPN_EDITOR_PLUGIN_CAPABILITY_IPV6);
+	        NM_VPN_EDITOR_PLUGIN_CAPABILITY_EXPORT);
+	        //NM_VPN_EDITOR_PLUGIN_CAPABILITY_IPV6);
 }
 
 #ifndef NM_VPN_OLD
