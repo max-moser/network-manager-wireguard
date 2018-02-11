@@ -248,3 +248,199 @@ out_fail:
 }
 
 /*****************************************************************************/
+
+// check if the given string looks like an IPv4 address
+// that is, four segments of numbers (0-255), separated by dots
+// additionally, there may be a port suffix (separated from the address by a colon; 0 - 65535)
+// and/or a subnet (separated by the rest by a slash; 0 - 32)
+gboolean
+is_ip4(char *addr)
+{
+	int idx = 0;
+	int dots = 0;
+	gchar **parts;
+	gchar **tmp;
+	gchar **tmp2;
+	gchar *lastpart;
+	gboolean success = TRUE;
+
+	if(!addr){
+		return FALSE;
+	}
+
+	while(addr && addr[idx]){
+		if(addr[idx] == '.'){
+			dots++;
+		}
+		idx++;
+	}
+
+	if(dots != 3){
+		return FALSE;
+	}
+
+	parts = g_strsplit(addr, ".", 0);
+
+	// iterate over the first three parts, which cannot be anything else than numbers
+	for(idx = 0; idx < 3; idx++){
+		if(!g_ascii_string_to_unsigned(parts[idx], 10, 0, 255, NULL, NULL)){
+			success = FALSE;
+			goto ip4end;
+		}
+	}
+
+	// if the last part is a number, we're fine
+	lastpart = parts[3];
+	if(g_ascii_string_to_unsigned(lastpart, 10, 0, 255, NULL, NULL)){
+		success = TRUE;
+		goto ip4end;
+	}
+
+	// might have a subnet suffix after a slash (e.g. 192.168.1.254/24)
+	// might have a port suffix after a colon (e.g. 192.168.1.254:8080)
+	if(g_strrstr(lastpart, ":") && g_strrstr(lastpart, "/")){
+		tmp = g_strsplit(lastpart, ":", 2);
+		tmp2 = g_strsplit(tmp[1], "/", 2);
+
+		if(!g_ascii_string_to_unsigned(tmp[0], 10, 0, 255, NULL, NULL)){
+			// the last part of the IP
+			success = FALSE;
+		}
+
+		if(!g_ascii_string_to_unsigned(tmp2[0], 10, 0, 65535, NULL, NULL)){
+			// the port
+			success = FALSE;
+		}
+
+		if(!g_ascii_string_to_unsigned(tmp2[1], 10, 0, 32, NULL, NULL)){
+			// the subnet portion
+			success = FALSE;
+		}
+
+		g_strfreev(tmp);
+		g_strfreev(tmp2);
+	}
+	else if(g_strrstr(lastpart, "/")){
+		tmp = g_strsplit(lastpart, "/", 2);
+
+		if(!g_ascii_string_to_unsigned(tmp[0], 10, 0, 255, NULL, NULL)){
+			// the last part of the IP
+			success = FALSE;
+		}
+
+		if(!g_ascii_string_to_unsigned(tmp[1], 10, 0, 32, NULL, NULL)){
+			// the subnet portion
+			success = FALSE;
+		}
+
+		g_strfreev(tmp);
+	}
+	else if(g_strrstr(lastpart, ":")){
+		tmp = g_strsplit(lastpart, ":", 2);
+
+		if(!g_ascii_string_to_unsigned(tmp[0], 10, 0, 255, NULL, NULL)){
+			// the last part of the IP
+			success = FALSE;
+		}
+
+		if(!g_ascii_string_to_unsigned(tmp[1], 10, 0, 65535, NULL, NULL)){
+			// the port
+			success = FALSE;
+		}
+
+		g_strfreev(tmp);
+	}
+	else{
+		// we have neither a port nor a subnet suffix, but it's not a number either
+		success = FALSE;
+	}
+
+ip4end:
+	g_strfreev(parts);
+	return success;
+}
+
+// check if the given string looks like an IPv6 address
+// that is, several segments of up to 4 hexadecimal digits
+// separated by colons, possibly followed by a slash and a subnet (0 - 128)
+//
+// if there are several zeroes in adjacent segments,
+// those segments may be omitted
+gboolean
+is_ip6(char *addr)
+{
+	gchar **parts;
+	gchar **tmp;
+	gchar *lastpart;
+	int len = 0;
+	int i = 0;
+	int num_empty = 0;
+	int num_colons = 0;
+	gboolean success = TRUE;
+
+	if(!addr){
+		return FALSE;
+	}
+	else if(!g_strrstr(addr, ":")){
+		return FALSE;
+	}
+
+	while(addr && addr[i]){
+		if(addr[i] == ':'){
+			num_colons++;
+		}
+		i++;
+	}
+	if(num_colons < 2){
+		// an IPv6 has to contain at least two colons
+		return FALSE;
+	}
+
+	parts = g_strsplit(addr, ":", 0);
+	while(parts && parts[len]){
+		len++;
+	}
+
+	num_empty = 0;
+	for(i = 0; i < (len-1); i++){
+		if((i == 0) && (!g_strcmp0("", parts[i]))){
+			// the beginning may be empty (e.g. in "::1")
+			continue;
+		}
+
+		if(!g_strcmp0("", parts[i]) && (num_empty < 1)){
+			// there may be one "skipped" part in the IP6
+			num_empty++;
+		}
+		else if(!g_ascii_string_to_unsigned(parts[i], 16, 0, 65536, NULL, NULL)){
+			// the rest of the parts have to be numerals between 0 and 16^4 in hex
+			success = FALSE;
+			goto ip6end;
+		}
+	}
+
+	lastpart = parts[len-1];
+	if(g_strrstr(lastpart, "/")){
+		// we have a subnet portion
+		tmp = g_strsplit(lastpart, "/", 2);
+
+		if(g_strcmp0("", tmp[0]) && !g_ascii_string_to_unsigned(tmp[0], 16, 0, 65536, NULL, NULL)){
+			success = FALSE;
+		}
+		else if(!g_ascii_string_to_unsigned(tmp[1], 10, 0, 128, NULL, NULL)){
+			success = FALSE;
+		}
+
+		g_strfreev(tmp);
+	}
+	else{
+		// there is only a number, or an empty string (e.g. in the case of "::")
+		if(g_strcmp0("", lastpart) && !g_ascii_string_to_unsigned(lastpart, 16, 0, 65536, NULL, NULL)){
+			success = FALSE;
+		}
+	}
+
+ip6end:
+	g_strfreev(parts);
+	return success;
+}

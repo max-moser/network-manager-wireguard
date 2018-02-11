@@ -26,7 +26,11 @@
 #define NMV_WG_TAG_PRIVATE_KEY			"PrivateKey"
 #define NMV_WG_TAG_LISTEN_PORT			"ListenPort"
 #define NMV_WG_TAG_ADDRESS				"Address"
+#define NMV_WG_TAG_DNS                  "DNS"
+#define NMV_WG_TAG_MTU                  "MTU"
+#define NMV_WG_TAG_PRE_UP               "PreUp"
 #define NMV_WG_TAG_POST_UP				"PostUp"
+#define NMV_WG_TAG_PRE_DOWN             "PreDown"
 #define NMV_WG_TAG_POST_DOWN			"PostDown"
 #define NMV_WG_TAG_PRESHARED_KEY		"PresharedKey"
 #define NMV_WG_TAG_PEER					"[Peer]"
@@ -91,6 +95,10 @@
 gboolean is_pkcs12 (const char *filepath);
 
 gboolean is_encrypted (const char *filename);
+
+gboolean is_ip4 (char *addr);
+
+gboolean is_ip6 (char *addr);
 
 #define NMOVPN_PROTCOL_TYPES \
 	"udp", \
