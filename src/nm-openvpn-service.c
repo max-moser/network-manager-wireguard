@@ -42,9 +42,12 @@
 #include <locale.h>
 #include <pwd.h>
 #include <grp.h>
+#include <glib.h>
+#include <glib/gstdio.h>
 #include <glib-unix.h>
 
 #include "utils.h"
+#include "import-export.h"
 #include "nm-utils/nm-shared-utils.h"
 #include "nm-utils/nm-vpn-plugin-macros.h"
 
@@ -136,6 +139,8 @@ typedef struct {
 	NMWireguardPluginIOData *io_data;
 	gboolean interactive;
 	char *mgt_path;
+	char *connection_file;
+	GString *connection_config;
 } NMWireguardPluginPrivate;
 
 G_DEFINE_TYPE (NMWireguardPlugin, nm_wireguard_plugin, NM_TYPE_VPN_SERVICE_PLUGIN)
@@ -416,7 +421,9 @@ pids_pending_add (GPid pid, NMWireguardPlugin *plugin)
 }
 
 // TODO implement me right
-wg_quick_closed(GPid pid, gint status, gpointer user_data){
+static void
+wg_quick_closed(GPid pid, gint status, gpointer user_data)
+{
 	PidsPendingData *pid_data = user_data;
 	NMWireguardPlugin *plugin;
 
@@ -1002,12 +1009,12 @@ nm_openvpn_socket_data_cb (GIOChannel *source, GIOCondition condition, gpointer 
 static gboolean
 nm_openvpn_connect_timer_cb (gpointer data)
 {
-	printf("Connect Timer Callback!\n");
 	NMWireguardPlugin *plugin = NM_WIREGUARD_PLUGIN (data);
 	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
 	NMWireguardPluginIOData *io_data = priv->io_data;
 	struct sockaddr_un remote = { 0 };
 	int fd;
+	printf("Connect Timer Callback!\n");
 
 	priv->connect_count++;
 
@@ -1047,8 +1054,8 @@ out:
 static void
 nm_openvpn_schedule_connect_timer (NMWireguardPlugin *plugin)
 {
-	printf("Scheduling timer\n");
 	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
+	printf("Scheduling timer\n");
 
 	if (priv->connect_timer == 0)
 		priv->connect_timer = g_timeout_add (200, nm_openvpn_connect_timer_cb, plugin);
@@ -1342,8 +1349,8 @@ nm_wireguard_start_interface(NMWireguardPlugin *plugin,
 							 NMConnection *connection,
 							 GError **error)
 {
-	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE(plugin);
-	const char *wg_connection_name = NULL;
+	// NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE(plugin);
+	// const char *wg_connection_name = NULL;
 
 	return TRUE;
 }
@@ -2083,11 +2090,13 @@ check_need_secrets (NMSettingVpn *s_vpn, gboolean *need_secrets)
 
 // IMPLEMENT ME RIGHT
 static gboolean
-test_disconnect(NMVpnServicePlugin *plugin,
-				GError **err)
+wg_disconnect(NMVpnServicePlugin *plugin,
+				GError **error)
 {
-	char *wg_quick_path = wg_quick_find_exepath();
-	char *connection_name = "mullvad";
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE(plugin);
+	const char *wg_quick_path = wg_quick_find_exepath();
+	char *filename = priv->connection_file;
+	GString *cfg_content = priv->connection_config;
 	char *command;
 	int retcode = 1;
 
@@ -2095,16 +2104,36 @@ test_disconnect(NMVpnServicePlugin *plugin,
 		_LOGW("Error: Could not find wg-quick!");
 		return FALSE;
 	}
-	// join together our command
-	command = g_strjoin("", wg_quick_path, " down ", connection_name);
 
-	if(!g_spawn_command_line_sync(command, NULL, NULL, &retcode, err)){
-		_LOGW("An error occured while spawning wg-quick! (Error: %s)", (*err)->message);
+	if(!filename || !cfg_content){
+		_LOGW("Error: Cannot remember the connection details for Disconnect");
+		g_set_error_literal(error,
+							NM_VPN_PLUGIN_ERROR,
+							NM_VPN_PLUGIN_ERROR_FAILED,
+							"Cannot remember the connection details for Disconnect");
+		return FALSE;
 	}
 
-	g_free(command);
+	// create the temporary configuration file
+	g_file_set_contents(filename, cfg_content->str, cfg_content->len, error);
+	g_chmod(filename, 0400);
 
-	_LOGI("Did a disconnect!");
+	// join together our command
+	command = g_strdup_printf("%s down %s", wg_quick_path, filename);
+
+	if(!g_spawn_command_line_sync(command, NULL, NULL, &retcode, error)){
+		_LOGW("An error occured while spawning wg-quick! (Error: %s)", (*error)->message);
+	}
+
+	// delete the file and free temporary private data
+	g_remove(filename);
+	g_free(command);
+	g_string_free(priv->connection_config, TRUE);
+	g_free(priv->connection_file);
+	priv->connection_config = NULL;
+	priv->connection_file = NULL;
+
+	_LOGI("Disconnected from Wireguard Connection!");
 	return TRUE;
 }
 
@@ -2129,173 +2158,71 @@ real_disconnect (NMVpnServicePlugin *plugin,
 	return TRUE;
 }
 
-// read the configuration and set the Plugin's private data accordingly
 static gboolean
-read_config(NMVpnServicePlugin *plugin,
-			const char *connection_name,
-			GError **error){
-
-	printf("A:%s\n", connection_name);
-	NMWireguardPlugin *wg_plugin = NM_WIREGUARD_PLUGIN(plugin);
-	printf("A2\n"); // do not remove this, or we get a segfault in the next line. because reasons
-	char *filename = g_strjoin("", "/etc/nm-wireguard/", connection_name, ".conf");
-	//printf("A3:%s\n", filename);
-	gchar *contents = NULL;
-	gchar *line = NULL;
-	gchar **lines = NULL;
-	gboolean success = TRUE;
-	gsize length;
-	int i = 0;
-	GError *local = NULL;
-
-	printf("B:%s\n", filename);
-
-	if(!g_file_get_contents(filename, &contents, &length, &local)){
-		// TODO the file could not be read
-		_LOGW("Error while reading configuration: %s", (local)->message);
-		success = FALSE;
-	}else{
-		// TODO set the private data of the plugin such that it contains the read information
-		//wg_plugin->priv
-
-		// TODO find 
-		printf("--- %s (length:%d)\n", filename, length);
-		lines = g_strsplit(contents, "\n", 0);
-		while((line = lines[i]) != NULL){
- 
-			if(g_strrstr(line, "Address") != NULL){
-				printf(">> %s\n", line);
-			}
-			printf("> %s\n", line);
-			i++;
-		}
-		printf("---\n");
-	}
-
-	printf("C\n");
-
-	g_strfreev(lines);
-	g_free(filename);
-	g_free(contents);
-	return success;
-}
-
-// IMPLEMENT ME RIGHT
-static gboolean
-test_connect (NMVpnServicePlugin *plugin,
+connect_common(NMVpnServicePlugin *plugin,
 				NMConnection *connection,
-				GError **err)
+				GVariant *details,
+				GError **error)
 {
-
-	NMSettingVpn *setting = nm_connection_get_setting_vpn(connection);
-	char *secret = nm_setting_vpn_get_secret(setting, "name");
-	char *str_setting = nm_setting_to_string(setting);
-	char *wg_quick_path = wg_quick_find_exepath();
-	char *connection_name = "mullvad";
+	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE(plugin);
+	const char *wg_quick_path = wg_quick_find_exepath();
+	const char *connection_name = nm_connection_get_id(connection);
 	char *command;
 	int retcode = 1;
+	char *filename = NULL;
+	GString *connection_config = NULL;
+	GVariantBuilder builder, ip4builder, ip6builder;
+	GVariant *config, *ip4config, *ip6config;
 
+	_LOGI("Setting up Wireguard Connection ('%s')", connection_name);
 	if(wg_quick_path == NULL){
 		_LOGW("Error: Could not find wg-quick!");
 		return FALSE;
 	}
 
-	printf("Setting to String: %s\n", str_setting);
-	printf("Secret: %s\n", secret);
-
-	// join together our command
-	command = g_strjoin("", wg_quick_path, " up ", connection_name);
-
-	printf("Command: %s\n", command);
-	if(!g_spawn_command_line_sync(command, NULL, NULL, &retcode, err)){
-		_LOGW("An error occured while spawning wg-quick! (Error: %s)", (*err)->message);
-	}
-
-	g_free(command);
-
-	//pids_pending_add_wg(pid, plugin);
-	//printf("PID of spawned command: %d\n", pid);
-	printf("Return code of spawned command: %d\n", retcode);
-	// note: exit code 139 means SIGSEV (program died because of segfault or so)
-	{
-		printf("WG set up and ready to go!\n");
-	}
-
-	_LOGI("Did a dummy connect");
-	return TRUE;
-}
-
-// print the keys and values in a dictionary
-static void printme(const char *key, const char *value, gpointer user_data){
-	printf("Key:   %s\n", key);
-	printf("Value: %s\n", value);
-}
-
-// IMPLEMENT ME RIGHT
-// this is the function that is actually called when the user clicks the connection in the GUI
-static gboolean
-test_connect_interactive(NMVpnServicePlugin *plugin,
-							NMConnection *connection,
-							GError **error){
-
-	NMSettingVpn *setting = nm_connection_get_setting_vpn(connection);
-	char *secret = nm_setting_vpn_get_secret(setting, "name");
-	char *str_setting = nm_setting_to_string(setting);
-	char *wg_quick_path = wg_quick_find_exepath();
-	char *connection_name = nm_connection_get_id(connection);
-	char *command;
-	int retcode = 1;
-
-	read_config(plugin, connection_name, error);
-
-	printf("Connecting interactively to '%s'\n", connection_name);
-	printf("===\n");
-	printf(">>> Data:\n");
-	nm_setting_vpn_foreach_data_item(setting, printme, NULL);
-	printf(">>> Secret:\n");
-	nm_setting_vpn_foreach_secret(setting, printme, NULL);
-	printf("===\n");
-
-	if(wg_quick_path == NULL){
-		_LOGW("Error: Could not find wg-quick!");
+	// take the connection details and create the configuration string from it
+	connection_config = create_config_string(connection, error);
+	if(!connection_config){
+		_LOGW("Error: Could not create configuration for connection '%s'!", connection_name);
+		g_set_error_literal(error,
+							NM_VPN_PLUGIN_ERROR,
+							NM_VPN_PLUGIN_ERROR_FAILED,
+							"Could not create configuration from connection");
 		return FALSE;
 	}
+	priv->connection_config = connection_config;
+	filename = g_strdup_printf("/tmp/%s.conf", connection_name);
+	priv->connection_file = filename;
 
-	printf("Setting to String: %s\n", str_setting);
-	printf("Secret: %s\n", secret);
+	if(!do_export(filename, connection, error)){
+		_LOGW("Error: Could not create temporary configuration file for connection '%s'", connection_name);
+		return FALSE;
+	}
+	g_chmod(filename, 0400);
 
 	// join together our command
-	// TODO sanitize the connection name before using it
-	command = g_strjoin("", wg_quick_path, " up ", connection_name);
+	command = g_strdup_printf("%s up %s", wg_quick_path, filename);
 
-	printf("Command: %s\n", command);
 	if(!g_spawn_command_line_sync(command, NULL, NULL, &retcode, error)){
 		_LOGW("An error occured while spawning wg-quick! (Error: %s)", (*error)->message);
+		return FALSE;
 	}
 
+	// remove the file and free the command string
+	g_remove(filename);
 	g_free(command);
-
-	//pids_pending_add_wg(pid, plugin);
-	//printf("PID of spawned command: %d\n", pid);
-	printf("Return code of spawned command: %d\n", retcode);
-	// note: exit code 139 means SIGSEV (program died because of segfault or so)
-	{
-		printf("WG set up and ready to go!\n");
-	}
-
-	_LOGI("Did an interactive dummy connect");
-	NM_WIREGUARD_PLUGIN_GET_PRIVATE(plugin)->interactive = TRUE;
 
 	// get ready to build the IP4 stuff and send it
 	// (required that the connection does not time-out)
-	char* tmp;
-	GVariantBuilder builder, ip4builder;
 	g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
 	g_variant_builder_init(&ip4builder, G_VARIANT_TYPE_VARDICT);
-	GVariant *config = g_variant_builder_end(&builder);
-	GVariant *ip4config = g_variant_builder_end(&ip4builder);
+	g_variant_builder_init(&ip6builder, G_VARIANT_TYPE_VARDICT);
+	config = g_variant_builder_end(&builder);
+	ip4config = g_variant_builder_end(&ip4builder);
+	ip6config = g_variant_builder_end(&ip6builder);
 	nm_vpn_service_plugin_set_config(plugin, config);
 	nm_vpn_service_plugin_set_ip4_config(plugin, ip4config);
+	nm_vpn_service_plugin_set_ip6_config(plugin, ip6config);
 
 	/*
 	[1] https://git.gnome.org/browse/network-manager-openvpn/tree/src/nm-openvpn-service-openvpn-helper.c?id=40e522aea2146ec20e0232545aa574664184be39#n114
@@ -2304,22 +2231,30 @@ test_connect_interactive(NMVpnServicePlugin *plugin,
 	[4] https://cgit.freedesktop.org/NetworkManager/NetworkManager/tree/src/vpn/nm-vpn-connection.c?id=7044febf97debaf04b7f9ca4fbb2dc24fcf1b0b0#n2072
 	*/
 
-	/*
-	// it might be easier to just do something valid, actually than trying to pull this hack
-	s = g_signal_new ("state-changed",
-					G_OBJECT_CLASS_TYPE (object_class),
-					G_SIGNAL_RUN_FIRST,
-					G_STRUCT_OFFSET (NMVpnServicePluginClass, state_changed),
-					NULL, NULL,
-					NULL,
-					G_TYPE_NONE, 1,
-					G_TYPE_UINT);
-	g_signal_emit (plugin, s, 0, NM_VPN_SERVICE_STATE_STARTED);
+	return TRUE;
+}
+// IMPLEMENT ME RIGHT
+static gboolean
+wg_connect (NMVpnServicePlugin *plugin,
+				NMConnection *connection,
+				GError **error)
+{
+	return connect_common(plugin, connection, NULL, error);
+}
 
-	// what is this? // nmdbus_vpn_plugin_emit_state_changed (priv->dbus_vpn_service_plugin, NM_VPN_SERVICE_STATE_STARTED);
-	//nm_vpn_service_plugin_set_state (plugin, NM_VPN_SERVICE_STATE_STARTED);
-	*/
+// IMPLEMENT ME RIGHT
+// this is the function that is actually called when the user clicks the connection in the GUI
+static gboolean
+wg_connect_interactive(NMVpnServicePlugin *plugin,
+							NMConnection *connection,
+							GVariant *details,
+							GError **error)
+{
+	if(!connect_common(plugin, connection, details, error)){
+		return FALSE;
+	}
 
+	NM_WIREGUARD_PLUGIN_GET_PRIVATE(plugin)->interactive = TRUE;
 	return TRUE;
 }
 
@@ -2369,12 +2304,6 @@ test_need_secrets (NMVpnServicePlugin *plugin,
 					const char **setting_name,
 					GError **error)
 {
-	NMSettingVpn *setting = nm_connection_get_setting_vpn(connection);
-	char *secret = nm_setting_vpn_get_secret(setting, "name");
-	char *str_setting = nm_setting_to_string(setting);
-
-	char *ptr = setting_name;
-	*setting_name = NM_SETTING_VPN_SETTING_NAME;
 	_LOGI("I require no secrets!");
 	return FALSE;
 }
@@ -2522,10 +2451,10 @@ nm_wireguard_plugin_class_init (NMWireguardPluginClass *plugin_class)
 
 	/* virtual methods */
 	// IMPLEMENT ME RIGHT
-	parent_class->connect      = test_connect;
-	parent_class->connect_interactive = test_connect_interactive;
+	parent_class->connect      = wg_connect;
+	parent_class->connect_interactive = wg_connect_interactive;
 	parent_class->need_secrets = test_need_secrets;
-	parent_class->disconnect   = test_disconnect;
+	parent_class->disconnect   = wg_disconnect;
 	parent_class->new_secrets  = test_new_secrets;
 }
 
