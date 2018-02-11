@@ -1183,8 +1183,8 @@ args_write_line_setting_value (GString *f,
 
 /*****************************************************************************/
 
-static GString *
-do_export_create (NMConnection *connection, const char *path, GError **error)
+GString *
+create_config_string (NMConnection *connection, GError **error)
 {
 	NMSettingConnection *s_con;
 	NMSettingVpn *s_vpn;
@@ -1202,14 +1202,6 @@ do_export_create (NMConnection *connection, const char *path, GError **error)
 	char **ip_list, **ip_iter;
 	GArray *ips;
 	nm_auto(_auto_free_gstring_p) GString *f = NULL;
-
-	if (!path || !path[0]) {
-		g_set_error_literal (error,
-		                     NMV_EDITOR_PLUGIN_ERROR,
-		                     NMV_EDITOR_PLUGIN_ERROR_FILE_NOT_VPN,
-		                     _("missing path argument"));
-		return NULL;
-	}
 
 	s_con = nm_connection_get_setting_connection (connection);
 	s_vpn = nm_connection_get_setting_vpn (connection);
@@ -1330,7 +1322,7 @@ do_export (const char *path, NMConnection *connection, GError **error)
 	nm_auto(_auto_free_gstring_p) GString *f = NULL;
 	gs_free_error GError *local = NULL;
 
-	f = do_export_create (connection, path, error);
+	f = create_config_string (connection, error);
 	if (!f)
 		return FALSE;
 

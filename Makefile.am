@@ -35,7 +35,8 @@ ui_DATA =
 
 shared_sources = \
 	shared/nm-utils/nm-shared-utils.c \
-	shared/utils.c
+	shared/utils.c \
+	shared/import-export.c
 
 ###############################################################################
 
@@ -102,9 +103,7 @@ EXTRA_DIST += \
 
 plugin_sources = \
 	properties/nm-openvpn-editor-plugin.c \
-	properties/nm-openvpn-editor-plugin.h \
-	properties/import-export.c \
-	properties/import-export.h
+	properties/nm-openvpn-editor-plugin.h
 
 editor_sources = \
 	properties/resources.c \
@@ -400,6 +399,8 @@ EXTRA_DIST += \
 	shared/nm-service-defines.h \
 	shared/utils.c \
 	shared/utils.h \
+	shared/import-export.c \
+	shared/import-export.h \
 	$(NULL)
 
 CLEANFILES += \
