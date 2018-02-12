@@ -1,6 +1,6 @@
 {
 global:
-	nm_vpn_editor_factory_openvpn;
+	nm_vpn_editor_factory_wireguard;
 local:
 	*;
 };

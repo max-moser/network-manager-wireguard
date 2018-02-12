@@ -22,11 +22,11 @@
 #ifndef __NM_SERVICE_DEFINES_H__
 #define __NM_SERVICE_DEFINES_H__
 
-#define NM_VPN_SERVICE_TYPE_OPENVPN "org.freedesktop.NetworkManager.wireguard"
+#define NM_VPN_SERVICE_TYPE_WIREGUARD "org.freedesktop.NetworkManager.wireguard"
 
-#define NM_DBUS_SERVICE_OPENVPN    "org.freedesktop.NetworkManager.wireguard"
-#define NM_DBUS_INTERFACE_OPENVPN  "org.freedesktop.NetworkManager.wireguard"
-#define NM_DBUS_PATH_OPENVPN       "/org/freedesktop/NetworkManager/wireguard"
+#define NM_DBUS_SERVICE_WIREGUARD    "org.freedesktop.NetworkManager.wireguard"
+#define NM_DBUS_INTERFACE_WIREGUARD  "org.freedesktop.NetworkManager.wireguard"
+#define NM_DBUS_PATH_WIREGUARD       "/org/freedesktop/NetworkManager/wireguard"
 
 #define NM_WG_KEY_ADDR_IP4      "local-ip4"
 #define NM_WG_KEY_ADDR_IP6      "local-ip6"

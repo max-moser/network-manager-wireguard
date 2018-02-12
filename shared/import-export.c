@@ -763,7 +763,7 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 	nm_connection_add_setting (connection, NM_SETTING (s_ip4));
 	g_object_set (s_ip4, NM_SETTING_IP_CONFIG_METHOD, NM_SETTING_IP4_CONFIG_METHOD_AUTO, NULL);
 	s_vpn = NM_SETTING_VPN (nm_setting_vpn_new ());
-	g_object_set (s_vpn, NM_SETTING_VPN_SERVICE_TYPE, NM_VPN_SERVICE_TYPE_OPENVPN, NULL);
+	g_object_set (s_vpn, NM_SETTING_VPN_SERVICE_TYPE, NM_VPN_SERVICE_TYPE_WIREGUARD, NULL);
 	nm_connection_add_setting (connection, NM_SETTING (s_vpn));
 
 	/* Get the default path for ca, cert, key file, these files maybe

@@ -41,23 +41,21 @@
 
 /*****************************************************************************/
 
-static void openvpn_editor_plugin_widget_interface_init (NMVpnEditorInterface *iface_class);
+static void wireguard_editor_plugin_widget_interface_init (NMVpnEditorInterface *iface_class);
 
-G_DEFINE_TYPE_EXTENDED (OpenvpnEditor, openvpn_editor_plugin_widget, G_TYPE_OBJECT, 0,
+G_DEFINE_TYPE_EXTENDED (WireguardEditor, wireguard_editor_plugin_widget, G_TYPE_OBJECT, 0,
                         G_IMPLEMENT_INTERFACE (NM_TYPE_VPN_EDITOR,
-                                               openvpn_editor_plugin_widget_interface_init))
+                                               wireguard_editor_plugin_widget_interface_init))
 
-#define OPENVPN_EDITOR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OPENVPN_TYPE_EDITOR, OpenvpnEditorPrivate))
+#define WIREGUARD_EDITOR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), WIREGUARD_TYPE_EDITOR, WireguardEditorPrivate))
 
 typedef struct {
 	GtkBuilder *builder;
 	GtkWidget *widget;
 	GtkWindowGroup *window_group;
 	gboolean window_added;
-	GHashTable *advanced;
 	gboolean new_connection;
-	GtkWidget *tls_user_cert_chooser;
-} OpenvpnEditorPrivate;
+} WireguardEditorPrivate;
 
 /*****************************************************************************/
 
@@ -98,10 +96,10 @@ check_interface_dns_entry(const char *str)
 	if(is_empty(str)){
 		return TRUE;
 	}
-	else if(is_ip4(str)){
+	else if(is_ip4((char *)str)){
 		return TRUE;
 	}
-	else if(is_ip6(str)){
+	else if(is_ip6((char *)str)){
 		return TRUE;
 	}
 
@@ -128,7 +126,7 @@ check_interface_private_key(const char *str)
 		return FALSE;
 	}
 	
-	// TODO
+	// TODO maybe check length, base64 encoding, ...?
 	return TRUE;
 }
 
@@ -186,7 +184,7 @@ typedef gboolean (*CheckFunc)(const char *str);
 
 // helper function to reduce boilerplate code in 'check_validity()'
 static gboolean
-check (OpenvpnEditorPrivate *priv,
+check (WireguardEditorPrivate *priv,
 		char *widget_name,
 		CheckFunc chk, const char *key,
 		gboolean set_error,
@@ -214,7 +212,7 @@ check (OpenvpnEditorPrivate *priv,
 }
 
 static void
-set_error_class(OpenvpnEditorPrivate *priv, char *widget_name, gboolean error)
+set_error_class(WireguardEditorPrivate *priv, char *widget_name, gboolean error)
 {
 	GtkWidget *widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, widget_name));
 	if(error){
@@ -226,7 +224,7 @@ set_error_class(OpenvpnEditorPrivate *priv, char *widget_name, gboolean error)
 }
 
 static gboolean
-is_filled_out(OpenvpnEditorPrivate *priv, char *widget_name)
+is_filled_out(WireguardEditorPrivate *priv, char *widget_name)
 {
 	const char *str;
 	GtkWidget *widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, widget_name));
@@ -236,13 +234,9 @@ is_filled_out(OpenvpnEditorPrivate *priv, char *widget_name)
 }
 
 static gboolean
-check_validity (OpenvpnEditor *self, GError **error)
+check_validity (WireguardEditor *self, GError **error)
 {
-	OpenvpnEditorPrivate *priv = OPENVPN_EDITOR_GET_PRIVATE (self);
-	const char *str;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	const char *contype = NULL;
+	WireguardEditorPrivate *priv = WIREGUARD_EDITOR_GET_PRIVATE (self);
 	gboolean success = TRUE;
 	gboolean ip4_ok = TRUE;
 	gboolean ip6_ok = TRUE;
@@ -311,132 +305,22 @@ check_validity (OpenvpnEditor *self, GError **error)
 		}
 	}
 
-	/*
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "auth_combo"));
-	model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
-	g_return_val_if_fail (model, FALSE);
-	success = gtk_combo_box_get_active_iter (GTK_COMBO_BOX (widget), &iter);
-	g_return_val_if_fail (success == TRUE, FALSE);
-	gtk_tree_model_get (model, &iter, COL_AUTH_TYPE, &contype, -1);
-	if (!auth_widget_check_validity (priv->builder, contype, error))
-		return FALSE;
-	*/
-
 	return success;
 }
 
 static void
 stuff_changed_cb (GtkWidget *widget, gpointer user_data)
 {
-	g_signal_emit_by_name (OPENVPN_EDITOR (user_data), "changed");
-}
-
-static void
-auth_combo_changed_cb (GtkWidget *combo, gpointer user_data)
-{
-	OpenvpnEditor *self = OPENVPN_EDITOR (user_data);
-	OpenvpnEditorPrivate *priv = OPENVPN_EDITOR_GET_PRIVATE (self);
-	GtkWidget *auth_notebook;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	gint new_page = 0;
-
-	auth_notebook = GTK_WIDGET (gtk_builder_get_object (priv->builder, "auth_notebook"));
-	g_assert (auth_notebook);
-
-	model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
-	g_assert (model);
-	g_assert (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (combo), &iter));
-
-	gtk_tree_model_get (model, &iter, COL_AUTH_PAGE, &new_page, -1);
-
-	gtk_notebook_set_current_page (GTK_NOTEBOOK (auth_notebook), new_page);
-
-	stuff_changed_cb (combo, self);
-}
-
-static void
-advanced_dialog_close_cb (GtkWidget *dialog, gpointer user_data)
-{
-	gtk_widget_hide (dialog);
-	/* gtk_widget_destroy() will remove the window from the window group */
-	gtk_widget_destroy (dialog);
-}
-
-static void
-advanced_dialog_response_cb (GtkWidget *dialog, gint response, gpointer user_data)
-{
-	OpenvpnEditor *self = OPENVPN_EDITOR (user_data);
-	OpenvpnEditorPrivate *priv = OPENVPN_EDITOR_GET_PRIVATE (self);
-	GError *error = NULL;
-
-	if (response != GTK_RESPONSE_OK) {
-		advanced_dialog_close_cb (dialog, self);
-		return;
-	}
-
-	if (priv->advanced)
-		g_hash_table_destroy (priv->advanced);
-	priv->advanced = advanced_dialog_new_hash_from_dialog (dialog, &error);
-	if (!priv->advanced) {
-		g_message ("%s: error reading advanced settings: %s", __func__, error->message);
-		g_error_free (error);
-	}
-	advanced_dialog_close_cb (dialog, self);
-
-	stuff_changed_cb (NULL, self);
-}
-
-static void
-advanced_button_clicked_cb (GtkWidget *button, gpointer user_data)
-{
-	OpenvpnEditor *self = OPENVPN_EDITOR (user_data);
-	OpenvpnEditorPrivate *priv = OPENVPN_EDITOR_GET_PRIVATE (self);
-	GtkWidget *dialog, *toplevel, *widget;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	const char *contype = NULL;
-	gboolean success;
-
-	toplevel = gtk_widget_get_toplevel (priv->widget);
-	g_return_if_fail (gtk_widget_is_toplevel (toplevel));
-
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "auth_combo"));
-	model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
-	success = gtk_combo_box_get_active_iter (GTK_COMBO_BOX (widget), &iter);
-	g_return_if_fail (success == TRUE);
-	gtk_tree_model_get (model, &iter, COL_AUTH_TYPE, &contype, -1);
-
-	dialog = advanced_dialog_new (priv->advanced, contype);
-	if (!dialog) {
-		g_warning ("%s: failed to create the Advanced dialog!", __func__);
-		return;
-	}
-
-	gtk_window_group_add_window (priv->window_group, GTK_WINDOW (dialog));
-	if (!priv->window_added) {
-		gtk_window_group_add_window (priv->window_group, GTK_WINDOW (toplevel));
-		priv->window_added = TRUE;
-	}
-
-	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (toplevel));
-	g_signal_connect (G_OBJECT (dialog), "response", G_CALLBACK (advanced_dialog_response_cb), self);
-	g_signal_connect (G_OBJECT (dialog), "close", G_CALLBACK (advanced_dialog_close_cb), self);
-
-	gtk_widget_show_all (dialog);
+	g_signal_emit_by_name (WIREGUARD_EDITOR (user_data), "changed");
 }
 
 static gboolean
-init_editor_plugin (OpenvpnEditor *self, NMConnection *connection, GError **error)
+init_editor_plugin (WireguardEditor *self, NMConnection *connection, GError **error)
 {
-	OpenvpnEditorPrivate *priv = OPENVPN_EDITOR_GET_PRIVATE (self);
+	WireguardEditorPrivate *priv = WIREGUARD_EDITOR_GET_PRIVATE (self);
 	NMSettingVpn *s_vpn;
 	GtkWidget *widget;
-	GtkListStore *store;
-	GtkTreeIter iter;
-	int active = -1;
 	const char *value;
-	const char *contype = NM_OPENVPN_CONTYPE_TLS;
 
 	s_vpn = nm_connection_get_setting_vpn (connection);
 
@@ -581,137 +465,16 @@ init_editor_plugin (OpenvpnEditor *self, NMConnection *connection, GError **erro
 	}
 	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (stuff_changed_cb), self);
 
-	
-	/*
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "auth_combo"));
-	g_return_val_if_fail (widget != NULL, FALSE);
-
-	store = gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
-	*/
-
-	/*
-	if (s_vpn) {
-		contype = nm_setting_vpn_get_data_item (s_vpn, NM_OPENVPN_KEY_CONNECTION_TYPE);
-		if (contype) {
-			if (   strcmp (contype, NM_OPENVPN_CONTYPE_TLS)
-			    && strcmp (contype, NM_OPENVPN_CONTYPE_STATIC_KEY)
-			    && strcmp (contype, NM_OPENVPN_CONTYPE_PASSWORD)
-			    && strcmp (contype, NM_OPENVPN_CONTYPE_PASSWORD_TLS))
-				contype = NM_OPENVPN_CONTYPE_TLS;
-		} else
-			contype = NM_OPENVPN_CONTYPE_TLS;
-	}
-	*/
-
-	/* TLS auth widget */
-	/*
-		tls_pw_init_auth_widget (priv->builder, s_vpn,
-	                         NM_OPENVPN_CONTYPE_TLS, "tls",
-	                         stuff_changed_cb, self);
-	gtk_list_store_append (store, &iter);
-	gtk_list_store_set (store, &iter,
-	                    COL_AUTH_NAME, _("Certificates (TLS)"),
-	                    COL_AUTH_PAGE, 0,
-	                    COL_AUTH_TYPE, NM_OPENVPN_CONTYPE_TLS,
-	                    -1);
-						*/
-
-	/* Password auth widget */
-	/*
-	tls_pw_init_auth_widget (priv->builder, s_vpn,
-	                         NM_OPENVPN_CONTYPE_PASSWORD, "pw",
-	                         stuff_changed_cb, self);
-	gtk_list_store_append (store, &iter);
-	gtk_list_store_set (store, &iter,
-	                    COL_AUTH_NAME, _("Password"),
-	                    COL_AUTH_PAGE, 1,
-	                    COL_AUTH_TYPE, NM_OPENVPN_CONTYPE_PASSWORD,
-	                    -1);
-	if ((active < 0) && !strcmp (contype, NM_OPENVPN_CONTYPE_PASSWORD))
-		active = 1;
-		*/
-
-	/* Password+TLS auth widget */
-	/*
-	tls_pw_init_auth_widget (priv->builder, s_vpn,
-	                         NM_OPENVPN_CONTYPE_PASSWORD_TLS, "pw_tls",
-	                         stuff_changed_cb, self);
-	gtk_list_store_append (store, &iter);
-	gtk_list_store_set (store, &iter,
-	                    COL_AUTH_NAME, _("Password with Certificates (TLS)"),
-	                    COL_AUTH_PAGE, 2,
-	                    COL_AUTH_TYPE, NM_OPENVPN_CONTYPE_PASSWORD_TLS,
-	                    -1);
-	if ((active < 0) && !strcmp (contype, NM_OPENVPN_CONTYPE_PASSWORD_TLS))
-		active = 2;
-		*/
-
-	/* Static key auth widget */
-	/*
-	sk_init_auth_widget (priv->builder, s_vpn, stuff_changed_cb, self);
-
-	gtk_list_store_append (store, &iter);
-	gtk_list_store_set (store, &iter,
-	                    COL_AUTH_NAME, _("Static Key"),
-	                    COL_AUTH_PAGE, 3,
-	                    COL_AUTH_TYPE, NM_OPENVPN_CONTYPE_STATIC_KEY,
-	                    -1);
-	if ((active < 0) && !strcmp (contype, NM_OPENVPN_CONTYPE_STATIC_KEY))
-		active = 3;
-
-	gtk_combo_box_set_model (GTK_COMBO_BOX (widget), GTK_TREE_MODEL (store));
-	g_object_unref (store);
-	g_signal_connect (widget, "changed", G_CALLBACK (auth_combo_changed_cb), self);
-	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), active < 0 ? 0 : active);
-
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "advanced_button"));
-	g_signal_connect (G_OBJECT (widget), "clicked", G_CALLBACK (advanced_button_clicked_cb), self);
-	*/
-
 	return TRUE;
 }
 
 static GObject *
 get_widget (NMVpnEditor *iface)
 {
-	OpenvpnEditor *self = OPENVPN_EDITOR (iface);
-	OpenvpnEditorPrivate *priv = OPENVPN_EDITOR_GET_PRIVATE (self);
+	WireguardEditor *self = WIREGUARD_EDITOR (iface);
+	WireguardEditorPrivate *priv = WIREGUARD_EDITOR_GET_PRIVATE (self);
 
 	return G_OBJECT (priv->widget);
-}
-
-static void
-hash_copy_advanced (gpointer key, gpointer data, gpointer user_data)
-{
-	NMSettingVpn *s_vpn = NM_SETTING_VPN (user_data);
-	const char *value = (const char *) data;
-
-	g_return_if_fail (value && strlen (value));
-
-	/* HTTP Proxy password is a secret, not a data item */
-	if (!strcmp (key, NM_OPENVPN_KEY_HTTP_PROXY_PASSWORD))
-		nm_setting_vpn_add_secret (s_vpn, (const char *) key, value);
-	else
-		nm_setting_vpn_add_data_item (s_vpn, (const char *) key, value);
-}
-
-static char *
-get_auth_type (GtkBuilder *builder)
-{
-	GtkComboBox *combo;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	char *auth_type = NULL;
-	gboolean success;
-
-	combo = GTK_COMBO_BOX (GTK_WIDGET (gtk_builder_get_object (builder, "auth_combo")));
-	model = gtk_combo_box_get_model (combo);
-
-	success = gtk_combo_box_get_active_iter (combo, &iter);
-	g_return_val_if_fail (success == TRUE, NULL);
-	gtk_tree_model_get (model, &iter, COL_AUTH_TYPE, &auth_type, -1);
-
-	return auth_type;
 }
 
 static gboolean
@@ -719,11 +482,10 @@ update_connection (NMVpnEditor *iface,
                    NMConnection *connection,
                    GError **error)
 {
-	OpenvpnEditor *self = OPENVPN_EDITOR (iface);
-	OpenvpnEditorPrivate *priv = OPENVPN_EDITOR_GET_PRIVATE (self);
+	WireguardEditor *self = WIREGUARD_EDITOR (iface);
+	WireguardEditorPrivate *priv = WIREGUARD_EDITOR_GET_PRIVATE (self);
 	NMSettingVpn *s_vpn;
 	GtkWidget *widget;
-	char *auth_type;
 	const char *str;
 	gboolean valid = FALSE;
 
@@ -731,7 +493,7 @@ update_connection (NMVpnEditor *iface,
 		return FALSE;
 
 	s_vpn = NM_SETTING_VPN (nm_setting_vpn_new ());
-	g_object_set (s_vpn, NM_SETTING_VPN_SERVICE_TYPE, NM_VPN_SERVICE_TYPE_OPENVPN, NULL);
+	g_object_set (s_vpn, NM_SETTING_VPN_SERVICE_TYPE, NM_VPN_SERVICE_TYPE_WIREGUARD, NULL);
 
 	// local ip4
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_ip4_entry"));
@@ -817,46 +579,6 @@ update_connection (NMVpnEditor *iface,
 	if (str && str[0])
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_ENDPOINT, str);
 
-	/*
-	auth_type = get_auth_type (priv->builder);
-	if (auth_type) {
-		nm_setting_vpn_add_data_item (s_vpn, NM_OPENVPN_KEY_CONNECTION_TYPE, auth_type);
-		auth_widget_update_connection (priv->builder, auth_type, s_vpn);
-		g_free (auth_type);
-	}
-	*/
-
-	/*
-	if (priv->advanced)
-		g_hash_table_foreach (priv->advanced, hash_copy_advanced, s_vpn);
-	*/
-
-	/* Default to agent-owned secrets for new connections */
-	/*
-	if (priv->new_connection) {
-		if (nm_setting_vpn_get_secret (s_vpn, NM_OPENVPN_KEY_HTTP_PROXY_PASSWORD)) {
-			nm_setting_set_secret_flags (NM_SETTING (s_vpn),
-			                             NM_OPENVPN_KEY_HTTP_PROXY_PASSWORD,
-			                             NM_SETTING_SECRET_FLAG_AGENT_OWNED,
-			                             NULL);
-		}
-
-		if (nm_setting_vpn_get_secret (s_vpn, NM_OPENVPN_KEY_PASSWORD)) {
-			nm_setting_set_secret_flags (NM_SETTING (s_vpn),
-			                             NM_OPENVPN_KEY_PASSWORD,
-			                             NM_SETTING_SECRET_FLAG_AGENT_OWNED,
-			                             NULL);
-		}
-
-		if (nm_setting_vpn_get_secret (s_vpn, NM_OPENVPN_KEY_CERTPASS)) {
-			nm_setting_set_secret_flags (NM_SETTING (s_vpn),
-			                             NM_OPENVPN_KEY_CERTPASS,
-			                             NM_SETTING_SECRET_FLAG_AGENT_OWNED,
-			                             NULL);
-		}
-	}
-	*/
-
 	nm_connection_add_setting (connection, NM_SETTING (s_vpn));
 	valid = TRUE;
 
@@ -875,28 +597,28 @@ is_new_func (const char *key, const char *value, gpointer user_data)
 /*****************************************************************************/
 
 static void
-openvpn_editor_plugin_widget_init (OpenvpnEditor *plugin)
+wireguard_editor_plugin_widget_init (WireguardEditor *plugin)
 {
 }
 
 NMVpnEditor *
-openvpn_editor_new (NMConnection *connection, GError **error)
+wireguard_editor_new (NMConnection *connection, GError **error)
 {
 	NMVpnEditor *object;
-	OpenvpnEditorPrivate *priv;
+	WireguardEditorPrivate *priv;
 	gboolean new = TRUE;
 	NMSettingVpn *s_vpn;
 
 	if (error)
 		g_return_val_if_fail (*error == NULL, NULL);
 
-	object = g_object_new (OPENVPN_TYPE_EDITOR, NULL);
+	object = g_object_new (WIREGUARD_TYPE_EDITOR, NULL);
 	if (!object) {
-		g_set_error_literal (error, NMV_EDITOR_PLUGIN_ERROR, 0, _("could not create openvpn object"));
+		g_set_error_literal (error, NMV_EDITOR_PLUGIN_ERROR, 0, "Could not create wireguard object");
 		return NULL;
 	}
 
-	priv = OPENVPN_EDITOR_GET_PRIVATE (object);
+	priv = WIREGUARD_EDITOR_GET_PRIVATE (object);
 
 	priv->builder = gtk_builder_new ();
 
@@ -923,18 +645,10 @@ openvpn_editor_new (NMConnection *connection, GError **error)
 		nm_setting_vpn_foreach_data_item (s_vpn, is_new_func, &new);
 	priv->new_connection = new;
 
-	if (!init_editor_plugin (OPENVPN_EDITOR (object), connection, error)) {
+	if (!init_editor_plugin (WIREGUARD_EDITOR (object), connection, error)) {
 		g_object_unref (object);
 		return NULL;
 	}
-
-	/*
-	priv->advanced = advanced_dialog_new_hash_from_connection (connection, error);
-	if (!priv->advanced) {
-		g_object_unref (object);
-		return NULL;
-	}
-	*/
 
 	return object;
 }
@@ -942,8 +656,8 @@ openvpn_editor_new (NMConnection *connection, GError **error)
 static void
 dispose (GObject *object)
 {
-	OpenvpnEditor *plugin = OPENVPN_EDITOR (object);
-	OpenvpnEditorPrivate *priv = OPENVPN_EDITOR_GET_PRIVATE (plugin);
+	WireguardEditor *plugin = WIREGUARD_EDITOR (object);
+	WireguardEditorPrivate *priv = WIREGUARD_EDITOR_GET_PRIVATE (plugin);
 
 	g_clear_object (&priv->window_group);
 
@@ -951,13 +665,11 @@ dispose (GObject *object)
 
 	g_clear_object (&priv->builder);
 
-	g_clear_pointer (&priv->advanced, g_hash_table_destroy);
-
-	G_OBJECT_CLASS (openvpn_editor_plugin_widget_parent_class)->dispose (object);
+	G_OBJECT_CLASS (wireguard_editor_plugin_widget_parent_class)->dispose (object);
 }
 
 static void
-openvpn_editor_plugin_widget_interface_init (NMVpnEditorInterface *iface_class)
+wireguard_editor_plugin_widget_interface_init (NMVpnEditorInterface *iface_class)
 {
 	/* interface implementation */
 	iface_class->get_widget = get_widget;
@@ -965,11 +677,11 @@ openvpn_editor_plugin_widget_interface_init (NMVpnEditorInterface *iface_class)
 }
 
 static void
-openvpn_editor_plugin_widget_class_init (OpenvpnEditorClass *req_class)
+wireguard_editor_plugin_widget_class_init (WireguardEditorClass *req_class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (req_class);
 
-	g_type_class_add_private (req_class, sizeof (OpenvpnEditorPrivate));
+	g_type_class_add_private (req_class, sizeof (WireguardEditorPrivate));
 
 	object_class->dispose = dispose;
 }
@@ -981,13 +693,13 @@ openvpn_editor_plugin_widget_class_init (OpenvpnEditorClass *req_class)
 #include "nm-wireguard-editor-plugin.h"
 
 G_MODULE_EXPORT NMVpnEditor *
-nm_vpn_editor_factory_openvpn (NMVpnEditorPlugin *editor_plugin,
+nm_vpn_editor_factory_wireguard (NMVpnEditorPlugin *editor_plugin,
                                NMConnection *connection,
                                GError **error)
 {
 	g_return_val_if_fail (!error || !*error, NULL);
 
-	return openvpn_editor_new (connection, error);
+	return wireguard_editor_new (connection, error);
 }
 #endif
 

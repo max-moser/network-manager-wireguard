@@ -20,37 +20,37 @@
  *
  **************************************************************************/
 
-#ifndef __NM_OPENVPN_EDITOR_PLUGIN_H__
-#define __NM_OPENVPN_EDITOR_PLUGIN_H__
+#ifndef __NM_WIREGUARD_EDITOR_PLUGIN_H__
+#define __NM_WIREGUARD_EDITOR_PLUGIN_H__
 
-#define OPENVPN_TYPE_EDITOR_PLUGIN                (openvpn_editor_plugin_get_type ())
-#define OPENVPN_EDITOR_PLUGIN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), OPENVPN_TYPE_EDITOR_PLUGIN, OpenvpnEditorPlugin))
-#define OPENVPN_EDITOR_PLUGIN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), OPENVPN_TYPE_EDITOR_PLUGIN, OpenvpnEditorPluginClass))
-#define OPENVPN_IS_EDITOR_PLUGIN(obj)             (G_TYPE_CHECK_INSTANCE_TYPE ((obj), OPENVPN_TYPE_EDITOR_PLUGIN))
-#define OPENVPN_IS_EDITOR_PLUGIN_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE ((klass), OPENVPN_TYPE_EDITOR_PLUGIN))
-#define OPENVPN_EDITOR_PLUGIN_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), OPENVPN_TYPE_EDITOR_PLUGIN, OpenvpnEditorPluginClass))
+#define WIREGUARD_TYPE_EDITOR_PLUGIN                (wireguard_editor_plugin_get_type ())
+#define WIREGUARD_EDITOR_PLUGIN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), WIREGUARD_TYPE_EDITOR_PLUGIN, WireguardEditorPlugin))
+#define WIREGUARD_EDITOR_PLUGIN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), WIREGUARD_TYPE_EDITOR_PLUGIN, WireguardEditorPluginClass))
+#define WIREGUARD_IS_EDITOR_PLUGIN(obj)             (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WIREGUARD_TYPE_EDITOR_PLUGIN))
+#define WIREGUARD_IS_EDITOR_PLUGIN_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE ((klass), WIREGUARD_TYPE_EDITOR_PLUGIN))
+#define WIREGUARD_EDITOR_PLUGIN_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), WIREGUARD_TYPE_EDITOR_PLUGIN, WireguardEditorPluginClass))
 
-typedef struct _OpenvpnEditorPlugin OpenvpnEditorPlugin;
-typedef struct _OpenvpnEditorPluginClass OpenvpnEditorPluginClass;
+typedef struct _WireguardEditorPlugin WireguardEditorPlugin;
+typedef struct _WireguardEditorPluginClass WireguardEditorPluginClass;
 
-struct _OpenvpnEditorPlugin {
+struct _WireguardEditorPlugin {
 	GObject parent;
 };
 
-struct _OpenvpnEditorPluginClass {
+struct _WireguardEditorPluginClass {
 	GObjectClass parent;
 };
 
-GType openvpn_editor_plugin_get_type (void);
+GType wireguard_editor_plugin_get_type (void);
 
 typedef NMVpnEditor *(*NMVpnEditorFactory) (NMVpnEditorPlugin *editor_plugin,
                                             NMConnection *connection,
                                             GError **error);
 
 NMVpnEditor *
-nm_vpn_editor_factory_openvpn (NMVpnEditorPlugin *editor_plugin,
+nm_vpn_editor_factory_wireguard (NMVpnEditorPlugin *editor_plugin,
                                NMConnection *connection,
                                GError **error);
 
-#endif /* __NM_OPENVPN_EDITOR_PLUGIN_H__ */
+#endif /* __NM_WIREGUARD_EDITOR_PLUGIN_H__ */
 

@@ -20,30 +20,30 @@
  *
  **************************************************************************/
 
-#ifndef __NM_OPENVPN_EDITOR_H__
-#define __NM_OPENVPN_EDITOR_H__
+#ifndef __NM_WIREGUARD_EDITOR_H__
+#define __NM_WIREGUARD_EDITOR_H__
 
-#define OPENVPN_TYPE_EDITOR            (openvpn_editor_plugin_widget_get_type ())
-#define OPENVPN_EDITOR(obj)                      (G_TYPE_CHECK_INSTANCE_CAST ((obj), OPENVPN_TYPE_EDITOR, OpenvpnEditor))
-#define OPENVPN_EDITOR_CLASS(klass)              (G_TYPE_CHECK_CLASS_CAST ((klass), OPENVPN_TYPE_EDITOR, OpenvpnEditorClass))
-#define OPENVPN_IS_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), OPENVPN_TYPE_EDITOR))
-#define OPENVPN_IS_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), OPENVPN_TYPE_EDITOR))
-#define OPENVPN_EDITOR_GET_CLASS(obj)            (G_TYPE_INSTANCE_GET_CLASS ((obj), OPENVPN_TYPE_EDITOR, OpenvpnEditorClass))
+#define WIREGUARD_TYPE_EDITOR            (wireguard_editor_plugin_widget_get_type ())
+#define WIREGUARD_EDITOR(obj)                      (G_TYPE_CHECK_INSTANCE_CAST ((obj), WIREGUARD_TYPE_EDITOR, WireguardEditor))
+#define WIREGUARD_EDITOR_CLASS(klass)              (G_TYPE_CHECK_CLASS_CAST ((klass), WIREGUARD_TYPE_EDITOR, WireguardEditorClass))
+#define WIREGUARD_IS_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WIREGUARD_TYPE_EDITOR))
+#define WIREGUARD_IS_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), WIREGUARD_TYPE_EDITOR))
+#define WIREGUARD_EDITOR_GET_CLASS(obj)            (G_TYPE_INSTANCE_GET_CLASS ((obj), WIREGUARD_TYPE_EDITOR, WireguardEditorClass))
 
-typedef struct _OpenvpnEditor OpenvpnEditor;
-typedef struct _OpenvpnEditorClass OpenvpnEditorClass;
+typedef struct _WireguardEditor WireguardEditor;
+typedef struct _WireguardEditorClass WireguardEditorClass;
 
-struct _OpenvpnEditor {
+struct _WireguardEditor {
 	GObject parent;
 };
 
-struct _OpenvpnEditorClass {
+struct _WireguardEditorClass {
 	GObjectClass parent;
 };
 
-GType openvpn_editor_plugin_widget_get_type (void);
+GType wireguard_editor_plugin_widget_get_type (void);
 
-NMVpnEditor *openvpn_editor_new (NMConnection *connection, GError **error);
+NMVpnEditor *wireguard_editor_new (NMConnection *connection, GError **error);
 
-#endif	/* __NM_OPENVPN_EDITOR_H__ */
+#endif	/* __NM_WIREGUARD_EDITOR_H__ */
 

@@ -609,7 +609,7 @@ main (int argc, char *argv[])
 	NMWireguardPlugin *plugin;
 	gboolean persist = FALSE;
 	GOptionContext *opt_ctx = NULL;
-	gchar *bus_name = NM_DBUS_SERVICE_OPENVPN;
+	gchar *bus_name = NM_DBUS_SERVICE_WIREGUARD;
 	GError *error = NULL;
 	GMainLoop *loop;
 

@@ -490,8 +490,8 @@ main (int argc, char *argv[])
 	// the parameters are supplied via arguments
 	printf("UUID: %s, Name: %s, Service: %s\n", vpn_uuid, vpn_name, vpn_service);
 
-	if (strcmp (vpn_service, NM_VPN_SERVICE_TYPE_OPENVPN) != 0) {
-		fprintf (stderr, "This dialog only works with the '%s' service\n", NM_VPN_SERVICE_TYPE_OPENVPN);
+	if (strcmp (vpn_service, NM_VPN_SERVICE_TYPE_WIREGUARD) != 0) {
+		fprintf (stderr, "This dialog only works with the '%s' service\n", NM_VPN_SERVICE_TYPE_WIREGUARD);
 		return EXIT_FAILURE;
 	}
 

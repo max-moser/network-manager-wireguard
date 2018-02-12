@@ -116,7 +116,7 @@ _create_plugin (void)
 
 	plugin = nm_vpn_editor_plugin_factory (&error);
 	g_assert_no_error (error);
-	g_assert (OPENVPN_IS_EDITOR_PLUGIN (plugin));
+	g_assert (WIREGUARD_IS_EDITOR_PLUGIN (plugin));
 	return plugin;
 }
 #define _CREATE_PLUGIN(plugin) \
