@@ -74,18 +74,6 @@ src_nm_wireguard_service_LDADD = \
 EXTRA_src_nm_wireguard_service_DEPENDENCIES = \
 	linker-script-binary.ver
 
-libexec_PROGRAMS += src/nm-openvpn-service-openvpn-helper
-
-src_nm_openvpn_service_openvpn_helper_CPPFLAGS = $(src_cppflags)
-src_nm_openvpn_service_openvpn_helper_LDFLAGS = \
-	-Wl,--version-script="$(srcdir)/linker-script-binary.ver"
-src_nm_openvpn_service_openvpn_helper_LDADD = \
-	src/libnm-utils.la \
-	$(GLIB_LIBS) \
-	$(LIBNM_LIBS)
-EXTRA_src_nm_openvpn_service_openvpn_helper_DEPENDENCIES = \
-	linker-script-binary.ver
-
 ###############################################################################
 
 properties/resources.h: properties/gresource.xml
