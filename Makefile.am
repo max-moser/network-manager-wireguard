@@ -48,7 +48,7 @@ src_cppflags = \
 	-DLIBEXECDIR=\""$(libexecdir)"\" \
 	-DLOCALSTATEDIR=\""$(localstatedir)"\" \
 	-DDATADIR=\"$(datadir)\" \
-	-DNM_OPENVPN_LOCALEDIR=\"$(datadir)/locale\" \
+	-DNM_WIREGUARD_LOCALEDIR=\"$(datadir)/locale\" \
 	-DG_LOG_DOMAIN=\"nm-wireguard\" \
 	-I$(srcdir)/shared \
 	$(GLIB_CFLAGS) \
@@ -102,14 +102,14 @@ EXTRA_DIST += \
 	properties/gresource.xml
 
 plugin_sources = \
-	properties/nm-openvpn-editor-plugin.c \
-	properties/nm-openvpn-editor-plugin.h
+	properties/nm-wireguard-editor-plugin.c \
+	properties/nm-wireguard-editor-plugin.h
 
 editor_sources = \
 	properties/resources.c \
 	properties/resources.h \
-	properties/nm-openvpn-editor.c \
-	properties/nm-openvpn-editor.h \
+	properties/nm-wireguard-editor.c \
+	properties/nm-wireguard-editor.h \
 	properties/auth-helpers.c \
 	properties/auth-helpers.h
 
@@ -121,88 +121,88 @@ properties_cppflags = \
 
 ###############################################################################
 
-noinst_LTLIBRARIES += properties/libnm-vpn-plugin-openvpn-utils.la
+noinst_LTLIBRARIES += properties/libnm-vpn-plugin-wireguard-utils.la
 
-properties_libnm_vpn_plugin_openvpn_utils_la_SOURCES = \
+properties_libnm_vpn_plugin_wireguard_utils_la_SOURCES = \
 	$(shared_sources)
 
-properties_libnm_vpn_plugin_openvpn_utils_la_CPPFLAGS = \
+properties_libnm_vpn_plugin_wireguard_utils_la_CPPFLAGS = \
 	-DNETWORKMANAGER_COMPILATION=NM_NETWORKMANAGER_COMPILATION_LIB_BASE \
 	-DNM_PLUGIN_DIR=\"$(NM_PLUGIN_DIR)\" \
 	$(properties_cppflags) \
 	$(LIBNM_CFLAGS)
 
-properties_libnm_vpn_plugin_openvpn_utils_la_LIBADD = \
+properties_libnm_vpn_plugin_wireguard_utils_la_LIBADD = \
 	$(LIBNM_LIBS) \
 	$(DL_LIBS)
 
-noinst_LTLIBRARIES += properties/libnm-vpn-plugin-openvpn-core.la
+noinst_LTLIBRARIES += properties/libnm-vpn-plugin-wireguard-core.la
 
-properties_libnm_vpn_plugin_openvpn_core_la_SOURCES = \
+properties_libnm_vpn_plugin_wireguard_core_la_SOURCES = \
 	shared/nm-utils/nm-vpn-plugin-utils.c \
 	shared/nm-utils/nm-vpn-plugin-utils.h \
 	shared/nm-utils/nm-vpn-plugin-macros.h \
 	$(plugin_sources)
 
-properties_libnm_vpn_plugin_openvpn_core_la_CPPFLAGS = \
+properties_libnm_vpn_plugin_wireguard_core_la_CPPFLAGS = \
 	-DNETWORKMANAGER_COMPILATION=NM_NETWORKMANAGER_COMPILATION_LIB_BASE \
 	-DNM_PLUGIN_DIR=\"$(NM_PLUGIN_DIR)\" \
 	$(properties_cppflags) \
 	$(LIBNM_CFLAGS)
 
-properties_libnm_vpn_plugin_openvpn_core_la_LIBADD = \
-	properties/libnm-vpn-plugin-openvpn-utils.la \
+properties_libnm_vpn_plugin_wireguard_core_la_LIBADD = \
+	properties/libnm-vpn-plugin-wireguard-utils.la \
 	$(LIBNM_LIBS) \
 	$(DL_LIBS)
 
-plugin_LTLIBRARIES += properties/libnm-vpn-plugin-openvpn.la
+plugin_LTLIBRARIES += properties/libnm-vpn-plugin-wireguard.la
 
-properties_libnm_vpn_plugin_openvpn_la_SOURCES =
-properties_libnm_vpn_plugin_openvpn_la_LIBADD = \
-	properties/libnm-vpn-plugin-openvpn-core.la
-properties_libnm_vpn_plugin_openvpn_la_LDFLAGS = \
+properties_libnm_vpn_plugin_wireguard_la_SOURCES =
+properties_libnm_vpn_plugin_wireguard_la_LIBADD = \
+	properties/libnm-vpn-plugin-wireguard-core.la
+properties_libnm_vpn_plugin_wireguard_la_LDFLAGS = \
 	-avoid-version \
-	-Wl,--version-script=$(srcdir)/properties/libnm-vpn-plugin-openvpn.ver
+	-Wl,--version-script=$(srcdir)/properties/libnm-vpn-plugin-wireguard.ver
 
 ###############################################################################
 
 if WITH_GNOME
-plugin_LTLIBRARIES += properties/libnm-vpn-plugin-openvpn-editor.la
+plugin_LTLIBRARIES += properties/libnm-vpn-plugin-wireguard-editor.la
 endif
 
-properties_libnm_vpn_plugin_openvpn_editor_la_SOURCES = \
+properties_libnm_vpn_plugin_wireguard_editor_la_SOURCES = \
 	$(editor_sources)
 
-properties_libnm_vpn_plugin_openvpn_editor_la_CPPFLAGS = \
+properties_libnm_vpn_plugin_wireguard_editor_la_CPPFLAGS = \
 	-DNETWORKMANAGER_COMPILATION=NM_NETWORKMANAGER_COMPILATION_LIB_EDITOR \
 	$(properties_cppflags) \
 	$(GTK_CFLAGS) \
 	$(LIBNM_CFLAGS) \
 	$(LIBNMA_CFLAGS)
 
-properties_libnm_vpn_plugin_openvpn_editor_la_LIBADD = \
-	properties/libnm-vpn-plugin-openvpn-utils.la \
+properties_libnm_vpn_plugin_wireguard_editor_la_LIBADD = \
+	properties/libnm-vpn-plugin-wireguard-utils.la \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
 	$(LIBNM_LIBS) \
 	$(LIBNMA_LIBS)
 
-properties_libnm_vpn_plugin_openvpn_editor_la_LDFLAGS = \
+properties_libnm_vpn_plugin_wireguard_editor_la_LDFLAGS = \
 	-avoid-version \
-	-Wl,--version-script=$(srcdir)/properties/libnm-vpn-plugin-openvpn-editor.ver
+	-Wl,--version-script=$(srcdir)/properties/libnm-vpn-plugin-wireguard-editor.ver
 
 ###############################################################################
 
 if WITH_LIBNM_GLIB
-noinst_LTLIBRARIES += properties/libnm-openvpn-properties-core.la
+noinst_LTLIBRARIES += properties/libnm-wireguard-properties-core.la
 endif
 
-properties_libnm_openvpn_properties_core_la_SOURCES = \
+properties_libnm_wireguard_properties_core_la_SOURCES = \
 	$(shared_sources) \
 	$(plugin_sources) \
 	$(editor_sources)
 
-properties_libnm_openvpn_properties_core_la_CPPFLAGS = \
+properties_libnm_wireguard_properties_core_la_CPPFLAGS = \
 	-DNM_VPN_OLD \
 	-DNETWORKMANAGER_COMPILATION=NM_NETWORKMANAGER_COMPILATION_LIB \
 	$(properties_cppflags) \
@@ -210,7 +210,7 @@ properties_libnm_openvpn_properties_core_la_CPPFLAGS = \
 	$(LIBNM_GLIB_CFLAGS) \
 	$(LIBNM_GTK_CFLAGS)
 
-properties_libnm_openvpn_properties_core_la_LIBADD = \
+properties_libnm_wireguard_properties_core_la_LIBADD = \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
 	$(LIBNM_GLIB_LIBS) \
@@ -218,20 +218,20 @@ properties_libnm_openvpn_properties_core_la_LIBADD = \
 
 
 if WITH_LIBNM_GLIB
-plugin_LTLIBRARIES += properties/libnm-openvpn-properties.la
+plugin_LTLIBRARIES += properties/libnm-wireguard-properties.la
 endif
 
-properties_libnm_openvpn_properties_la_SOURCES =
-properties_libnm_openvpn_properties_la_LIBADD = \
-	properties/libnm-openvpn-properties-core.la
-properties_libnm_openvpn_properties_la_LDFLAGS = \
+properties_libnm_wireguard_properties_la_SOURCES =
+properties_libnm_wireguard_properties_la_LIBADD = \
+	properties/libnm-wireguard-properties-core.la
+properties_libnm_wireguard_properties_la_LDFLAGS = \
 	-avoid-version \
-	-Wl,--version-script=$(srcdir)/properties/libnm-openvpn-properties.ver
+	-Wl,--version-script=$(srcdir)/properties/libnm-wireguard-properties.ver
 
 EXTRA_DIST += \
-	properties/libnm-vpn-plugin-openvpn.ver \
-	properties/libnm-vpn-plugin-openvpn-editor.ver \
-	properties/libnm-openvpn-properties.ver \
+	properties/libnm-vpn-plugin-wireguard.ver \
+	properties/libnm-vpn-plugin-wireguard-editor.ver \
+	properties/libnm-wireguard-properties.ver \
 	properties/nm-wireguard-dialog.ui
 
 ###############################################################################
@@ -255,7 +255,7 @@ properties_tests_test_import_export_CPPFLAGS = \
 	$(LIBNMA_CFLAGS)
 
 properties_tests_test_import_export_LDADD = \
-	properties/libnm-vpn-plugin-openvpn-core.la \
+	properties/libnm-vpn-plugin-wireguard-core.la \
 	$(GLIB_LIBS) \
 	$(LIBNM_LIBS) \
 	$(LIBNMA_LIBS)
@@ -276,7 +276,7 @@ properties_tests_test_import_export_glib_CPPFLAGS = \
 	$(LIBNM_GTK_CFLAGS)
 
 properties_tests_test_import_export_glib_LDADD = \
-	properties/libnm-openvpn-properties-core.la \
+	properties/libnm-wireguard-properties-core.la \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
 	$(LIBNM_GLIB_LIBS) \
@@ -316,13 +316,13 @@ EXTRA_DIST += \
 ###############################################################################
 
 if WITH_GNOME
-libexec_PROGRAMS += auth-dialog/nm-openvpn-auth-dialog
+libexec_PROGRAMS += auth-dialog/nm-wireguard-auth-dialog
 endif
 
-auth_dialog_nm_openvpn_auth_dialog_SOURCES = \
+auth_dialog_nm_wireguard_auth_dialog_SOURCES = \
 	$(shared_sources) \
 	auth-dialog/main.c
-auth_dialog_nm_openvpn_auth_dialog_CPPFLAGS = \
+auth_dialog_nm_wireguard_auth_dialog_CPPFLAGS = \
 	-DICONDIR=\""$(datadir)/pixmaps"\" \
 	-DBINDIR=\""$(bindir)"\" \
 	-DGNOMELOCALEDIR=\"$(datadir)/locale\" \
@@ -332,15 +332,15 @@ auth_dialog_nm_openvpn_auth_dialog_CPPFLAGS = \
 	$(LIBNM_CFLAGS) \
 	$(LIBNMA_CFLAGS) \
 	$(LIBSECRET_CFLAGS)
-auth_dialog_nm_openvpn_auth_dialog_LDFLAGS = \
+auth_dialog_nm_wireguard_auth_dialog_LDFLAGS = \
 	-Wl,--version-script="$(srcdir)/linker-script-binary.ver"
-auth_dialog_nm_openvpn_auth_dialog_LDADD = \
+auth_dialog_nm_wireguard_auth_dialog_LDADD = \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
 	$(LIBNM_LIBS) \
 	$(LIBNMA_LIBS) \
 	$(LIBSECRET_LIBS)
-EXTRA_auth_dialog_nm_openvpn_auth_dialog_DEPENDENCIES = \
+EXTRA_auth_dialog_nm_wireguard_auth_dialog_DEPENDENCIES = \
 	linker-script-binary.ver
 
 ###############################################################################

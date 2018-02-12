@@ -27,7 +27,7 @@
 
 #include "nm-default.h"
 
-#include "nm-openvpn-editor.h"
+#include "nm-wireguard-editor.h"
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -978,7 +978,7 @@ openvpn_editor_plugin_widget_class_init (OpenvpnEditorClass *req_class)
 
 #ifndef NM_VPN_OLD
 
-#include "nm-openvpn-editor-plugin.h"
+#include "nm-wireguard-editor-plugin.h"
 
 G_MODULE_EXPORT NMVpnEditor *
 nm_vpn_editor_factory_openvpn (NMVpnEditorPlugin *editor_plugin,

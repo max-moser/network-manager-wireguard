@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*- */
 /***************************************************************************
- * nm-openvpn-editor.h : GNOME UI dialogs for configuring openvpn VPN connections
+ * nm-wireguard-editor.h : GNOME UI dialogs for configuring wireguard VPN connections
  *
  * Copyright (C) 2008 Dan Williams, <dcbw@redhat.com>
  *

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*- */
 /***************************************************************************
- * nm-openvpn-editor-plugin.c : GNOME UI dialogs for configuring openvpn VPN connections
+ * nm-wireguard-editor-plugin.c : GNOME UI dialogs for configuring wireguard VPN connections
  *
  * Copyright (C) 2005 Tim Niemueller <tim@niemueller.de>
  * Copyright (C) 2008 - 2010 Dan Williams, <dcbw@redhat.com>
@@ -25,7 +25,7 @@
 
 #include "nm-default.h"
 
-#include "nm-openvpn-editor-plugin.h"
+#include "nm-wireguard-editor-plugin.h"
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -34,7 +34,7 @@
 #include <string.h>
 
 #ifdef NM_VPN_OLD
-#include "nm-openvpn-editor.h"
+#include "nm-wireguard-editor.h"
 #else
 #include "nm-utils/nm-vpn-plugin-utils.h"
 #endif

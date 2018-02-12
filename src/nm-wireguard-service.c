@@ -62,9 +62,6 @@
 #ifndef LIBEXECDIR
 #define LIBEXECDIR ""
 #endif
-#ifndef NM_OPENVPN_LOCALEDIR
-#define NM_OPENVPN_LOCALEDIR ""
-#endif
 #ifndef NM_WIREGUARD_LOCALEDIR
 #define NM_WIREGUARD_LOCALEDIR ""
 #endif

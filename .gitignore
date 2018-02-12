@@ -42,7 +42,7 @@ appdata/network-manager-wireguard.metainfo.xml
 */tests/*.trs
 test-*.log
 
-auth-dialog/nm-openvpn-auth-dialog
+auth-dialog/nm-wireguard-auth-dialog
 nm-wireguard-service.name
 nm-openvpn.desktop
 src/nm-wireguard-service

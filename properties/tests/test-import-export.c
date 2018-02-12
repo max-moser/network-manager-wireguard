@@ -26,8 +26,8 @@
 #include <locale.h>
 #include <sys/stat.h>
 
-#include "nm-openvpn-editor-plugin.h"
-#include "nm-openvpn-editor.h"
+#include "nm-wireguard-editor-plugin.h"
+#include "nm-wireguard-editor.h"
 #include "import-export.h"
 #include "utils.h"
 
