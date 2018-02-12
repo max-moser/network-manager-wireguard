@@ -16,10 +16,7 @@ For compilation, the project uses autoconf and related things.
 ### Installation
 In order to get the plugin running, its sources have to be compiled and the result has to be installed. This can be done by following these steps: 
 * Compile the project
-* `sudo make install` (don't worry; for uninstalling, there is the target `uninstall`)
-* maybe copy the shared objects from `properties/.libs` to `/usr/lib/NetworkManager` (`cp properties/.libs/*.so /usr/lib/NetworkManager/`)
-* maybe create the configuration files in `/etc/NetworkManager/VPN` (see further below) if they weren't created
-* maybe tell D-BUS to allow usage of names (see below)
+* `sudo make sysconfdir=/etc libdir=/usr/lib install` (don't worry; for uninstalling, there is the target `uninstall`)
 
 
 ### Execution
@@ -71,27 +68,26 @@ The following is an example for the content of such a file:
 
 #### NetworkManager Plugin Configuration
 
-NetworkManager has to be told where the plugins live in order to be able to call them. This is done via `service.name` files, which usually reside in `/etc/NetworkManager/VPN` or `/usr/lib/NetworkManager/VPN` (e.g. `/usr/lib/NetworkManager/VPN/nm-openconnect-service.name`).
+NetworkManager has to be told where the plugins live in order to be able to call them. This is done via `service.name` files, which usually reside in `/etc/NetworkManager/VPN` or `/usr/lib/NetworkManager/VPN` (e.g. `/usr/lib/NetworkManager/VPN/nm-wireguard-service.name`).
 
 An example for the content of these files would be:
 ~~~~
-# This file is obsoleted by a file in /usr/lib/NetworkManager/VPN
+# This file is obsoleted by a file in /usr/local/lib/NetworkManager/VPN
 
 [VPN Connection]
-name=openconnect
-service=org.freedesktop.NetworkManager.openconnect
-program=/usr/lib/nm-openconnect-service
-supports-multiple-connections=true
+name=wireguard
+service=org.freedesktop.NetworkManager.wireguard
+program=/usr/local/libexec/nm-wireguard-service
+supports-multiple-connections=false
 
 [libnm]
-plugin=/usr/lib/NetworkManager/libnm-vpn-plugin-openconnect.so
+plugin=/usr/local/lib/NetworkManager/libnm-vpn-plugin-wireguard.so
 
 [GNOME]
-auth-dialog=/usr/lib/nm-openconnect-auth-dialog
-properties=/usr/lib/NetworkManager/libnm-openconnect-properties
-
-[openconnect]
-supported-protocols=anyconnect,nc
+auth-dialog=/usr/local/libexec/nm-wireguard-auth-dialog
+properties=/usr/local/lib/NetworkManager/libnm-wireguard-properties
+supports-external-ui-mode=false
+supports-hints=false
 ~~~~
 
 
