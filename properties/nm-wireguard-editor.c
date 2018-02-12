@@ -51,17 +51,12 @@ G_DEFINE_TYPE_EXTENDED (WireguardEditor, wireguard_editor_plugin_widget, G_TYPE_
 typedef struct {
 	GtkBuilder *builder;
 	GtkWidget *widget;
-	GtkWindowGroup *window_group;
-	gboolean window_added;
 	gboolean new_connection;
 } WireguardEditorPrivate;
 
 /*****************************************************************************/
 
-#define COL_AUTH_NAME 0
-#define COL_AUTH_PAGE 1
-#define COL_AUTH_TYPE 2
-
+// check if the given string is NULL or empty
 static gboolean
 is_empty(const char *str)
 {
@@ -76,6 +71,9 @@ is_empty(const char *str)
 	g_free(tmp);
 	return empty;
 }
+
+/*****************************************************************************/
+// functions for checking the contents of the input fields in the GUI
 
 static gboolean
 check_interface_ip4_entry(const char *str)
@@ -179,6 +177,7 @@ check_peer_endpoint(const char *str)
 	return is_ip4((char *)str) || is_ip6((char *)str);
 }
 
+// used in 'check()', matches the functions above
 typedef gboolean (*CheckFunc)(const char *str);
 
 // helper function to reduce boilerplate code in 'check_validity()'
@@ -210,6 +209,7 @@ check (WireguardEditorPrivate *priv,
 	return TRUE;
 }
 
+// add or remove the "error" class from the specified input field
 static void
 set_error_class(WireguardEditorPrivate *priv, char *widget_name, gboolean error)
 {
@@ -222,6 +222,7 @@ set_error_class(WireguardEditorPrivate *priv, char *widget_name, gboolean error)
 	}
 }
 
+// check if the specified input field contains any user input
 static gboolean
 is_filled_out(WireguardEditorPrivate *priv, char *widget_name)
 {
@@ -232,6 +233,9 @@ is_filled_out(WireguardEditorPrivate *priv, char *widget_name)
 	return !is_empty(str);
 }
 
+// check validity of the input fields in the GUI
+// if there is an error in one or more of the input fields, mark the corresponding
+// input fields with the "error" class
 static gboolean
 check_validity (WireguardEditor *self, GError **error)
 {
@@ -271,13 +275,13 @@ check_validity (WireguardEditor *self, GError **error)
 	// pre-up, post-up, pre-down, post-down are scripts and don't get validated
 
 	if(ip4_ok && ip6_ok){
+		// IP4 and IP6 are both set: OK
 		set_error_class(priv, "interface_ip4_entry", FALSE);
 		set_error_class(priv, "interface_ip6_entry", FALSE);
-		// this should be fine, actually
 	}
 	else if(ip4_ok){
-		// IP6 is filled out but not ok
 		if(is_filled_out(priv, "interface_ip6_entry")){
+			// IP6 is filled out but not ok: NOK
 			success = FALSE;
 			g_set_error (error,
 						NMV_EDITOR_PLUGIN_ERROR,
@@ -285,13 +289,14 @@ check_validity (WireguardEditor *self, GError **error)
 						NM_WG_KEY_ADDR_IP6);
 		}
 		else{
+			// IP6 is not filled out: OK
 			set_error_class(priv, "interface_ip4_entry", FALSE);
 			set_error_class(priv, "interface_ip6_entry", FALSE);
 		}
 	}
 	else if(ip6_ok){
-		// IP4 is filled out but not ok
 		if(is_filled_out(priv, "interface_ip4_entry")){
+			// IP4 is filled out but not ok: NOK
 			success = FALSE;
 			g_set_error (error,
 						NMV_EDITOR_PLUGIN_ERROR,
@@ -299,6 +304,7 @@ check_validity (WireguardEditor *self, GError **error)
 						NM_WG_KEY_ADDR_IP4);
 		}
 		else{
+			// IP4 is not filled out: OK
 			set_error_class(priv, "interface_ip4_entry", FALSE);
 			set_error_class(priv, "interface_ip6_entry", FALSE);
 		}
@@ -307,12 +313,15 @@ check_validity (WireguardEditor *self, GError **error)
 	return success;
 }
 
+// callback when input has changed
 static void
 stuff_changed_cb (GtkWidget *widget, gpointer user_data)
 {
 	g_signal_emit_by_name (WIREGUARD_EDITOR (user_data), "changed");
 }
 
+// set up the GUI: fill the contents of the input fields with the stuff contained
+// in our NMConnection
 static gboolean
 init_editor_plugin (WireguardEditor *self, NMConnection *connection, GError **error)
 {
@@ -467,6 +476,7 @@ init_editor_plugin (WireguardEditor *self, NMConnection *connection, GError **er
 	return TRUE;
 }
 
+// get the active widget (config GUI)
 static GObject *
 get_widget (NMVpnEditor *iface)
 {
@@ -476,6 +486,8 @@ get_widget (NMVpnEditor *iface)
 	return G_OBJECT (priv->widget);
 }
 
+// check if the user's inputs are valid and if so, update the NMConnection's
+// NMSettingVpn data items (gets called everytime something changes, afaik)
 static gboolean
 update_connection (NMVpnEditor *iface,
                    NMConnection *connection,
@@ -488,8 +500,10 @@ update_connection (NMVpnEditor *iface,
 	const char *str;
 	gboolean valid = FALSE;
 
-	if (!check_validity (self, error))
+	// validity check is done before anything else
+	if (!check_validity (self, error)){
 		return FALSE;
+	}
 
 	s_vpn = NM_SETTING_VPN (nm_setting_vpn_new ());
 	g_object_set (s_vpn, NM_SETTING_VPN_SERVICE_TYPE, NM_VPN_SERVICE_TYPE_WIREGUARD, NULL);
@@ -497,86 +511,100 @@ update_connection (NMVpnEditor *iface,
 	// local ip4
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_ip4_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_ADDR_IP4, str);
+	}
 
 	// local ip6
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_ip6_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_ADDR_IP6, str);
+	}
 
 	// private key
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_private_key_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_PRIVATE_KEY, str);
+	}
 
 	// dns
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_dns_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_DNS, str);
+	}
 
 	// mtu
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_mtu_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_MTU, str);
+	}
 
 	// listen port
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_port_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_LISTEN_PORT, str);
+	}
 
 	// pre up script
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_pre_up_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_PRE_UP, str);
+	}
 
 	// post up script
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_post_up_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_POST_UP, str);
+	}
 
 	// pre up script
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_pre_down_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_PRE_DOWN, str);
+	}
 
 	// post down script
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_post_down_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_POST_DOWN, str);
+	}
 
 	// preshared key
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_psk_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_PRESHARED_KEY, str);
+	}
 
 	// peer public key
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_public_key_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_PUBLIC_KEY, str);
+	}
 
 	// allowed IPs
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_allowed_ips_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_ALLOWED_IPS, str);
+	}
 
 	// endpoint
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_endpoint_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (str && str[0])
+	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_ENDPOINT, str);
+	}
 
 	nm_connection_add_setting (connection, NM_SETTING (s_vpn));
 	valid = TRUE;
@@ -584,6 +612,7 @@ update_connection (NMVpnEditor *iface,
 	return valid;
 }
 
+// function to determine if the connection is new, according to its data items
 static void
 is_new_func (const char *key, const char *value, gpointer user_data)
 {
@@ -623,6 +652,8 @@ wireguard_editor_new (NMConnection *connection, GError **error)
 
 	gtk_builder_set_translation_domain (priv->builder, GETTEXT_PACKAGE);
 
+	// create the GUI from our .ui file
+	// note: the resource is described in gresource.xml and gets compiled to resources.c
 	if (!gtk_builder_add_from_resource (priv->builder, "/org/freedesktop/network-manager-wireguard/nm-wireguard-dialog.ui", error)) {
 		g_object_unref (object);
 		g_return_val_if_reached (NULL);
@@ -635,8 +666,6 @@ wireguard_editor_new (NMConnection *connection, GError **error)
 		g_return_val_if_reached (NULL);
 	}
 	g_object_ref_sink (priv->widget);
-
-	priv->window_group = gtk_window_group_new ();
 
 	s_vpn = nm_connection_get_setting_vpn (connection);
 	// if there is at least one item to iterate over, the connection can't be new
@@ -657,8 +686,6 @@ dispose (GObject *object)
 {
 	WireguardEditor *plugin = WIREGUARD_EDITOR (object);
 	WireguardEditorPrivate *priv = WIREGUARD_EDITOR_GET_PRIVATE (plugin);
-
-	g_clear_object (&priv->window_group);
 
 	g_clear_object (&priv->widget);
 
