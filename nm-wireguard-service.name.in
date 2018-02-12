@@ -5,10 +5,10 @@ program=@LIBEXECDIR@/nm-wireguard-service
 supports-multiple-connections=false
 
 [libnm]
-plugin=@PLUGINDIR@/libnm-vpn-plugin-openvpn.so
+plugin=@PLUGINDIR@/libnm-vpn-plugin-wireguard.so
 
 [GNOME]
-auth-dialog=@LIBEXECDIR@/nm-openvpn-auth-dialog
-properties=@PLUGINDIR@/libnm-openvpn-properties
+auth-dialog=@LIBEXECDIR@/nm-wireguard-auth-dialog
+properties=@PLUGINDIR@/libnm-wireguard-properties
 supports-external-ui-mode=false
 supports-hints=false
