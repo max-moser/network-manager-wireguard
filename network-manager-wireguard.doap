@@ -5,8 +5,8 @@
          xmlns:gnome="http://api.gnome.org/doap-extensions#"
          xmlns="http://usefulinc.com/ns/doap#">
 
-  <name xml:lang="en">network-manager-openvpn</name>
-  <shortdesc xml:lang="en">OpenVPN support for NetworkManager</shortdesc>
+  <name xml:lang="en">network-manager-wireguard</name>
+  <shortdesc xml:lang="en">Wireguard support for NetworkManager</shortdesc>
 
   <homepage rdf:resource="https://wiki.gnome.org/Projects/NetworkManager" />
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/networkmanager-list" />

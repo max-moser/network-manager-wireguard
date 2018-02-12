@@ -902,7 +902,7 @@ openvpn_editor_new (NMConnection *connection, GError **error)
 
 	gtk_builder_set_translation_domain (priv->builder, GETTEXT_PACKAGE);
 
-	if (!gtk_builder_add_from_resource (priv->builder, "/org/freedesktop/network-manager-openvpn/nm-openvpn-dialog.ui", error)) {
+	if (!gtk_builder_add_from_resource (priv->builder, "/org/freedesktop/network-manager-wireguard/nm-wireguard-dialog.ui", error)) {
 		g_object_unref (object);
 		g_return_val_if_reached (NULL);
 	}

@@ -104,6 +104,13 @@ NMWireguardPlugin *nm_wireguard_plugin_new (const char *bus_name);
 
 /*****************************************************************************/
 
+typedef struct _Configs{
+	NMVpnServicePlugin *plugin;
+	GVariant *config;
+	GVariant *ip4config;
+	GVariant *ip6config;
+} Configs;
+
 typedef enum {
 	OPENVPN_BINARY_VERSION_INVALID,
 	OPENVPN_BINARY_VERSION_UNKNOWN,
@@ -148,6 +155,11 @@ G_DEFINE_TYPE (NMWireguardPlugin, nm_wireguard_plugin, NM_TYPE_VPN_SERVICE_PLUGI
 #define NM_WIREGUARD_PLUGIN_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), NM_TYPE_WIREGUARD_PLUGIN, NMWireguardPluginPrivate))
 
 /*****************************************************************************/
+
+typedef struct _PluginConnection {
+	NMVpnServicePlugin *plugin;
+	NMConnection *connection;
+} PluginConnection;
 
 typedef struct {
 	const char *name;
@@ -1014,7 +1026,6 @@ nm_openvpn_connect_timer_cb (gpointer data)
 	NMWireguardPluginIOData *io_data = priv->io_data;
 	struct sockaddr_un remote = { 0 };
 	int fd;
-	printf("Connect Timer Callback!\n");
 
 	priv->connect_count++;
 
@@ -1055,7 +1066,6 @@ static void
 nm_openvpn_schedule_connect_timer (NMWireguardPlugin *plugin)
 {
 	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE (plugin);
-	printf("Scheduling timer\n");
 
 	if (priv->connect_timer == 0)
 		priv->connect_timer = g_timeout_add (200, nm_openvpn_connect_timer_cb, plugin);
@@ -2158,6 +2168,206 @@ real_disconnect (NMVpnServicePlugin *plugin,
 	return TRUE;
 }
 
+static const gchar *
+get_setting(NMSettingVpn *s_vpn, const char *key)
+{
+	const gchar *setting = nm_setting_vpn_get_data_item(s_vpn, key);
+
+	if(!setting || !setting[0]){
+		return NULL;
+	}
+
+	return setting;
+}
+
+static GVariant *
+ip4_to_gvariant (const char *str)
+{
+	gchar *addr;
+	gchar **tmp, **tmp2;
+	struct in_addr temp_addr;
+	GVariant *res;
+
+	/* Empty */
+	if (!str || strlen (str) < 1){
+		return NULL;
+	}
+
+	// strip the port and subnet
+	tmp = g_strsplit(str, "/", 0);
+	tmp2 = g_strsplit(tmp[0], ":", 0);
+	addr = g_strdup(tmp[0]);
+
+	if (inet_pton (AF_INET, addr, &temp_addr) <= 0){
+		res = NULL;;
+	}
+	else{
+		res = g_variant_new_uint32 (temp_addr.s_addr);
+	}
+	
+	g_strfreev(tmp);
+	g_strfreev(tmp2);
+	g_free(addr);
+
+	return res;
+}
+
+static GVariant *
+ip6_to_gvariant (const char *str)
+{
+	struct in6_addr temp_addr;
+	gchar *addr;
+	gchar **tmp;
+	GVariantBuilder builder;
+	int i;
+
+	/* Empty */
+	if (!str || strlen (str) < 1){
+		return NULL;
+	}
+
+	// since we accept a subnet at the end, let's do away with that.
+	tmp = g_strsplit(str, "/", 0);
+	addr = g_strdup(tmp[0]);
+	g_strfreev(tmp);
+
+	if (inet_pton (AF_INET6, addr, &temp_addr) <= 0){
+		return NULL;
+	}
+
+	g_variant_builder_init (&builder, G_VARIANT_TYPE ("ay"));
+	for (i = 0; i < sizeof (temp_addr); i++){
+		g_variant_builder_add (&builder, "y", ((guint8 *) &temp_addr)[i]);
+	}
+
+	return g_variant_builder_end (&builder);
+}
+
+static gboolean
+send_config(gpointer data)
+{
+	Configs *cfgs = data;
+
+	nm_vpn_service_plugin_set_config(cfgs->plugin, cfgs->config);							
+
+	if(cfgs->ip4config){
+		nm_vpn_service_plugin_set_ip4_config(cfgs->plugin, cfgs->ip4config);
+	}
+
+	if(cfgs->ip6config){
+		nm_vpn_service_plugin_set_ip6_config(cfgs->plugin, cfgs->ip6config);
+	}
+
+	// if we don't return FALSE, it's gonna get called again and again and again and...
+	return FALSE;
+}
+
+static gboolean
+set_config(NMVpnServicePlugin *plugin, NMConnection *connection)
+{
+	NMSettingVpn *s_vpn = nm_connection_get_setting_vpn(connection);
+	GVariantBuilder builder, ip4builder, ip6builder;
+	GVariant *config, *ip4config, *ip6config;
+	GVariant *val;
+	const char *setting;
+	guint64 subnet = 24;
+	gboolean has_ip4 = FALSE;
+	gboolean has_ip6 = FALSE;
+	Configs *configs = malloc(sizeof(Configs));
+	memset(configs, 0, sizeof(Configs));
+
+	// get ready to build the IP4 stuff and send it
+	// (required that the connection does not time-out)
+	g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
+	g_variant_builder_init(&ip4builder, G_VARIANT_TYPE_VARDICT);
+	g_variant_builder_init(&ip6builder, G_VARIANT_TYPE_VARDICT);
+
+	// build the configs
+	setting = get_setting(s_vpn, NM_WG_KEY_ADDR_IP4);
+	if(setting){
+		val = ip4_to_gvariant(setting);
+		if(val){
+			g_variant_builder_add(&ip4builder, "{sv}", NM_VPN_PLUGIN_IP4_CONFIG_ADDRESS, val);
+
+			// try to find the subnet from the IP
+			if(g_strrstr(setting, "/")){
+				gchar **tmp;
+				tmp = g_strsplit(setting, "/", 2);
+				if(!g_ascii_string_to_unsigned(tmp[1], 10, 0, 32, &subnet, NULL)){
+					subnet = 24;
+				}
+				g_strfreev(tmp);
+			}
+			val = g_variant_new_uint32((guint32)subnet);
+			g_variant_builder_add(&ip4builder, "{sv}", NM_VPN_PLUGIN_IP4_CONFIG_PREFIX, val);
+			has_ip4 = TRUE;
+		}
+	}
+
+	setting = get_setting(s_vpn, NM_WG_KEY_DNS);
+	if(setting){
+		// TODO
+	}
+
+	setting = get_setting(s_vpn, NM_WG_KEY_ENDPOINT);
+	if(setting){
+		// TODO
+	}
+
+	setting = get_setting(s_vpn, NM_WG_KEY_MTU);
+	if(setting){
+		guint32 mtu = 1420;
+		if(!g_ascii_string_to_unsigned(setting, 10, 0, 1500, &mtu, NULL)){
+			mtu = 1420;
+		}
+		val = g_variant_new_uint32(mtu);
+		g_variant_builder_add(&builder, "{sv}", NM_VPN_PLUGIN_CONFIG_MTU, val);
+		g_variant_builder_add(&ip4builder, "{sv}", NM_VPN_PLUGIN_IP4_CONFIG_MTU, val);
+	}
+
+	val = g_variant_new_string(nm_connection_get_id(connection));
+	g_variant_builder_add(&builder, "{sv}", NM_VPN_PLUGIN_CONFIG_TUNDEV, val);
+	g_variant_builder_add(&ip4builder, "{sv}", NM_VPN_PLUGIN_IP4_CONFIG_TUNDEV, val);
+
+	setting = get_setting(s_vpn, NM_WG_KEY_ADDR_IP6);
+	if(setting){
+		val = ip6_to_gvariant(setting);
+		if(val){
+			g_variant_builder_add(&ip6builder, "{sv}", NM_VPN_PLUGIN_IP6_CONFIG_ADDRESS, setting);
+			has_ip6 = TRUE;
+		}
+	}
+
+	// check if we have any of IP4 or IP6 and if so, include them in the config
+	if(!has_ip4 && !has_ip6){
+		return FALSE;
+	}
+
+	if(has_ip4){
+		val = g_variant_new_boolean(TRUE);
+		g_variant_builder_add(&builder, "{sv}", NM_VPN_PLUGIN_CONFIG_HAS_IP4, val);
+	}
+
+	if(has_ip6){
+		val = g_variant_new_boolean(TRUE);
+		g_variant_builder_add(&builder, "{sv}", NM_VPN_PLUGIN_CONFIG_HAS_IP6, val);
+	}
+
+	// finish the builders
+	config = g_variant_builder_end(&builder);
+	ip4config = g_variant_builder_end(&ip4builder);
+	ip6config = g_variant_builder_end(&ip6builder);
+
+	// populate the configs struct and send the configuration asynchronously
+	configs->ip4config = (has_ip4) ? ip4config : NULL;
+	configs->ip6config = (has_ip6) ? ip6config : NULL;
+	configs->plugin    = plugin;
+	configs->config    = config;
+	g_timeout_add(0, send_config, configs);
+
+	return TRUE;
+}
+
 static gboolean
 connect_common(NMVpnServicePlugin *plugin,
 				NMConnection *connection,
@@ -2171,8 +2381,6 @@ connect_common(NMVpnServicePlugin *plugin,
 	int retcode = 1;
 	char *filename = NULL;
 	GString *connection_config = NULL;
-	GVariantBuilder builder, ip4builder, ip6builder;
-	GVariant *config, *ip4config, *ip6config;
 
 	_LOGI("Setting up Wireguard Connection ('%s')", connection_name);
 	if(wg_quick_path == NULL){
@@ -2212,33 +2420,18 @@ connect_common(NMVpnServicePlugin *plugin,
 	g_remove(filename);
 	g_free(command);
 
-	// get ready to build the IP4 stuff and send it
-	// (required that the connection does not time-out)
-	g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-	g_variant_builder_init(&ip4builder, G_VARIANT_TYPE_VARDICT);
-	g_variant_builder_init(&ip6builder, G_VARIANT_TYPE_VARDICT);
-	config = g_variant_builder_end(&builder);
-	ip4config = g_variant_builder_end(&ip4builder);
-	ip6config = g_variant_builder_end(&ip6builder);
-	nm_vpn_service_plugin_set_config(plugin, config);
-	nm_vpn_service_plugin_set_ip4_config(plugin, ip4config);
-	nm_vpn_service_plugin_set_ip6_config(plugin, ip6config);
-
-	/*
-	[1] https://git.gnome.org/browse/network-manager-openvpn/tree/src/nm-openvpn-service-openvpn-helper.c?id=40e522aea2146ec20e0232545aa574664184be39#n114
-	[2] https://cgit.freedesktop.org/NetworkManager/NetworkManager/tree/libnm/nm-vpn-service-plugin.c?id=7044febf97debaf04b7f9ca4fbb2dc24fcf1b0b0#n876
-	[3] https://cgit.freedesktop.org/NetworkManager/NetworkManager/tree/libnm/nm-vpn-service-plugin.c?id=7044febf97debaf04b7f9ca4fbb2dc24fcf1b0b0#n345
-	[4] https://cgit.freedesktop.org/NetworkManager/NetworkManager/tree/src/vpn/nm-vpn-connection.c?id=7044febf97debaf04b7f9ca4fbb2dc24fcf1b0b0#n2072
-	*/
+	set_config(plugin, connection);
 
 	return TRUE;
 }
+
 // IMPLEMENT ME RIGHT
 static gboolean
 wg_connect (NMVpnServicePlugin *plugin,
 				NMConnection *connection,
 				GError **error)
 {
+	_LOGI("Connecting to Wireguard: '%s'", nm_connection_get_id(connection));
 	return connect_common(plugin, connection, NULL, error);
 }
 
@@ -2250,6 +2443,7 @@ wg_connect_interactive(NMVpnServicePlugin *plugin,
 							GVariant *details,
 							GError **error)
 {
+	_LOGI("Connecting interactively to Wireguard: '%s'", nm_connection_get_id(connection));
 	if(!connect_common(plugin, connection, details, error)){
 		return FALSE;
 	}
@@ -2495,6 +2689,7 @@ nm_wireguard_plugin_new (const char *bus_name)
 	                                              NULL);
 
 	if (plugin) {
+		printf("Listening to bus-name %s\n", bus_name);
 		g_signal_connect (G_OBJECT (plugin), "state-changed", G_CALLBACK (plugin_state_changed), NULL);
 
 	} else {
@@ -2600,11 +2795,8 @@ main (int argc, char *argv[])
 	// TODO what is this, rem
 	if (   !g_file_test ("/sys/class/misc/tun", G_FILE_TEST_EXISTS)
 	    && (system ("/sbin/modprobe tun") == -1)){
-		
-			printf("tun stuff not found :>\n");
 			exit (EXIT_FAILURE);
 		}
-	printf("tun stuff seems okay tho\n");
 
 	// TODO fails here:
 	// nm-openvpn[27808] <warn>  Failed to initialize a plugin instance: Connection ":1.598" is not allowed to own the service "org.freedesktop.NetworkManager.openvpn" due to security policies in the configuration file

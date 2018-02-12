@@ -29,7 +29,7 @@ m4/gtk-doc.m4
 m4/intltool.m4
 m4/libtool.m4
 m4/lt*.m4
-appdata/network-manager-openvpn.metainfo.xml
+appdata/network-manager-wireguard.metainfo.xml
 .vscode/
 
 /cscope.files
@@ -43,9 +43,9 @@ appdata/network-manager-openvpn.metainfo.xml
 test-*.log
 
 auth-dialog/nm-openvpn-auth-dialog
-nm-openvpn-service.name
+nm-wireguard-service.name
 nm-openvpn.desktop
-src/nm-openvpn-service
+src/nm-wireguard-service
 src/nm-openvpn-service-openvpn-helper
 properties/tests/test-import-export
 properties/tests/test-import-export-glib

@@ -1,0 +1,14 @@
+[VPN Connection]
+name=wireguard
+service=org.freedesktop.NetworkManager.wireguard
+program=@LIBEXECDIR@/nm-wireguard-service
+supports-multiple-connections=false
+
+[libnm]
+plugin=@PLUGINDIR@/libnm-vpn-plugin-openvpn.so
+
+[GNOME]
+auth-dialog=@LIBEXECDIR@/nm-openvpn-auth-dialog
+properties=@PLUGINDIR@/libnm-openvpn-properties
+supports-external-ui-mode=false
+supports-hints=false

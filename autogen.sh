@@ -4,7 +4,7 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 REQUIRED_AUTOMAKE_VERSION=1.9
-PKG_NAME=NetworkManager-openvpn
+PKG_NAME=NetworkManager-wireguard
 
 (test -f $srcdir/configure.ac \
   && test -f $srcdir/auth-dialog/main.c) || {

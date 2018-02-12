@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright Lubomir Rintel 2016 -->
 <component type="addon">
-  <id>network-manager-openvpn</id>
+  <id>network-manager-wireguard</id>
   <project_license>GPL-2.0+</project_license>
   <metadata_license>CC0-1.0</metadata_license>
   <extends>nm-connection-editor.desktop</extends>
   <extends>gnome-control-center.desktop</extends>
-  <_name>OpenVPN client</_name>
-  <_summary>Client for OpenVPN virtual private networks</_summary>
+  <_name>Wireguard client</_name>
+  <_summary>Client for Wireguard virtual private networks</_summary>
 
   <keywords>
     <keyword>network</keyword>
@@ -15,12 +15,12 @@
     <keyword>NetworkManager</keyword>
     <keyword>connection</keyword>
     <keyword>VPN</keyword>
-    <keyword>OpenVPN</keyword>
+    <keyword>Wireguard</keyword>
   </keywords>
 
   <description>
-    <_p>Support for configuring OpenVPN virtual private network connections.</_p>
-    <_p>OpenVPN is a popular and flexible free-software VPN solution.</_p>
+    <_p>Support for configuring Wireguard virtual private network connections.</_p>
+    <_p>Wireguard is a modern VPN client built for simplicity.</_p>
   </description>
 
   <screenshots>

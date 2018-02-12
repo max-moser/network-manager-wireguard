@@ -23,12 +23,12 @@ plugindir = $(libdir)/NetworkManager
 plugin_LTLIBRARIES =
 
 dbusservicedir = $(sysconfdir)/dbus-1/system.d
-dbusservice_DATA = nm-openvpn-service.conf
+dbusservice_DATA = nm-wireguard-service.conf
 
 nmvpnservicedir = $(NM_VPN_SERVICE_DIR)
-nmvpnservice_DATA = nm-openvpn-service.name
+nmvpnservice_DATA = nm-wireguard-service.name
 
-uidir = $(datadir)/gnome-vpn-properties/openvpn
+uidir = $(datadir)/gnome-vpn-properties/wireguard
 ui_DATA =
 
 ###############################################################################
@@ -49,7 +49,7 @@ src_cppflags = \
 	-DLOCALSTATEDIR=\""$(localstatedir)"\" \
 	-DDATADIR=\"$(datadir)\" \
 	-DNM_OPENVPN_LOCALEDIR=\"$(datadir)/locale\" \
-	-DG_LOG_DOMAIN=\"nm-openvpn\" \
+	-DG_LOG_DOMAIN=\"nm-wireguard\" \
 	-I$(srcdir)/shared \
 	$(GLIB_CFLAGS) \
 	$(LIBNM_CFLAGS)
@@ -62,16 +62,16 @@ src_libnm_utils_la_LIBADD = \
 	$(GLIB_LIBS) \
 	$(LIBNM_LIBS)
 
-libexec_PROGRAMS += src/nm-openvpn-service
+libexec_PROGRAMS += src/nm-wireguard-service
 
-src_nm_openvpn_service_CPPFLAGS = $(src_cppflags)
-src_nm_openvpn_service_LDFLAGS = \
+src_nm_wireguard_service_CPPFLAGS = $(src_cppflags)
+src_nm_wireguard_service_LDFLAGS = \
 	-Wl,--version-script="$(srcdir)/linker-script-binary.ver"
-src_nm_openvpn_service_LDADD = \
+src_nm_wireguard_service_LDADD = \
 	src/libnm-utils.la \
 	$(GLIB_LIBS) \
 	$(LIBNM_LIBS)
-EXTRA_src_nm_openvpn_service_DEPENDENCIES = \
+EXTRA_src_nm_wireguard_service_DEPENDENCIES = \
 	linker-script-binary.ver
 
 libexec_PROGRAMS += src/nm-openvpn-service-openvpn-helper
@@ -232,7 +232,7 @@ EXTRA_DIST += \
 	properties/libnm-vpn-plugin-openvpn.ver \
 	properties/libnm-vpn-plugin-openvpn-editor.ver \
 	properties/libnm-openvpn-properties.ver \
-	properties/nm-openvpn-dialog.ui
+	properties/nm-wireguard-dialog.ui
 
 ###############################################################################
 
@@ -353,11 +353,11 @@ install-data-hook:
 	sed -e "1s|^|# This file is obsoleted by a file in $(NM_VPN_SERVICE_DIR)\n\n|" \
 	    -e 's|[@]LIBEXECDIR[@]|$(libexecdir)|g' \
 	    -e 's|[@]PLUGINDIR[@]|@NM_PLUGIN_DIR@|g' \
-	    <$(srcdir)/nm-openvpn-service.name.in \
-	    >$(DESTDIR)$(sysconfdir)/NetworkManager/VPN/nm-openvpn-service.name
+	    <$(srcdir)/nm-wireguard-service.name.in \
+	    >$(DESTDIR)$(sysconfdir)/NetworkManager/VPN/nm-wireguard-service.name
 
 uninstall-hook:
-	 rm -f $(DESTDIR)$(sysconfdir)/NetworkManager/VPN/nm-openvpn-service.name
+	 rm -f $(DESTDIR)$(sysconfdir)/NetworkManager/VPN/nm-wireguard-service.name
 endif
 
 appdatadir = $(datadir)/appdata
@@ -365,10 +365,10 @@ appdata_files = $(appdata_in_files:.xml.in=.xml)
 if WITH_GNOME
 appdata_DATA = $(appdata_files)
 endif
-appdata_in_files = appdata/network-manager-openvpn.metainfo.xml.in
+appdata_in_files = appdata/network-manager-wireguard.metainfo.xml.in
 @INTLTOOL_XML_RULE@
 
-nm-openvpn-service.name: $(srcdir)/nm-openvpn-service.name.in
+nm-wireguard-service.name: $(srcdir)/nm-wireguard-service.name.in
 	$(AM_V_GEN) sed -e 's|[@]LIBEXECDIR[@]|$(libexecdir)|g' \
 	    -e 's|[@]PLUGINDIR[@]/|@NM_PLUGIN_DIR_NAME_FILE@|g' \
 	    $^ >$@
@@ -380,7 +380,7 @@ TESTS = $(check_programs)
 
 EXTRA_DIST += \
 	linker-script-binary.ver \
-	nm-openvpn-service.name.in \
+	nm-wireguard-service.name.in \
 	$(dbusservice_DATA) \
 	$(appdata_in_files) \
 	$(appdata_files) \
