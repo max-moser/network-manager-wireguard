@@ -2322,6 +2322,14 @@ set_config(NMVpnServicePlugin *plugin, NMConnection *connection)
 		g_variant_builder_add(&ip4builder, "{sv}", NM_VPN_PLUGIN_IP4_CONFIG_MTU, val);
 	}
 
+	// keep NM from creating a default route to the interface which screws up the entire routing
+	// (we already did this ourselves)
+	val = g_variant_new_boolean(TRUE);
+	g_variant_builder_add(&builder, "{sv}", NM_VPN_PLUGIN_IP4_CONFIG_NEVER_DEFAULT, val);
+	g_variant_builder_add(&builder, "{sv}", NM_VPN_PLUGIN_IP6_CONFIG_NEVER_DEFAULT, val);
+	g_variant_builder_add(&ip4builder, "{sv}", NM_VPN_PLUGIN_IP4_CONFIG_NEVER_DEFAULT, val);
+	g_variant_builder_add(&ip6builder, "{sv}", NM_VPN_PLUGIN_IP6_CONFIG_NEVER_DEFAULT, val);
+
 	val = g_variant_new_string(nm_connection_get_id(connection));
 	g_variant_builder_add(&builder, "{sv}", NM_VPN_PLUGIN_CONFIG_TUNDEV, val);
 	g_variant_builder_add(&ip4builder, "{sv}", NM_VPN_PLUGIN_IP4_CONFIG_TUNDEV, val);
