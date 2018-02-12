@@ -155,6 +155,7 @@ _strbuf_append_c (char **buf, gsize *len, char ch)
 	*buf = &(*buf)[1];
 }
 
+// split the line into an array of strings
 static gboolean
 args_parse_line (const char *line,
                  gsize line_len,
@@ -303,6 +304,8 @@ _nmovpn_test_args_parse_line (const char *line,
 	return args_parse_line (line, line_len, out_p, out_error);
 }
 
+// return the next line of the content
+// and adjust the content pointer to start at the line after the current one
 static gboolean
 args_next_line (const char **content,
                 gsize *content_len,
@@ -336,13 +339,15 @@ args_next_line (const char **content,
 	 * containing the dropped character.
 	 * Or NULL if we reached the end of content. */
 	if (l > 0) {
-		if (s[0] == '\0')
+		if (s[0] == '\0') {
 			*cur_line_delimiter = "\0";
-		else
+		} else {
 			*cur_line_delimiter = "\n";
+		}
 		offset++;
-	} else
+	} else {
 		*cur_line_delimiter = NULL;
+	}
 
 	*content_len -= offset;
 	*content += offset;
@@ -352,16 +357,9 @@ args_next_line (const char **content,
 
 /*****************************************************************************/
 
-typedef struct {
-	char *token;
-	char *path;
-	gsize token_start_line;
-	GString *blob_data;
-	const char *key;
-} InlineBlobData;
-
-/*****************************************************************************/
-
+// take an array of strings, which is basically the read line split at specific tokens
+// (here, it's most likely split at each white-space)
+// "search" for the first index of the equals sign and store that index in the argument 'idx'
 static gboolean
 _parse_common (const char **line, int *idx, char **out_error)
 {
@@ -370,7 +368,7 @@ _parse_common (const char **line, int *idx, char **out_error)
 		len++;
 	}
 
-	// TODO what happens when we have KEY=VALUE?
+	// TODO fix scenario when we have "KEY=VALUE" and not "KEY = VALUE"
 
 	if(!line[0]){
 		*out_error = g_strdup_printf("Nothing found in the line");
@@ -399,6 +397,7 @@ _parse_common (const char **line, int *idx, char **out_error)
 	return TRUE;
 }
 
+// parse the endpoint (can be just about anything)
 static gboolean
 parse_endpoint(const char **line, char **endpoint, char **out_error)
 {
@@ -408,10 +407,13 @@ parse_endpoint(const char **line, char **endpoint, char **out_error)
 		return FALSE;
 	}
 
+	// TODO maybe restrict to IPs?
+
 	*endpoint = g_strdup(line[idx]);
 	return TRUE;
 }
 
+// parse the local listen port (integer with range [0 - 65535])
 static gboolean
 parse_listen_port(const char **line, guint64 *port, char **out_error)
 {
@@ -434,6 +436,7 @@ parse_listen_port(const char **line, guint64 *port, char **out_error)
 	return success;
 }
 
+// parse the private key
 static gboolean
 parse_private_key(const char **line, char **key, char **out_error)
 {
@@ -453,6 +456,7 @@ parse_private_key(const char **line, char **key, char **out_error)
 
 #define parse_public_key(line, key, out_error) parse_private_key(line, key, out_error)
 
+// parse the pre-shared key
 static gboolean
 parse_preshared_key(const char **line, char **key, char **out_error)
 {
@@ -469,7 +473,7 @@ parse_preshared_key(const char **line, char **key, char **out_error)
 	return TRUE;
 }
 
-
+// check if the string contains a valid IP4 address (also, remove a trailing comma if there is one)
 static char *
 _parse_ip4_address(const char *address)
 {
@@ -490,6 +494,7 @@ _parse_ip4_address(const char *address)
 	return ip4;
 }
 
+// analogous to the ip4 variant above
 static char *
 _parse_ip6_address(const char *address)
 {
@@ -509,6 +514,7 @@ _parse_ip6_address(const char *address)
 	return ip6;
 }
 
+// parse an IP (4 or 6) address from the line
 static gboolean
 parse_dns(const char **line, char **dns, char **out_error)
 {
@@ -522,7 +528,6 @@ parse_dns(const char **line, char **dns, char **out_error)
 
 	tmp = _parse_ip4_address(line[idx]);
 	if(!tmp){
-
 		// if the DNS isn't an IPv4 address, let's try IPv6...
 		tmp = _parse_ip6_address(line[idx]);
 		if(tmp){
@@ -539,6 +544,7 @@ parse_dns(const char **line, char **dns, char **out_error)
 	return TRUE;
 }
 
+// parse an MTU from the line (integer with range [0 - 1500])
 static gboolean
 parse_mtu(const char **line, guint64 *mtu, char **out_error)
 {
@@ -561,6 +567,11 @@ parse_mtu(const char **line, guint64 *mtu, char **out_error)
 	return success;
 }
 
+// parse the line and check if there were any IP4 and IP6 included
+// (if there are more than just one IP4, the later take precedence; same for IP6)
+//
+// ip4_address: either the string that was recognised as an IP4 address or NULL if none was found
+// ip6_address: pretty much the same, just for IP6
 static gboolean
 parse_address(const char **line, char **ip4_address, char **ip6_address, char **out_error)
 {
@@ -601,6 +612,7 @@ parse_address(const char **line, char **ip4_address, char **ip6_address, char **
 	return success;
 }
 
+// parse IPs (v4 and v6) from a line and save them in a GArray
 static gboolean
 parse_allowed_ips(const char **line, GArray **addresses, char **out_error)
 {
@@ -616,6 +628,8 @@ parse_allowed_ips(const char **line, GArray **addresses, char **out_error)
 
 	*addresses = g_array_new(TRUE, TRUE, sizeof(char *));
 	while(line && line[idx]){
+		// check if we have an IP4 or IP6 at our hands and if so,
+		// add them to our array of Allowed Addresses
 		ip4 = _parse_ip4_address(line[idx]);
 		if(ip4){
 			g_array_append_val(*addresses, ip4);
@@ -640,6 +654,7 @@ ip4next:
 	return success;
 }
 
+// parse a script: just concatenate the parts of the read line after the equals sign
 static gboolean
 parse_script(const char **line, char **script, char **out_error)
 {
@@ -675,6 +690,7 @@ parse_script(const char **line, char **script, char **out_error)
 	return TRUE;
 }
 
+// create a single string from the contents of a GArray
 static gchar *
 concatenate_strings(const GArray *string_array, char *separator)
 {
@@ -717,6 +733,7 @@ concatenate_strings(const GArray *string_array, char *separator)
 	return result;
 }
 
+// read a wg-quick .conf file and parse its contents to create a NMConnection from it
 NMConnection *
 do_import (const char *path, const char *contents, gsize contents_len, GError **error)
 {
@@ -853,13 +870,13 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 		}
 
 		if (NM_IN_STRSET (params[0], NMV_WG_TAG_MTU)){
-			char *mtu = NULL;
+			guint64 mtu = 1420;
 			if(!parse_mtu(params, &mtu, &line_error)){
 				goto handle_line_error;
 			}
 
 			setting_vpn_add_data_item_int64(s_vpn, NM_WG_KEY_MTU, mtu);
-			printf("%s = %s\n", NM_WG_KEY_DNS, mtu);
+			printf("%s = %ld\n", NM_WG_KEY_DNS, mtu);
 			continue;
 		}
 
@@ -1058,61 +1075,6 @@ out_error:
 
 /*****************************************************************************/
 
-static const char *
-escape_arg (const char *value, char **buf)
-{
-	const char *s;
-	char *result, *i_result;
-	gboolean has_single_quote = FALSE;
-	gboolean needs_quotation = FALSE;
-	gsize len;
-
-	nm_assert (value);
-	nm_assert (buf && !*buf);
-
-	if (value[0] == '\0')
-		return (*buf = g_strdup ("''"));
-
-	/* check if the string contains only benign characters... */
-	len = 0;
-	for (s = value; s[0]; s++) {
-		char c = s[0];
-
-		len++;
-		if (   (c >= '0' && c <= '9')
-		    || (c >= 'a' && c <= 'z')
-		    || (c >= 'A' && c <= 'Z')
-		    || NM_IN_SET (c, '_', '-', ':', '/'))
-			continue;
-		needs_quotation = TRUE;
-		if (c == '\'')
-			has_single_quote = TRUE;
-	}
-	if (!needs_quotation)
-		return value;
-
-	if (!has_single_quote) {
-		result = g_malloc (len + 2 + 1);
-		result[0] = '\'';
-		memcpy (&result[1], value, len);
-		result[1 + len] = '\'';
-		result[2 + len] = '\0';
-	} else {
-		i_result = result = g_malloc (len * 2 + 3);
-		*(i_result++) = '"';
-		for (s = value; s[0]; s++) {
-			if (NM_IN_SET (s[0], '\\', '"'))
-				*(i_result++) = '\\';
-			*(i_result++) = s[0];
-		}
-		*(i_result++) = '"';
-		*(i_result++) = '\0';
-	}
-
-	*buf = result;
-	return result;
-}
-
 static void
 args_write_line_v (GString *f, gsize nargs, const char **args)
 {
@@ -1137,52 +1099,10 @@ args_write_line_v (GString *f, gsize nargs, const char **args)
 }
 #define args_write_line(f, ...) args_write_line_v(f, NM_NARG (__VA_ARGS__), (const char *[]) { __VA_ARGS__ })
 
-static void
-args_write_line_int64 (GString *f, const char *key, gint64 value)
-{
-	char tmp[64];
-
-	args_write_line (f, key, nm_sprintf_buf (tmp, "%"G_GINT64_FORMAT, value));
-}
-
-static void
-args_write_line_setting_value_int (GString *f,
-                                   const char *tag_key,
-                                   NMSettingVpn *s_vpn,
-                                   const char *setting_key)
-{
-	const char *value;
-	gint64 v;
-
-	nm_assert (tag_key && tag_key[0]);
-	nm_assert (NM_IS_SETTING_VPN (s_vpn));
-	nm_assert (setting_key && setting_key[0]);
-
-	value = nm_setting_vpn_get_data_item (s_vpn, setting_key);
-	if (!_arg_is_set (value))
-		return;
-
-	v = _nm_utils_ascii_str_to_int64 (value, 10, G_MININT64, G_MAXINT64, 0);
-	if (errno)
-		return;
-	args_write_line_int64 (f, tag_key, v);
-}
-
-static void
-args_write_line_setting_value (GString *f,
-                               const char *tag_key,
-                               NMSettingVpn *s_vpn,
-                               const char *setting_key)
-{
-	const char *value;
-
-	value = nm_setting_vpn_get_data_item (s_vpn, setting_key);
-	if (_arg_is_set (value))
-		args_write_line (f, tag_key, value);
-}
-
 /*****************************************************************************/
 
+// create a string in our (wg-quick) format from the specified connection
+// this can be used to export a config file
 GString *
 create_config_string (NMConnection *connection, GError **error)
 {
@@ -1316,6 +1236,7 @@ create_config_string (NMConnection *connection, GError **error)
 	return g_steal_pointer (&f);
 }
 
+// export the connection's configuration to a file in our (wg-quick) format
 gboolean
 do_export (const char *path, NMConnection *connection, GError **error)
 {
@@ -1323,8 +1244,9 @@ do_export (const char *path, NMConnection *connection, GError **error)
 	gs_free_error GError *local = NULL;
 
 	f = create_config_string (connection, error);
-	if (!f)
+	if (!f){
 		return FALSE;
+	}
 
 	if (!g_file_set_contents (path, f->str, f->len, &local)) {
 		g_set_error (error,
