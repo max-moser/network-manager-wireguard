@@ -487,22 +487,17 @@ main (int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	// the parameters are supplied via arguments
-	printf("UUID: %s, Name: %s, Service: %s\n", vpn_uuid, vpn_name, vpn_service);
-
 	if (strcmp (vpn_service, NM_VPN_SERVICE_TYPE_WIREGUARD) != 0) {
 		fprintf (stderr, "This dialog only works with the '%s' service\n", NM_VPN_SERVICE_TYPE_WIREGUARD);
 		return EXIT_FAILURE;
 	}
 
-	printf("Reading stdin details\n");
 	// reads secrets/data from STDIN until "DONE" is read
 	if (!nm_vpn_service_plugin_read_vpn_details (0, &data, &secrets)) {
 		fprintf (stderr, "Failed to read '%s' (%s) data and secrets from stdin.\n",
 		         vpn_name, vpn_uuid);
-		//return 1; // TODO re-add
+		return 1;
 	}
-	printf("Done reading\n");
 
 	if (external_ui_mode) {
 		no_secrets_required_func = eui_no_secrets_required;
