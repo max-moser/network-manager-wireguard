@@ -36,7 +36,6 @@
 #include <string.h>
 #include <gtk/gtk.h>
 
-#include "auth-helpers.h"
 #include "utils.h"
 
 /*****************************************************************************/

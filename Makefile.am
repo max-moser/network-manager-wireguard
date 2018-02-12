@@ -97,9 +97,7 @@ editor_sources = \
 	properties/resources.c \
 	properties/resources.h \
 	properties/nm-wireguard-editor.c \
-	properties/nm-wireguard-editor.h \
-	properties/auth-helpers.c \
-	properties/auth-helpers.h
+	properties/nm-wireguard-editor.h
 
 properties_cppflags = \
 	-DICONDIR=\""$(datadir)/pixmaps"\" \
