@@ -1,6 +1,7 @@
 # Network-Manager VPN Plugin for Wireguard
 
-This project is a VPN Plugin for NetworkManager that handles Wireguard connections.
+This project is a VPN Plugin for NetworkManager that handles client-side Wireguard connections.  
+It is based on the [OpenVPN Plugin](https://git.gnome.org/browse/network-manager-openvpn) and was started as a Bachelor's Thesis at [SBA Research](https://www.sba-research.org/).
 
 
 
