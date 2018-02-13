@@ -1,7 +1,7 @@
 AC_PREREQ(2.52)
 
 AC_INIT(NetworkManager-wireguard,
-        0.0.1,
+        0.9.0,
         https://example.org/bugtracker?product=nm-wg,
         NetworkManager-wireguard)
 AM_INIT_AUTOMAKE([1.9 tar-ustar no-dist-gzip dist-xz])
