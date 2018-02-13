@@ -1,6 +1,6 @@
-# Network-Manager VPN Plugin for Wireguard
+# Network-Manager VPN Plugin for WireGuard
 
-This project is a VPN Plugin for NetworkManager that handles client-side Wireguard connections.  
+This project is a VPN Plugin for NetworkManager that handles client-side WireGuard connections.  
 It is based on the [OpenVPN Plugin](https://git.gnome.org/browse/network-manager-openvpn) and was started as a Bachelor's Thesis at [SBA Research](https://www.sba-research.org/).
 
 
@@ -23,7 +23,7 @@ In order to get the plugin running, its sources have to be compiled and the resu
 ### Execution
 Once the installation is completed, the Plugin can be used per NetworkManager (usually graphically via the applet).
 
-When a new Wireguard connection is created and configured via the NetworkManager GUI (can also be called via `nm-connection-editor`), it is the Connection Editor Plugin which is executed.  
+When a new WireGuard connection is created and configured via the NetworkManager GUI (can also be called via `nm-connection-editor`), it is the Connection Editor Plugin which is executed.
 When the connection is activated, it is the service plugin that is being called.
 
 A very basic testing suite is provided in the form of the Python script `examples/dbus/dbus.py`, which looks up the Plugin via name on D-BUS and sends it a Connect() instruction. More or less the same thing (and more) can however be achieved by just using NetworkManager after installing the package, so there should not be a need for this - except for the fact that the script is easily modifiable.
