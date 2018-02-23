@@ -96,9 +96,13 @@ gboolean is_pkcs12 (const char *filepath);
 
 gboolean is_encrypted (const char *filename);
 
+gboolean is_empty(const char *str);
+
 gboolean is_ip4 (char *addr);
 
 gboolean is_ip6 (char *addr);
+
+gboolean is_fqdn(char *addr);
 
 #define NMOVPN_PROTCOL_TYPES \
 	"udp", \

@@ -249,6 +249,22 @@ out_fail:
 
 /*****************************************************************************/
 
+// check if the given string is NULL or empty
+gboolean
+is_empty(const char *str)
+{
+	gboolean empty = FALSE;
+	gchar *tmp = g_strdup(str);
+	tmp = g_strstrip(tmp);
+
+	if(!tmp || !tmp[0]){
+		empty = TRUE;
+	}
+
+	g_free(tmp);
+	return empty;
+}
+
 // check if the given string looks like an IPv4 address
 // that is, four segments of numbers (0-255), separated by dots
 // additionally, there may be a port suffix (separated from the address by a colon; 0 - 65535)
@@ -441,6 +457,91 @@ is_ip6(char *addr)
 	}
 
 ip6end:
+	g_strfreev(parts);
+	return success;
+}
+
+// check if the address looks like a valid FQDN
+gboolean is_fqdn(char *addr)
+{
+	int idx = 0;
+	int idx2 = 0;
+	int dots = 0;
+	gchar **parts;
+	gchar **tmp;
+	gchar *lastpart;
+	gboolean success = TRUE;
+	gboolean contains_alpha = FALSE;
+
+	if(!addr){
+		return FALSE;
+	}
+
+	while(addr && addr[idx]){
+		if(addr[idx] == '.'){
+			dots++;
+		}
+		idx++;
+	}
+
+	parts = g_strsplit_set(addr, ".", 0);
+	lastpart = parts[dots];
+
+	// iterate over all parts of the name
+	for(idx = 0; idx <= dots; idx++){
+		contains_alpha = FALSE;
+
+		// if the part is empty
+		if(is_empty(parts[idx])){
+			success = FALSE;
+			goto fqdn_end;
+		}
+
+		idx2 = 0;
+		while(parts[idx] && parts[idx][idx2]){
+			char c = parts[idx][idx2];
+
+			// we have arrived at the last part and found the beginning of the port
+			if((idx == dots) && (c == ':')){
+				break;
+			}
+
+			if(!g_ascii_isalnum(c) && (c != '-')){
+				// if there's a character other than something alphanumeric or a hyphen,
+				// reject it
+				// TODO: cover more than just ASCII, check length, etc.
+				success = FALSE;
+				goto fqdn_end;
+			}
+
+			if(g_ascii_isalpha(c)){
+				contains_alpha = TRUE;
+			}
+
+			idx2++;
+		}
+
+		// names consisting of only numbers are not legitimate
+		if(!contains_alpha){
+			success = FALSE;
+			goto fqdn_end;
+		}
+	}
+
+	// might have a port suffix after a colon (e.g. tuwien.ac.at:8080)
+	if(g_strrstr(lastpart, ":")){
+		tmp = g_strsplit(lastpart, ":", 2);
+
+		// the last part has been checked in the loop above, so we only need
+		// to check the port
+		if(!g_ascii_string_to_unsigned(tmp[1], 10, 0, 65535, NULL, NULL)){
+			success = FALSE;
+		}
+
+		g_strfreev(tmp);
+	}
+
+fqdn_end:
 	g_strfreev(parts);
 	return success;
 }

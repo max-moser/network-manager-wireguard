@@ -55,24 +55,6 @@ typedef struct {
 } WireguardEditorPrivate;
 
 /*****************************************************************************/
-
-// check if the given string is NULL or empty
-static gboolean
-is_empty(const char *str)
-{
-	gboolean empty = FALSE;
-	gchar *tmp = g_strdup(str);
-	tmp = g_strstrip(tmp);
-
-	if(!tmp || !tmp[0]){
-		empty = TRUE;
-	}
-
-	g_free(tmp);
-	return empty;
-}
-
-/*****************************************************************************/
 // functions for checking the contents of the input fields in the GUI
 
 static gboolean
@@ -174,7 +156,7 @@ check_peer_allowed_ips(const char *str)
 static gboolean
 check_peer_endpoint(const char *str)
 {
-	return is_ip4((char *)str) || is_ip6((char *)str);
+	return is_ip4((char *)str) || is_ip6((char *)str) || is_fqdn((char *)str);
 }
 
 // used in 'check()', matches the functions above

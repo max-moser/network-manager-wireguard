@@ -186,7 +186,7 @@ wg_disconnect(NMVpnServicePlugin *plugin,
 	g_chmod(filename, 0400);
 
 	// join together our command
-	command = g_strdup_printf("%s down %s", wg_quick_path, filename);
+	command = g_strdup_printf("%s down '%s'", wg_quick_path, filename);
 
 	if(!g_spawn_command_line_sync(command, NULL, NULL, &retcode, error)){
 		_LOGW("An error occured while spawning wg-quick! (Error: %s)", (*error)->message);
@@ -474,7 +474,7 @@ connect_common(NMVpnServicePlugin *plugin,
 	g_chmod(filename, 0400);
 
 	// join together our command
-	command = g_strdup_printf("%s up %s", wg_quick_path, filename);
+	command = g_strdup_printf("%s up '%s'", wg_quick_path, filename);
 
 	if(!g_spawn_command_line_sync(command, NULL, NULL, &retcode, error)){
 		_LOGW("An error occured while spawning wg-quick! (Error: %s)", (*error)->message);
