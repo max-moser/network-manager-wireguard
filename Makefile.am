@@ -36,7 +36,8 @@ ui_DATA =
 shared_sources = \
 	shared/nm-utils/nm-shared-utils.c \
 	shared/utils.c \
-	shared/import-export.c
+	shared/import-export.c \
+	shared/wireguard.c
 
 ###############################################################################
 
