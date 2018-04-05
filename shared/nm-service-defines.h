@@ -41,7 +41,7 @@
 #define NM_WG_KEY_PUBLIC_KEY    "peer-public-key"
 #define NM_WG_KEY_ALLOWED_IPS   "peer-allowed-ips"
 #define NM_WG_KEY_ENDPOINT      "peer-endpoint"
-#define NM_WG_KEY_PRESHARED_KEY "preshared-key"
+#define NM_WG_KEY_PRESHARED_KEY "peer-preshared-key"
 
 #define NM_OPENVPN_KEY_AUTH "auth"
 #define NM_OPENVPN_KEY_CA "ca"

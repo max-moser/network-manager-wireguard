@@ -153,6 +153,37 @@ wg_quick_find_exepath (void)
 	return NULL;
 }
 
+// create a valid interface name from the specified string
+// this allocates memory which should be freed after usage
+//
+// wg-quick uses the following regular expression to check the interface name
+// for validity:
+// [a-zA-Z0-9_=+.-]{1,15}
+static gchar *
+create_interface_name_from_string(const char *str)
+{
+	int i;
+	int len = MIN(strlen(str), 15);
+	char ch;
+	gchar *interface_name = g_strndup(str, len);
+
+	for(i = 0; i < len; i++){
+		ch = interface_name[i];
+		if(!g_ascii_isalnum(ch) &&
+			(ch != '_') &&
+			(ch != '=') &&
+			(ch != '+') &&
+			(ch != '.') &&
+			(ch != '-')){
+
+				// if we come across an invalid character, let's replace it with '-'
+				interface_name[i] = '-';
+			}
+	}
+
+	return interface_name;
+}
+
 /*****************************************************************************/
 
 // disconnect from the current connection
@@ -318,6 +349,7 @@ set_config(NMVpnServicePlugin *plugin, NMConnection *connection)
 	GVariant *config, *ip4config, *ip6config;
 	GVariant *val;
 	const char *setting;
+	const gchar *if_name;
 	guint64 subnet = 24;
 	gboolean has_ip4 = FALSE;
 	gboolean has_ip6 = FALSE;
@@ -381,9 +413,11 @@ set_config(NMVpnServicePlugin *plugin, NMConnection *connection)
 	g_variant_builder_add(&ip4builder, "{sv}", NM_VPN_PLUGIN_IP4_CONFIG_NEVER_DEFAULT, val);
 	g_variant_builder_add(&ip6builder, "{sv}", NM_VPN_PLUGIN_IP6_CONFIG_NEVER_DEFAULT, val);
 
-	val = g_variant_new_string(nm_connection_get_id(connection));
+	if_name = create_interface_name_from_string(nm_connection_get_id(connection));
+	val = g_variant_new_string(if_name);
 	g_variant_builder_add(&builder, "{sv}", NM_VPN_PLUGIN_CONFIG_TUNDEV, val);
 	g_variant_builder_add(&ip4builder, "{sv}", NM_VPN_PLUGIN_IP4_CONFIG_TUNDEV, val);
+	g_free((gchar *)if_name);
 
 	setting = get_setting(s_vpn, NM_WG_KEY_ADDR_IP6);
 	if(setting){
@@ -442,6 +476,7 @@ connect_common(NMVpnServicePlugin *plugin,
 	NMWireguardPluginPrivate *priv = NM_WIREGUARD_PLUGIN_GET_PRIVATE(plugin);
 	const char *wg_quick_path = wg_quick_find_exepath();
 	const char *connection_name = nm_connection_get_id(connection);
+	const gchar *if_name = create_interface_name_from_string(connection_name);
 	char *command;
 	int retcode = 1;
 	char *filename = NULL;
@@ -464,7 +499,7 @@ connect_common(NMVpnServicePlugin *plugin,
 		return FALSE;
 	}
 	priv->connection_config = connection_config;
-	filename = g_strdup_printf("/tmp/%s.conf", connection_name);
+	filename = g_strdup_printf("/tmp/%s.conf", if_name);
 	priv->connection_file = filename;
 
 	if(!do_export(filename, connection, error)){
@@ -484,6 +519,7 @@ connect_common(NMVpnServicePlugin *plugin,
 	// remove the file and free the command string
 	g_remove(filename);
 	g_free(command);
+	g_free((gchar *)if_name);
 
 	set_config(plugin, connection);
 
