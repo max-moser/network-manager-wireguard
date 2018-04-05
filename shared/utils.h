@@ -104,6 +104,8 @@ gboolean is_ip6 (char *addr);
 
 gboolean is_fqdn(char *addr);
 
+gboolean is_base64(char *str);
+
 #define NMOVPN_PROTCOL_TYPES \
 	"udp", \
 	"udp4", \

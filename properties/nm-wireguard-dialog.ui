@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.2 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.4"/>
   <object class="GtkAdjustment" id="adjustment1">
@@ -203,6 +203,9 @@
     <property name="icon_name">stock-preferences</property>
     <property name="type_hint">dialog</property>
     <property name="skip_pager_hint">True</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -1720,9 +1723,6 @@ config: http-proxy-retry or socks-proxy-retry</property>
       <action-widget response="-6">cancel_button</action-widget>
       <action-widget response="-5">ok_button</action-widget>
     </action-widgets>
-    <child>
-      <placeholder/>
-    </child>
   </object>
   <object class="GtkBox" id="wg-vbox">
     <property name="visible">True</property>
@@ -1894,45 +1894,6 @@ config: http-proxy-retry or socks-proxy-retry</property>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">4</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox" id="preshared-key">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Preshared Key:</property>
-                <property name="width_chars">15</property>
-                <property name="max_width_chars">15</property>
-                <attributes>
-                  <attribute name="underline" value="True"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="interface_psk_entry">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">5</property>
           </packing>
         </child>
         <child>
@@ -2199,7 +2160,7 @@ config: http-proxy-retry or socks-proxy-retry</property>
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="Address1">
+          <object class="GtkBox" id="public-key">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
@@ -2235,7 +2196,7 @@ config: http-proxy-retry or socks-proxy-retry</property>
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="Address3">
+          <object class="GtkBox" id="allowed-ips">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
@@ -2271,7 +2232,7 @@ config: http-proxy-retry or socks-proxy-retry</property>
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="Address2">
+          <object class="GtkBox" id="endpoint">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
@@ -2304,6 +2265,45 @@ config: http-proxy-retry or socks-proxy-retry</property>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="preshared-key">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Preshared Key:</property>
+                <property name="width_chars">15</property>
+                <property name="max_width_chars">15</property>
+                <attributes>
+                  <attribute name="underline" value="True"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="peer_psk_entry">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
           </packing>
         </child>
       </object>

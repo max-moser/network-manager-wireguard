@@ -99,14 +99,29 @@ check_interface_mtu_entry(const char *str)
 }
 
 static gboolean
-check_interface_private_key(const char *str)
+check_peer_preshared_key(const char *str)
 {
 	if(is_empty(str)){
+		return TRUE;
+	}
+
+	// WireGuard has Base64-encoded PSKs of length 44
+	if(strlen(str) != 44){
 		return FALSE;
 	}
-	
-	// TODO maybe check length, base64 encoding, ...?
-	return TRUE;
+
+	return is_base64((char *)str);
+}
+
+static gboolean
+check_interface_private_key(const char *str)
+{
+	return check_peer_preshared_key(str);
+}
+
+static gboolean
+check_peer_public_key(const char *str){
+	return check_peer_preshared_key(str);
 }
 
 static gboolean
@@ -117,11 +132,6 @@ check_interface_listen_port(const char *str)
 	}
 
 	return TRUE;
-}
-
-static gboolean
-check_peer_public_key(const char *str){
-	return check_interface_private_key(str);
 }
 
 static gboolean
@@ -252,6 +262,9 @@ check_validity (WireguardEditor *self, GError **error)
 		success = FALSE;
 	}
 	if(!check(priv, "peer_endpoint_entry", check_peer_endpoint, NM_WG_KEY_ENDPOINT, TRUE, error)){
+		success = FALSE;
+	}
+	if(!check(priv, "peer_psk_entry", check_peer_preshared_key, NM_WG_KEY_PRESHARED_KEY, TRUE, error)){
 		success = FALSE;
 	}
 	// pre-up, post-up, pre-down, post-down are scripts and don't get validated
@@ -415,7 +428,7 @@ init_editor_plugin (WireguardEditor *self, NMConnection *connection, GError **er
 	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (stuff_changed_cb), self);
 
 	// Interface Preshared Key
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_psk_entry"));
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_psk_entry"));
 	g_return_val_if_fail (widget != NULL, FALSE);
 	if (s_vpn) {
 		value = nm_setting_vpn_get_data_item (s_vpn, NM_WG_KEY_PRESHARED_KEY);
@@ -561,7 +574,7 @@ update_connection (NMVpnEditor *iface,
 	}
 
 	// preshared key
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_psk_entry"));
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_psk_entry"));
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
 	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_PRESHARED_KEY, str);

@@ -892,17 +892,6 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 			continue;
 		}
 
-		if (NM_IN_STRSET (params[0], NMV_WG_TAG_PRESHARED_KEY)){
-			char *psk = NULL;
-			if(!parse_preshared_key(params, &psk, &line_error)){
-				goto handle_line_error;
-			}
-
-			setting_vpn_add_data_item(s_vpn, NM_WG_KEY_PRESHARED_KEY, psk);
-			printf("%s = %s\n", NMV_WG_TAG_PRESHARED_KEY, psk);
-			continue;
-		}
-
 		if (NM_IN_STRSET (params[0], NMV_WG_TAG_PRE_UP)){
 			char *script = NULL;
 			if(!parse_script(params, &script, &line_error)){
@@ -1003,6 +992,17 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 			setting_vpn_add_data_item(s_vpn, NM_WG_KEY_ENDPOINT, endpoint);
 			have_endpoint = TRUE;
 			printf("%s = %s\n", NMV_WG_TAG_ENDPOINT, endpoint);
+			continue;
+		}
+
+		if (NM_IN_STRSET (params[0], NMV_WG_TAG_PRESHARED_KEY)){
+			char *psk = NULL;
+			if(!parse_preshared_key(params, &psk, &line_error)){
+				goto handle_line_error;
+			}
+
+			setting_vpn_add_data_item(s_vpn, NM_WG_KEY_PRESHARED_KEY, psk);
+			printf("%s = %s\n", NMV_WG_TAG_PRESHARED_KEY, psk);
 			continue;
 		}
 
@@ -1208,9 +1208,6 @@ create_config_string (NMConnection *connection, GError **error)
 
 	args_write_line(f, NMV_WG_TAG_LISTEN_PORT, "=", listen_port);
 
-	if(psk){
-		args_write_line(f, NMV_WG_TAG_PRESHARED_KEY, "=", psk);
-	}
 	if(post_up){
 		args_write_line(f, NMV_WG_TAG_POST_UP, "=", post_up);
 	}
@@ -1232,6 +1229,10 @@ create_config_string (NMConnection *connection, GError **error)
 	args_write_line(f, NMV_WG_TAG_ALLOWED_IPS, "=", allowed_ips);
 	g_strfreev (ip_list);
 	g_array_free(ips, TRUE);
+
+	if(psk){
+		args_write_line(f, NMV_WG_TAG_PRESHARED_KEY, "=", psk);
+	}
 
 	return g_steal_pointer (&f);
 }

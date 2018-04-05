@@ -545,3 +545,37 @@ fqdn_end:
 	g_strfreev(parts);
 	return success;
 }
+
+gboolean is_base64(char *str)
+{
+	char *ptr = str;
+	int padding = 0;
+
+	// Base64 only allows for alphanumeric characters along with
+	// '+', '/' (and '=' as trailing padding)
+	for(; ptr && *ptr; ptr++){
+		if(*ptr == '='){
+			padding++;
+		}
+
+		if(padding <= 0){
+			if(!g_ascii_isalnum(*ptr) &&
+				(*ptr != '+') &&
+				(*ptr != '/')){
+
+				return FALSE;
+			}
+		}else{
+			if(*ptr != '='){
+				return FALSE;
+			}
+		}
+	}
+
+	// if we have more than 3x '=', there's too much padding
+	if(padding > 3){
+		return FALSE;
+	}
+
+	return TRUE;
+}
