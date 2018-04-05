@@ -176,7 +176,8 @@ typedef gboolean (*CheckFunc)(const char *str);
 static gboolean
 check (WireguardEditorPrivate *priv,
 		char *widget_name,
-		CheckFunc chk, const char *key,
+		CheckFunc chk,
+		const char *key,
 		gboolean set_error,
 		GError **error)
 {
@@ -193,6 +194,7 @@ check (WireguardEditorPrivate *priv,
 			g_set_error (error,
 						NMV_EDITOR_PLUGIN_ERROR,
 						NMV_EDITOR_PLUGIN_ERROR_INVALID_PROPERTY,
+						"%s",
 						key);
 		}
 		return FALSE;
