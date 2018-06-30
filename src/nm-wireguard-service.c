@@ -423,7 +423,7 @@ set_config(NMVpnServicePlugin *plugin, NMConnection *connection)
 	if(setting){
 		val = ip6_to_gvariant(setting);
 		if(val){
-			g_variant_builder_add(&ip6builder, "{sv}", NM_VPN_PLUGIN_IP6_CONFIG_ADDRESS, setting);
+			g_variant_builder_add(&ip6builder, "{sv}", NM_VPN_PLUGIN_IP6_CONFIG_ADDRESS, val);
 			has_ip6 = TRUE;
 		}
 	}
