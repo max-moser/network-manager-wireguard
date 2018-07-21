@@ -1118,6 +1118,7 @@ create_config_string (NMConnection *connection, GError **error)
 	const char *allowed_ips;
 	const char *endpoint;
 	const char *psk;
+	const char *dns;
 	char *value = NULL;
 	char **ip_list, **ip_iter;
 	GArray *ips;
@@ -1143,6 +1144,7 @@ create_config_string (NMConnection *connection, GError **error)
 	allowed_ips = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_ALLOWED_IPS));
 	endpoint    = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_ENDPOINT));
 	psk         = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_PRESHARED_KEY));
+	dns         = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_DNS));
 
 	if(!ip4 && !ip6){
 		g_set_error_literal(error,
@@ -1207,6 +1209,9 @@ create_config_string (NMConnection *connection, GError **error)
 	g_free(value);
 
 	args_write_line(f, NMV_WG_TAG_LISTEN_PORT, "=", listen_port);
+	if(dns){
+		args_write_line(f,NMV_WG_TAG_DNS, "=", dns);
+	}
 
 	if(post_up){
 		args_write_line(f, NMV_WG_TAG_POST_UP, "=", post_up);
