@@ -1029,13 +1029,6 @@ handle_line_error:
 		goto out_error;
 	}
 
-	if(!have_listen_port){
-		g_set_error_literal(error, NMV_EDITOR_PLUGIN_ERROR, NMV_EDITOR_PLUGIN_ERROR_FAILED,
-							"The file to import wasn't a valid Wireguard configuration (no local listen port)");
-
-		goto out_error;
-	}
-
 	if(!have_ip4_addr && !have_ip6_addr){
 		g_set_error_literal(error, NMV_EDITOR_PLUGIN_ERROR, NMV_EDITOR_PLUGIN_ERROR_FAILED,
 							"The file to import wasn't a valid Wireguard configuration (no local IPv4 or IPv6 addresses)");
@@ -1154,14 +1147,6 @@ create_config_string (NMConnection *connection, GError **error)
 		return NULL;
 	}
 
-	if(!listen_port){
-		g_set_error_literal(error,
-							NMV_EDITOR_PLUGIN_ERROR,
-							NMV_EDITOR_PLUGIN_ERROR_FILE_NOT_VPN,
-							"Connection was incomplete (missing local listen port)");
-		return NULL;
-	}
-
 	if(!private_key){
 		g_set_error_literal(error,
 							NMV_EDITOR_PLUGIN_ERROR,
@@ -1208,11 +1193,13 @@ create_config_string (NMConnection *connection, GError **error)
 	args_write_line(f, value);
 	g_free(value);
 
-	args_write_line(f, NMV_WG_TAG_LISTEN_PORT, "=", listen_port);
+
+	if(listen_port){
+		args_write_line(f, NMV_WG_TAG_LISTEN_PORT, "=", listen_port);
+	}
 	if(dns){
 		args_write_line(f,NMV_WG_TAG_DNS, "=", dns);
 	}
-
 	if(post_up){
 		args_write_line(f, NMV_WG_TAG_POST_UP, "=", post_up);
 	}
