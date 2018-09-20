@@ -102,7 +102,6 @@ if test x"$with_gnome" != xno; then
 	PKG_CHECK_MODULES(LIBSECRET, libsecret-1 >= 0.18)
 
 	if test x"$with_libnm_glib" != xno; then
-		PKG_CHECK_MODULES(LIBNM_GTK, libnm-gtk >= 1.7.0)
 		PKG_CHECK_MODULES(LIBNM_GLIB,
 			NetworkManager >= 1.7.0
 			libnm-util >= 1.7.0

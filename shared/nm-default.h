@@ -106,18 +106,4 @@
 
 #endif /* NM_VPN_OLD */
 
-/*****************************************************************************/
-
-#if (NETWORKMANAGER_COMPILATION) & NM_NETWORKMANAGER_COMPILATION_LIB_EDITOR
-
-#ifdef NM_VPN_OLD
-#include <nm-ui-utils.h>
-#else /* NM_VPN_OLD */
-#include <nma-ui-utils.h>
-#endif /* NM_VPN_OLD */
-
-#endif /* NM_NETWORKMANAGER_COMPILATION_LIB_EDITOR */
-
-/*****************************************************************************/
-
 #endif /* __NM_DEFAULT_H__ */

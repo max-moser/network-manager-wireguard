@@ -194,14 +194,12 @@ properties_libnm_wireguard_properties_core_la_CPPFLAGS = \
 	-DNETWORKMANAGER_COMPILATION=NM_NETWORKMANAGER_COMPILATION_LIB \
 	$(properties_cppflags) \
 	$(GTK_CFLAGS) \
-	$(LIBNM_GLIB_CFLAGS) \
-	$(LIBNM_GTK_CFLAGS)
+	$(LIBNM_GLIB_CFLAGS)
 
 properties_libnm_wireguard_properties_core_la_LIBADD = \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
-	$(LIBNM_GLIB_LIBS) \
-	$(LIBNM_GTK_LIBS)
+	$(LIBNM_GLIB_LIBS)
 
 
 if WITH_LIBNM_GLIB
