@@ -37,6 +37,7 @@
 #define NMV_WG_TAG_PUBLIC_KEY			"PublicKey"
 #define NMV_WG_TAG_ALLOWED_IPS			"AllowedIPs"
 #define NMV_WG_TAG_ENDPOINT				"Endpoint"
+#define NMV_WG_TAG_PERSISTENT_KEEP_ALIVE    "PersistentKeepalive"
 
 #define NMV_OVPN_TAG_AUTH               "auth"
 #define NMV_OVPN_TAG_AUTH_NOCACHE       "auth-nocache"

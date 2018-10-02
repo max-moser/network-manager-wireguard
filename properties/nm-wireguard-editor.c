@@ -99,6 +99,19 @@ check_interface_mtu_entry(const char *str)
 }
 
 static gboolean
+check_peer_persistent_keep_alive_entry(const char *str)
+{
+	if(is_empty(str)){
+		return TRUE;
+	}
+	else if(!g_ascii_string_to_unsigned(str, 10, 0, 450, NULL, NULL)){
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static gboolean
 check_peer_preshared_key(const char *str)
 {
 	if(is_empty(str)){
@@ -269,6 +282,9 @@ check_validity (WireguardEditor *self, GError **error)
 	if(!check(priv, "peer_psk_entry", check_peer_preshared_key, NM_WG_KEY_PRESHARED_KEY, TRUE, error)){
 		success = FALSE;
 	}
+        if(!check(priv, "peer_persistent_keep_alive_entry", check_peer_persistent_keep_alive_entry, NM_WG_KEY_PERSISTENT_KEEP_ALIVE, TRUE, error)){
+		success = FALSE;
+	}
 	// pre-up, post-up, pre-down, post-down are scripts and don't get validated
 
 	if(ip4_ok && ip6_ok){
@@ -359,7 +375,7 @@ init_editor_plugin (WireguardEditor *self, NMConnection *connection, GError **er
 	}
 	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (stuff_changed_cb), self);
 
-	// Interface Private Key
+	// Interface MTU
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "interface_mtu_entry"));
 	g_return_val_if_fail (widget != NULL, FALSE);
 	if (s_vpn) {
@@ -439,6 +455,15 @@ init_editor_plugin (WireguardEditor *self, NMConnection *connection, GError **er
 	}
 	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (stuff_changed_cb), self);
 
+        // Peer Persistent Keep Alive
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_persistent_keep_alive_entry"));
+	g_return_val_if_fail (widget != NULL, FALSE);
+	if (s_vpn) {
+		value = nm_setting_vpn_get_data_item (s_vpn, NM_WG_KEY_PERSISTENT_KEEP_ALIVE);
+		if (value)
+			gtk_entry_set_text (GTK_ENTRY (widget), value);
+	}
+	g_signal_connect (G_OBJECT (widget), "changed", G_CALLBACK (stuff_changed_cb), self);
 	
 	// Peer Public Key
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_public_key_entry"));
@@ -601,6 +626,13 @@ update_connection (NMVpnEditor *iface,
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
 	if (str && str[0]){
 		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_ENDPOINT, str);
+	}
+        
+        // persistent keep alive
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "peer_persistent_keep_alive_entry"));
+	str = gtk_entry_get_text (GTK_ENTRY (widget));
+	if (str && str[0]){
+		nm_setting_vpn_add_data_item (s_vpn, NM_WG_KEY_PERSISTENT_KEEP_ALIVE, str);
 	}
 
 	nm_connection_add_setting (connection, NM_SETTING (s_vpn));
