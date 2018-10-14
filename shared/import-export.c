@@ -567,6 +567,30 @@ parse_mtu(const char **line, guint64 *mtu, char **out_error)
 	return success;
 }
 
+
+// parse Persistent Keep Alive value (max 0-5min? (450))
+static gboolean
+parse_persistent_keep_alive(const char **line, guint64 *pka, char **out_error)
+{
+	int idx = 0;
+	char *tmp = NULL;
+	gboolean success = TRUE;
+
+	if(!_parse_common(line, &idx, out_error)){
+		return FALSE;
+	}
+
+	tmp = g_strdup(line[idx]);
+	if(!g_ascii_string_to_unsigned(tmp, 10, 0, 450, pka, NULL)){
+		*out_error = g_strdup_printf("'%s' is not a valid Persistent Keep Alive assignment! (max '%d')", tmp, 450);
+		*pka = -1;
+		success = FALSE;
+	}
+
+	g_free(tmp);
+	return success;
+}
+
 // parse the line and check if there were any IP4 and IP6 included
 // (if there are more than just one IP4, the later take precedence; same for IP6)
 //
@@ -876,7 +900,7 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 			}
 
 			setting_vpn_add_data_item_int64(s_vpn, NM_WG_KEY_MTU, mtu);
-			printf("%s = %ld\n", NM_WG_KEY_DNS, mtu);
+			printf("%s = %ld\n", NMV_WG_TAG_MTU, mtu);
 			continue;
 		}
 
@@ -1005,6 +1029,17 @@ do_import (const char *path, const char *contents, gsize contents_len, GError **
 			printf("%s = %s\n", NMV_WG_TAG_PRESHARED_KEY, psk);
 			continue;
 		}
+                
+                if (NM_IN_STRSET (params[0], NMV_WG_TAG_PERSISTENT_KEEP_ALIVE)){
+			guint64 pka = 0;
+			if(!parse_persistent_keep_alive(params, &pka, &line_error)){
+				goto handle_line_error;
+			}
+
+			setting_vpn_add_data_item_int64(s_vpn, NM_WG_KEY_PERSISTENT_KEEP_ALIVE, pka);
+			printf("%s = %lu\n", NMV_WG_TAG_PERSISTENT_KEEP_ALIVE, pka);
+			continue;
+		}
 
 		/* currently we ignore any unknown options and skip over them. */
 		continue;
@@ -1111,6 +1146,7 @@ create_config_string (NMConnection *connection, GError **error)
 	const char *allowed_ips;
 	const char *endpoint;
 	const char *psk;
+	const char *pka;
 	const char *dns;
 	char *value = NULL;
 	char **ip_list, **ip_iter;
@@ -1137,6 +1173,7 @@ create_config_string (NMConnection *connection, GError **error)
 	allowed_ips = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_ALLOWED_IPS));
 	endpoint    = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_ENDPOINT));
 	psk         = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_PRESHARED_KEY));
+	pka         = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_PERSISTENT_KEEP_ALIVE));
 	dns         = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_DNS));
 
 	if(!ip4 && !ip6){
@@ -1227,6 +1264,10 @@ create_config_string (NMConnection *connection, GError **error)
 	if(psk){
 		args_write_line(f, NMV_WG_TAG_PRESHARED_KEY, "=", psk);
 	}
+        
+        if(pka && *pka > 0){
+            args_write_line(f, NMV_WG_TAG_PERSISTENT_KEEP_ALIVE, "=", pka);
+        }
 
 	return g_steal_pointer (&f);
 }
