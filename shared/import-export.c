@@ -1064,13 +1064,6 @@ handle_line_error:
 		goto out_error;
 	}
 
-	if(!have_listen_port){
-		g_set_error_literal(error, NMV_EDITOR_PLUGIN_ERROR, NMV_EDITOR_PLUGIN_ERROR_FAILED,
-							"The file to import wasn't a valid Wireguard configuration (no local listen port)");
-
-		goto out_error;
-	}
-
 	if(!have_ip4_addr && !have_ip6_addr){
 		g_set_error_literal(error, NMV_EDITOR_PLUGIN_ERROR, NMV_EDITOR_PLUGIN_ERROR_FAILED,
 							"The file to import wasn't a valid Wireguard configuration (no local IPv4 or IPv6 addresses)");
@@ -1154,6 +1147,7 @@ create_config_string (NMConnection *connection, GError **error)
 	const char *endpoint;
 	const char *psk;
 	const char *pka;
+	const char *dns;
 	char *value = NULL;
 	char **ip_list, **ip_iter;
 	GArray *ips;
@@ -1180,20 +1174,13 @@ create_config_string (NMConnection *connection, GError **error)
 	endpoint    = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_ENDPOINT));
 	psk         = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_PRESHARED_KEY));
 	pka         = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_PERSISTENT_KEEP_ALIVE));
+	dns         = _arg_is_set(nm_setting_vpn_get_data_item(s_vpn, NM_WG_KEY_DNS));
 
 	if(!ip4 && !ip6){
 		g_set_error_literal(error,
 							NMV_EDITOR_PLUGIN_ERROR,
 							NMV_EDITOR_PLUGIN_ERROR_FILE_NOT_VPN,
 							"Connection was incomplete (missing local address)");
-		return NULL;
-	}
-
-	if(!listen_port){
-		g_set_error_literal(error,
-							NMV_EDITOR_PLUGIN_ERROR,
-							NMV_EDITOR_PLUGIN_ERROR_FILE_NOT_VPN,
-							"Connection was incomplete (missing local listen port)");
 		return NULL;
 	}
 
@@ -1243,7 +1230,10 @@ create_config_string (NMConnection *connection, GError **error)
 	args_write_line(f, value);
 	g_free(value);
 
-	args_write_line(f, NMV_WG_TAG_LISTEN_PORT, "=", listen_port);
+	if(listen_port){
+		args_write_line(f, NMV_WG_TAG_LISTEN_PORT, "=", listen_port);
+	}
+
 
 	if(post_up){
 		args_write_line(f, NMV_WG_TAG_POST_UP, "=", post_up);
@@ -1259,7 +1249,11 @@ create_config_string (NMConnection *connection, GError **error)
 	ip_list = g_strsplit_set (allowed_ips, " \t,", 0);
 	ips = g_array_new(TRUE, TRUE, sizeof(char *));
 	for (ip_iter = ip_list; ip_iter && *ip_iter; ip_iter++) {
-		g_array_append_val(ips, *ip_iter);
+		// Using the g_strsplit_set call above can create zero length array elements if
+		// there is multiple separators such as both a comma and a space so we need to
+		// ignore any 0 length strings
+		if (0 != strlen(*ip_iter))
+			g_array_append_val(ips, *ip_iter);
 	}
 
 	allowed_ips = concatenate_strings(ips, ", ");
