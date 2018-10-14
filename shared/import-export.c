@@ -1222,7 +1222,11 @@ create_config_string (NMConnection *connection, GError **error)
 	ip_list = g_strsplit_set (allowed_ips, " \t,", 0);
 	ips = g_array_new(TRUE, TRUE, sizeof(char *));
 	for (ip_iter = ip_list; ip_iter && *ip_iter; ip_iter++) {
-		g_array_append_val(ips, *ip_iter);
+		// Using the g_strsplit_set call above can create zero length array elements if
+		// there is multiple separators such as both a comma and a space so we need to
+		// ignore any 0 length strings
+		if (0 != strlen(*ip_iter))
+			g_array_append_val(ips, *ip_iter);
 	}
 
 	allowed_ips = concatenate_strings(ips, ", ");
