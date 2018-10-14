@@ -26,7 +26,7 @@ Once the installation is completed, the Plugin can be used per NetworkManager (u
 When a new WireGuard connection is created and configured via the NetworkManager GUI (can also be called via `nm-connection-editor`), it is the Connection Editor Plugin which is executed.
 When the connection is activated, it is the service plugin that is being called.
 
-A very basic testing suite is provided in the form of the Python script `examples/dbus/dbus.py`, which looks up the Plugin via name on D-BUS and sends it a Connect() instruction. More or less the same thing (and more) can however be achieved by just using NetworkManager after installing the package, so there should not be a need for this - except for the fact that the script is easily modifiable.
+A very basic testing suite is provided in the form of the Python script `examples/dbus/dbus.py`, which looks up the Plugin via name on D-Bus and sends it a Connect() instruction. More or less the same thing (and more) can however be achieved by just using NetworkManager after installing the package, so there should not be a need for this - except for the fact that the script is easily modifiable.
 
 
 ### Viewing Logs
@@ -41,18 +41,18 @@ The logs that are created by NetworkManager can be viewed with `journalctl -u Ne
 Over the course of the project, I created some files that are not required for the project itself, but rather for its development.  
 Here is a brief overview over some of them:
 * `includes2strings.py`: Searches the input for `-I` flags (useful for extracting the include dirs from a Makefile)
-* `examples/dbus/dbus.py`: A small script that tests the availability of the Plugin and its responsiveness to D-BUS messages
+* `examples/dbus/dbus.py`: A small script that tests the availability of the Plugin and its responsiveness to D-Bus messages
 
 
 ### Configuration
 
-#### D-BUS Allowance
+#### D-Bus Allowance
 
-D-BUS does not allow just anybody to own any D-BUS service name they like. Thus, it may be necessary to tell D-BUS that it is not forbidden to use the name `org.freedesktop.NetworkManager.wireguard`.  
+D-Bus does not allow just anybody to own any D-Bus service name they like. Thus, it may be necessary to tell D-Bus that it is not forbidden to use the name `org.freedesktop.NetworkManager.wireguard`.  
 This can be achieved by placing an appropriate file (like `nm-wireguard-service.conf`) inside the directory `/etc/dbus-1/system.d` or similar.
 
 The following is an example for the content of such a file:
-~~~~
+~~~~xml
 <!DOCTYPE busconfig PUBLIC
  "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
  "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
@@ -72,7 +72,7 @@ The following is an example for the content of such a file:
 NetworkManager has to be told where the plugins live in order to be able to call them. This is done via `service.name` files, which usually reside in `/etc/NetworkManager/VPN` or `/usr/lib/NetworkManager/VPN` (e.g. `/usr/lib/NetworkManager/VPN/nm-wireguard-service.name`).
 
 An example for the content of these files would be:
-~~~~
+~~~~ini
 # This file is obsoleted by a file in /usr/local/lib/NetworkManager/VPN
 
 [VPN Connection]
@@ -98,10 +98,10 @@ supports-hints=false
 
 ### Service (the Plugin itself)
 
-The service is responsible for setting up a VPN connection with the supplied parameters. For this, it has to implement a [D-BUS interface](https://developer.gnome.org/NetworkManager/stable/gdbus-org.freedesktop.NetworkManager.VPN.Plugin.html) and listen to incoming requests, which will be sent by NetworkManager in due time (i.e. when the user tells NM to set up the appropriate VPN connection).  
+The service is responsible for setting up a VPN connection with the supplied parameters. For this, it has to implement a [D-Bus interface](https://developer.gnome.org/NetworkManager/stable/gdbus-org.freedesktop.NetworkManager.VPN.Plugin.html) and listen to incoming requests, which will be sent by NetworkManager in due time (i.e. when the user tells NM to set up the appropriate VPN connection).  
 If the binary service is not running at the time when NM wants to set up the connection, it will try to start the binary ad hoc.
 
-In principle, this piece of software can be written in any language, but in order to make the implementation sane, there should at least exist convenient D-BUS bindings for the language. Further, there are parts of the code already implemented in C, which might make it more convenient to just stick to that.
+In principle, this piece of software can be written in any language, but in order to make the implementation sane, there should at least exist convenient D-Bus bindings for the language. Further, there are parts of the code already implemented in C, which might make it more convenient to just stick to that.
 
 
 ### Auth-Dialog
@@ -157,7 +157,7 @@ Saved connections are stored in `/etc/NetworkManager/system-connections`, with o
 This guarantees that nobody can have a look at the saved system-wide connections (and their stored secrets) that isn't supposed to.
 
 An example of such a system-connection file would be (one can see that the user-input data is stored as key-value pairs with internally used keys in the vpn section):
-~~~~
+~~~~ini
 [connection]
 id=wiretest
 uuid=8298d5ea-73d5-499b-9376-57409a7a2331
