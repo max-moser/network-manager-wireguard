@@ -94,6 +94,7 @@ typedef struct _Configs{
 	GVariant *config;
 	GVariant *ip4config;
 	GVariant *ip6config;
+	GVariant *dns_config;
 } Configs;
 
 typedef struct {
@@ -346,13 +347,15 @@ set_config(NMVpnServicePlugin *plugin, NMConnection *connection)
 {
 	NMSettingVpn *s_vpn = nm_connection_get_setting_vpn(connection);
 	GVariantBuilder builder, ip4builder, ip6builder;
-	GVariant *config, *ip4config, *ip6config;
+	GVariantBuilder dns_builder;
+	GVariant *config, *ip4config, *ip6config, *dns_config;
 	GVariant *val;
 	const char *setting;
 	const gchar *if_name;
 	guint64 subnet = 24;
 	gboolean has_ip4 = FALSE;
 	gboolean has_ip6 = FALSE;
+	gboolean has_dns = FALSE;
 	Configs *configs = malloc(sizeof(Configs));
 	memset(configs, 0, sizeof(Configs));
 
@@ -361,6 +364,7 @@ set_config(NMVpnServicePlugin *plugin, NMConnection *connection)
 	g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
 	g_variant_builder_init(&ip4builder, G_VARIANT_TYPE_VARDICT);
 	g_variant_builder_init(&ip6builder, G_VARIANT_TYPE_VARDICT);
+	g_variant_builder_init(&dns_builder, G_VARIANT_TYPE_VARDICT);
 
 	// build the configs
 	setting = get_setting(s_vpn, NM_WG_KEY_ADDR_IP4);
@@ -387,6 +391,9 @@ set_config(NMVpnServicePlugin *plugin, NMConnection *connection)
 	setting = get_setting(s_vpn, NM_WG_KEY_DNS);
 	if(setting){
 		// TODO
+		val = g_variant_new_string(setting);
+		g_variant_builder_add(&dns_builder, "{ss}", NMV_WG_TAG_DNS, val);
+		has_dns = TRUE;
 	}
 
 	setting = get_setting(s_vpn, NM_WG_KEY_ENDPOINT);
@@ -447,10 +454,12 @@ set_config(NMVpnServicePlugin *plugin, NMConnection *connection)
 	config = g_variant_builder_end(&builder);
 	ip4config = g_variant_builder_end(&ip4builder);
 	ip6config = g_variant_builder_end(&ip6builder);
+	dns_config = g_variant_builder_end(&dns_builder);
 
 	// populate the configs struct and send the configuration asynchronously
 	configs->ip4config = (has_ip4) ? ip4config : NULL;
 	configs->ip6config = (has_ip6) ? ip6config : NULL;
+	configs->dns_config = (has_dns) ? dns_config : NULL;
 	configs->plugin    = plugin;
 	configs->config    = config;
 	g_timeout_add(0, send_config, configs);
