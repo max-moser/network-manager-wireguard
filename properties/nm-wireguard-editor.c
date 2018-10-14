@@ -127,6 +127,11 @@ check_peer_public_key(const char *str){
 static gboolean
 check_interface_listen_port(const char *str)
 {
+	// Listen port is not a required field according to man wg
+	if(is_empty(str)){
+		return TRUE;
+	}
+
 	if(!g_ascii_string_to_unsigned(str, 10, 0, 65535, NULL, NULL)){
 		return FALSE;
 	}
