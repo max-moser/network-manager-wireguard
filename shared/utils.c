@@ -489,7 +489,6 @@ gboolean is_fqdn(char *addr)
 
 	// iterate over all parts of the name
 	for(idx = 0; idx <= dots; idx++){
-		contains_alpha = FALSE;
 
 		// if the part is empty
 		if(is_empty(parts[idx])){
@@ -521,11 +520,12 @@ gboolean is_fqdn(char *addr)
 			idx2++;
 		}
 
-		// names consisting of only numbers are not legitimate
-		if(!contains_alpha){
-			success = FALSE;
-			goto fqdn_end;
-		}
+		
+	}
+	// names consisting of only numbers are not legitimate
+	if(!contains_alpha){
+		success = FALSE;
+		goto fqdn_end;
 	}
 
 	// might have a port suffix after a colon (e.g. tuwien.ac.at:8080)
