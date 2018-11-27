@@ -1230,11 +1230,13 @@ create_config_string (NMConnection *connection, GError **error)
 	args_write_line(f, value);
 	g_free(value);
 
+
 	if(listen_port){
 		args_write_line(f, NMV_WG_TAG_LISTEN_PORT, "=", listen_port);
 	}
-
-
+	if(dns){
+		args_write_line(f,NMV_WG_TAG_DNS, "=", dns);
+	}
 	if(post_up){
 		args_write_line(f, NMV_WG_TAG_POST_UP, "=", post_up);
 	}
