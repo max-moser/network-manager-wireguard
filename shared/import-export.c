@@ -1244,10 +1244,6 @@ create_config_string (NMConnection *connection, GError **error)
 		args_write_line(f, NMV_WG_TAG_POST_DOWN, "=", post_down);
 	}
 
-	if (dns){
-		args_write_line(f, NMV_WG_TAG_DNS, "=", dns);
-	}
-
 	args_write_line(f, NMV_WG_TAG_PEER);
 	args_write_line(f, NMV_WG_TAG_PUBLIC_KEY, "=", public_key);
 	args_write_line(f, NMV_WG_TAG_ENDPOINT, "=", endpoint);
