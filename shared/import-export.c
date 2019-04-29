@@ -1059,14 +1059,14 @@ handle_line_error:
 
 	if(!have_priv_key){
 		g_set_error_literal(error, NMV_EDITOR_PLUGIN_ERROR, NMV_EDITOR_PLUGIN_ERROR_FAILED,
-							"The file to import wasn't a valid Wireguard configuration (no local private key)");
+							"The file to import wasn't a valid WireGuard configuration (no local private key)");
 
 		goto out_error;
 	}
 
 	if(!have_ip4_addr && !have_ip6_addr){
 		g_set_error_literal(error, NMV_EDITOR_PLUGIN_ERROR, NMV_EDITOR_PLUGIN_ERROR_FAILED,
-							"The file to import wasn't a valid Wireguard configuration (no local IPv4 or IPv6 addresses)");
+							"The file to import wasn't a valid WireGuard configuration (no local IPv4 or IPv6 addresses)");
 
 		goto out_error;
 	}
@@ -1075,7 +1075,7 @@ handle_line_error:
 
 	if(!have_pub_key){
 		g_set_error_literal(error, NMV_EDITOR_PLUGIN_ERROR, NMV_EDITOR_PLUGIN_ERROR_FAILED,
-							"The file to import wasn't a valid Wireguard configuration (no peer public key)");
+							"The file to import wasn't a valid WireGuard configuration (no peer public key)");
 
 		goto out_error;
 	}
@@ -1087,7 +1087,7 @@ handle_line_error:
 
 	if(!have_endpoint){
 		g_set_error_literal(error, NMV_EDITOR_PLUGIN_ERROR, NMV_EDITOR_PLUGIN_ERROR_FAILED,
-							"The file to import wasn't a valid Wireguard configuration (no peer endpoint)");
+							"The file to import wasn't a valid WireGuard configuration (no peer endpoint)");
 
 		goto out_error;
 	}
@@ -1159,7 +1159,7 @@ create_config_string (NMConnection *connection, GError **error)
 		g_set_error_literal (error,
 		                     NMV_EDITOR_PLUGIN_ERROR,
 		                     NMV_EDITOR_PLUGIN_ERROR_FILE_NOT_VPN,
-		                     _("connection is not a valid Wireguard connection"));
+		                     _("connection is not a valid WireGuard connection"));
 		return NULL;
 	}
 
