@@ -1,14 +1,10 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-appdata/network-manager-openvpn.metainfo.xml.in
-auth-dialog/main.c
-properties/auth-helpers.c
-properties/import-export.c
-properties/nm-openvpn-editor-plugin.c
-properties/nm-openvpn-editor.c
+appdata/network-manager-wireguard.metainfo.xml.in
+[type: gettext/glade]properties/nm-wireguard-dialog.ui
+properties/nm-wireguard-editor.c
+properties/nm-wireguard-editor-plugin.c
 shared/nm-utils/nm-shared-utils.c
 shared/nm-utils/nm-vpn-plugin-utils.c
 shared/utils.c
-src/nm-openvpn-service.c
-src/nm-openvpn-service-openvpn-helper.c
-[type: gettext/glade]properties/nm-openvpn-dialog.ui
+src/nm-wireguard-service.c
