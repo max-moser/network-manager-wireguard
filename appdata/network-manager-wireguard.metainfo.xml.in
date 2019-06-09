@@ -25,17 +25,17 @@
 
   <screenshots>
     <screenshot type="default">
-      <image width="800" height="658">https://git.gnome.org/browse/network-manager-openvpn/plain/appdata/openvpn.png</image>
+      <image width="524" height="808">https://iam.tj/browse/network-manager-wireguard/plain/appdata/wireguard.png</image>
     </screenshot>
     <screenshot>
-      <caption>The advanced options dialog</caption>
-      <image width="800" height="604">https://git.gnome.org/browse/network-manager-openvpn/plain/appdata/openvpn-advanced.png</image>
+      <caption>The Proxy tab</caption>
+      <image width="524" height="808">https://iam.tj/browse/network-manager-wireguard/plain/appdata/wireguard-advanced.png</image>
     </screenshot>
   </screenshots>
 
-  <url type="homepage">https://wiki.gnome.org/Projects/NetworkManager/VPN</url>
-  <url type="bugtracker">https://bugzilla.gnome.org/enter_bug.cgi?product=NetworkManager</url>
-  <update_contact>networkmanager-maint@gnome.bugs</update_contact>
-  <translation type="gettext">NetworkManager-openvpn</translation>
-  <_developer_name>The NetworkManager Developers</_developer_name>
+  <url type="homepage">https://github.com/max-moser/network-manager-wireguard</url>
+  <url type="bugtracker">https://github.com/max-moser/network-manager-wireguard/issues</url>
+  <update_contact>ubuntu@iam.tj</update_contact>
+  <translation type="gettext">NetworkManager-wireguard</translation>
+  <_developer_name>Max Moser</_developer_name>
 </component>
