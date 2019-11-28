@@ -6,8 +6,8 @@
   <metadata_license>CC0-1.0</metadata_license>
   <extends>nm-connection-editor.desktop</extends>
   <extends>gnome-control-center.desktop</extends>
-  <_name>Wireguard client</_name>
-  <_summary>Client for Wireguard virtual private networks</_summary>
+  <_name>WireGuard client</_name>
+  <_summary>Client for WireGuard virtual private networks</_summary>
 
   <keywords>
     <keyword>network</keyword>
@@ -15,12 +15,12 @@
     <keyword>NetworkManager</keyword>
     <keyword>connection</keyword>
     <keyword>VPN</keyword>
-    <keyword>Wireguard</keyword>
+    <keyword>WireGuard</keyword>
   </keywords>
 
   <description>
-    <_p>Support for configuring Wireguard virtual private network connections.</_p>
-    <_p>Wireguard is a modern VPN client built for simplicity.</_p>
+    <_p>Support for configuring WireGuard virtual private network connections.</_p>
+    <_p>WireGuard is a modern VPN client built for simplicity.</_p>
   </description>
 
   <screenshots>

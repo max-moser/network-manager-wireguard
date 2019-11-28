@@ -87,7 +87,7 @@ def hibernate():
 
 def get_wg_plugin(bus_name="org.freedesktop.NetworkManager.wireguard",
                   object_path="/org/freedesktop/NetworkManager/VPN/Plugin"):
-    """Retrieve the wireguard VPN plugin from the System Bus.
+    """Retrieve the WireGuard VPN plugin from the System Bus.
 
     Arguments:
     bus_name -- the bus name of the object to import
@@ -107,7 +107,7 @@ def wg_disconnect(wg_plugin):
     wg_plugin.Disconnect()
 
 def wg_connect(wg_plugin):
-    """Send the Connect Command to the Wireguard Plugin"""
+    """Send the Connect Command to the WireGuard Plugin"""
 
     # these are the settings that are expected by Connect(a{sa{sv}}) for a VPN plugin
     service_type = GLib.Variant("s", "service")
