@@ -10,15 +10,33 @@ It is based on the [OpenVPN Plugin](https://git.gnome.org/browse/network-manager
 
 ### Compilation
 For compilation, the project uses autoconf and related things.
-* `./autogen.sh`
-* `make`
 
+```ssh
+./autogen.sh
+./configure --sysconfdir=/etc --libdir=/usr/lib install
+make
+```
+
+If you want to use the Gnome Shell integration, the project has to be configured as follows:
+
+```sh
+./autogen.sh --without-libnm-glib
+./configure --without-libnm-glib --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/NetworkManager --localstatedir=/var
+```
 
 ### Installation
 In order to get the plugin running, its sources have to be compiled and the result has to be installed. This can be done by following these steps: 
-* Compile the project
-* `sudo make sysconfdir=/etc libdir=/usr/lib install` (don't worry; for uninstalling, there is the target `uninstall`)
 
+```sh
+make # Compile the project
+sudo make install # don't worry; for uninstalling, there is the target `uninstall`
+```
+
+After this, you'll have to change the path to the library, in the plugin configuration:
+
+```sh
+sudo sed -i 's|plugin=libnm-vpn-plugin-wireguard.so|plugin=/usr/lib/x86_64-linux-gnu/NetworkManager/libnm-vpn-plugin-wireguard.so|g' /usr/lib/NetworkManager/VPN/nm-wireguard-service.name
+```
 
 ### Execution
 Once the installation is completed, the Plugin can be used per NetworkManager (usually graphically via the applet).
