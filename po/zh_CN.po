@@ -1,0 +1,796 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-torrent\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2012-09-23 01:34-0400\n"
+"Last-Translator: yanzilisan183 <yanzilisan183@sina.com>\n"
+"Language-Team: Sugar Labs\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
+"X-Project-Style: gnome\n"
+
+# nm-wireguard-dialog.ui
+msgid "Not Required"
+msgstr "不需要"
+
+msgid "Not required"
+msgstr "不需要"
+
+msgid "OpenVPN Advanced Options"
+msgstr "OpenVPN高级选项"
+
+msgid "Use custom gateway p_ort:"
+msgstr "使用自定义网关端口(_O):"
+
+msgid ""
+"TCP/UDP port number for peer. (Default value when there is no port for gateway).\n"
+"config: port"
+msgstr ""
+"对等端的TCP/UDP端口号。（当网关没有端口时的默认值）。\n"
+"配置: port"
+
+msgid "Use custom _renegotiation interval:"
+msgstr "使用自定义重新协商间隔(_R):"
+
+msgid ""
+"Renegotiate data channel key after the specified number of seconds.\n"
+"config: reneg-sec"
+msgstr ""
+"在指定的秒数之后重新协商数据通道密钥。\n"
+"配置: reneg-sec"
+
+msgid "Use L_ZO data compression"
+msgstr "使用LZO数据压缩(_Z)"
+
+msgid ""
+"Use fast LZO compression.\n"
+"config: comp-lzo"
+msgstr ""
+"使用快速 LZO 压缩。\n"
+"配置: comp-lzo"
+
+msgid ""
+"Select the LZO data compression mode.\n"
+"config: comp-lzo"
+msgstr ""
+"选择LZO数据压缩模式。\n"
+"配置: comp-lzo"
+
+msgid "Use a _TCP connection"
+msgstr "使用TCP连接(_T)"
+
+msgid ""
+"Use TCP for communicating with remote host.\n"
+"(This is a default setting only used when no protocol is specified for the gateway.)\n"
+"config: proto tcp-client | udp"
+msgstr ""
+"使用TCP与远程主机通信。\n"
+"(这是在没有为网关指定协议时使用的默认设置)。\n"
+"配置: proto tcp-client | udp"
+
+msgid "Set virtual _device type:"
+msgstr "设置虚拟设备类型(_D):"
+
+msgid "Explicitly set virtual device type and name (TUN/TAP)."
+msgstr "显式设置虚拟设备类型和名称(TUN/TAP)。"
+
+msgid ""
+"Explicitly set virtual device type (TUN/TAP).\n"
+"config: dev-type tun | tap"
+msgstr ""
+"显式设置虚拟设备类型(TUN/TAP)。"
+"配置: dev-type tun | tap"
+
+msgid " and _name:"
+msgstr "和名称(_N):"
+
+msgid ""
+"Use custom name for TUN/TAP virtual device (instead of default “tun” or “tap”).\n"
+"config: dev <name>"
+msgstr ""
+"使用TUN/TAP虚拟设备的自定义名称(而不是默认的“TUN”或“TAP”)。\n"
+"配置: dev <名称>"
+
+msgid "Use custom tunnel Maximum Transmission _Unit (MTU):"
+msgstr "使用自定义隧道最大传输单元(MTU)(_U):"
+
+msgid ""
+"Take the TUN device MTU to be the specified value and derive the link MTU from it.\n"
+"config: tun-mtu"
+msgstr ""
+"以TUN设备MTU为指定值，从中导出链接MTU。\n"
+"配置: tun-mtu"
+
+msgid "Use custom UDP _fragment size:"
+msgstr "使用自定义UDP片段大小(_F):"
+
+msgid ""
+"Enable internal datagram fragmentation with this maximum size.\n"
+"config: fragment"
+msgstr ""
+"启用此最大大小的内部数据报碎片。\n"
+"配置: fragment"
+
+msgid "Restrict tunnel TCP Maximum _Segment Size (MSS)"
+msgstr "限制隧道TCP最大段大小(MSS)(_S)"
+
+msgid ""
+"Restrict tunnel TCP MSS.\n"
+"config: mssfix"
+msgstr ""
+"限制隧道TCP MSS。\n"
+"配置: mssfix"
+
+msgid "Rando_mize remote hosts"
+msgstr "随机化远程主机(_M)"
+
+msgid ""
+"Randomize the order of gateways list (remote) as a kind of basic load-balancing measure.\n"
+"config: remote-random"
+msgstr ""
+"将网关列表（远程）的顺序作为一种基本的负载平衡措施随机化。\n"
+"配置: remote-random"
+
+msgid "IPv6 tun link"
+msgstr "IPv6 tun链路"
+
+msgid ""
+"Build a tun link capable of forwarding IPv6 traffic\n"
+"config: tun-ipv6"
+msgstr ""
+"构建能够转发IPv6业务的TUN链路。\n"
+"配置: tun-ipv6"
+
+msgid "Specify _exit or restart ping:"
+msgstr "指定退出或重新启动ping(_E):"
+
+msgid ""
+"Exit or restart after n seconds pass without reception of a ping or other packet from remote.\n"
+"config: ping-exit | ping-restart <n>"
+msgstr ""
+"在没有接收来自远程的ping或其他分组之后，在N秒之后退出或重启。\n"
+"配置: ping-exit | ping-restart <n>"
+
+msgid "Specify pin_g interval:"
+msgstr "指定ping间隔(_G):"
+
+msgid ""
+"Ping remote over the TCP/UDP control channel if no packets have been sent for at least n seconds.\n"
+"config: ping <n>"
+msgstr ""
+"如果没有发送至少N秒的数据包，ping就在TCP/UDP控制信道上进行远程操作。\n"
+"配置: ping <n>"
+
+msgid "Accept authenticated packets from any address (F_loat)"
+msgstr "接受来自任何地址的认证包(浮点)(_L)"
+
+msgid ""
+"Allow remote peer to change its IP address and/or port number, such as due to DHCP "
+"(this is the default if --remote is not used). --float when specified with --remote "
+"allows an OpenVPN session to initially connect to a peer at a known address, however "
+"if packets arrive from a new address and pass all authentication tests, the new address "
+"will take control of the session. This is useful when you are connecting to a peer which "
+"holds a dynamic address such as a dial-in user or DHCP client.\n"
+"\n"
+"Essentially, --float tells OpenVPN to accept authenticated packets from any address, "
+"not only the address which was specified in the --remote option.\n"
+"\n"
+"config: float"
+msgstr ""
+"允许远程对等更改其IP地址和/或端口号，例如由于DHCP(如果未使用--remote，则这是默认设置)。"
+"--float当使用--remote指定时，允许OpenVPN会话最初连接到位于已知地址的对等方，但是如果数据包"
+"从新地址到达并通过所有身份验证测试，则新地址将控制会话。当您连接到拥有动态地址（如拨入用户或"
+"DHCP客户机）的对等机时，这很有用。\n"
+"实际上，--float告诉OpenVPN从任何地址接受经过身份验证的数据包，而不仅仅是--remote选项中指定的地址。\n"
+"配置: float"
+
+msgid "Specify max routes:"
+msgstr "指定最大路由:"
+
+msgid ""
+"Specify the maximum number of routes the server is allowed to specify.\n"
+"config: max-routes <n>"
+msgstr ""
+"指定服务器允许指定的最大路由数。\n"
+"配置: max-routes <n>"
+
+msgid "General"
+msgstr "通用"
+
+msgid ""
+"Encrypt packets with cipher algorithm. The default is BF-CBC (Blowfish in Cipher Block Chaining mode).\n"
+"config: cipher"
+msgstr ""
+"用密码算法对数据包进行加密。默认值是BF-CBC(密码块链接模式下的Blowfish)。\n"
+"配置: cipher"
+
+msgid "Use custom _size of cipher key:"
+msgstr "使用自定义密码密钥大小(_S):"
+
+msgid ""
+"Set cipher key size to a custom value. If unspecified, it defaults to cipher-specific size.\n"
+"config: keysize <n>"
+msgstr ""
+"将密码密钥大小设置为自定义值。如果未指定，则默认为密码特定大小。\n"
+"配置: keysize <n>"
+
+msgid ""
+"Authenticate packets with HMAC using message digest algorithm. The default "
+"is SHA1.\n"
+"config: auth"
+msgstr ""
+"使用消息摘要算法对HMAC进行分组认证。默认值为SHA1。\n"
+"配置: auth"
+
+msgid "Ci_pher:"
+msgstr "密码(_P):"
+
+msgid "_HMAC Authentication:"
+msgstr "HMAC身份验证(_H):"
+
+msgid "Security"
+msgstr "安全"
+
+msgid "_Subject Match:"
+msgstr "主题匹配(_S):"
+
+msgid ""
+"Subject or Common Name to verify server certificate information against.\n"
+"\n"
+"config: verify-x509-name subject-or-name [mode]\n"
+"config (legacy mode): tls-remote subject-or-name"
+msgstr ""
+"验证服务器证书信息的使用者或公用名。\n"
+"配置: verify-x509-name subject-or-name [mode]\n"
+"配置(传统模式): tls-remote subject-or-name"
+
+msgid "Server _Certificate Check:"
+msgstr "服务器证书检查(_C):"
+
+msgid ""
+"Verify server certificate identification.\n"
+"\n"
+"When enabled, connection will only succeed if the server certificate matches some expected properties.\n"
+"Matching can either apply to the whole certificate subject (all the fields),\n"
+"or just the Common Name (CN field).\n"
+"\n"
+"The legacy option tls-remote is deprecated and removed from OpenVPN 2.4 and newer. Do not use it anymore.\n"
+"\n"
+"config: verify-x509-name subject-or-name [mode]\n"
+"config (legacy mode): tls-remote subject-or-name"
+msgstr ""
+"验证服务器证书标识。\n"
+"启用时，只有服务器证书与某些预期属性匹配时，连接才会成功。\n"
+"匹配可以应用于整个证书主题(所有字段)，或者只是通用名(CN字段)。\n"
+"旧版选项tls-remote已弃用，并已从OpenVPN 2.4及更高版本中删除。勿再使用。\n"
+"配置: verify-x509-name subject-or-name [mode]\n"
+"配置(传统模式): tls-remote subject-or-name"
+
+msgid "_Verify peer (server) certificate usage signature"
+msgstr "验证对端(服务器)证书使用签名(_V)"
+
+msgid "Require that peer certificate was signed with an explicit key usage and extended key usage based on RFC3280 TLS rules."
+msgstr "要求对端证书使用显式密钥用法和基于RFC3280 TLS规则的扩展密钥用法进行签名。"
+
+msgid "_Remote peer certificate TLS type:"
+msgstr "远程对端证书TLS类型(_R):"
+
+msgid ""
+"Require that peer certificate was signed with an explicit key usage and extended key usage based on RFC3280 TLS rules.\n"
+"config: remote-cert-tls client|server"
+msgstr ""
+"要求对端证书使用显式密钥用法和基于RFC3280 TLS规则的扩展密钥用法进行签名。\n"
+"配置: remote-cert-tls client|server"
+
+msgid "_Verify peer (server) certificate nsCertType designation"
+msgstr "验证对端(服务器)证书nsCertType指定(_V):"
+
+msgid "Require that peer certificate was signed with an explicit nsCertType designation."
+msgstr "要求对端证书使用显式nsCertType指定签名。"
+
+msgid "_Remote peer certificate nsCert designation:"
+msgstr "远程对端证书nsCert指定(_R):"
+
+msgid ""
+"Require that peer certificate was signed with an explicit nsCertType designation.\n"
+"config: ns-cert-type client|server"
+msgstr ""
+"要求对端证书使用显式nsCertType指定签名。\n"
+"配置: ns-cert-type client|server"
+
+msgid "Key _Direction:"
+msgstr "Key方向(_D):"
+
+msgid ""
+"Add an additional layer of HMAC authentication on top of the TLS control channel to protect against DoS attacks.\n"
+"config: tls-auth <file> [direction]"
+msgstr ""
+"在TLS控制通道的顶部添加额外的HMAC身份验证层，以防止DoS攻击。\n"
+"配置: tls-auth <文件> [方向]"
+
+msgid ""
+"Direction parameter for static key mode.\n"
+"If key direction is used, it must be the opposite of that used on the VPN "
+"peer.  For example, if the peer uses '1', this connection must use '0'.  If "
+"you are unsure what value to use, contact your system administrator.\n"
+"config: tls-auth <file> [direction]"
+msgstr ""
+"静态键模式的方向参数。\n"
+"如果使用密钥方向，则必须与VPN对等体上使用的方向相反。例如，如果对等体使用“1”，"
+"则该连接必须使用“0”。如果不确定使用什么值，请与系统管理员联系。\n"
+"配置: tls-auth <文件> [direction]"
+
+msgid "Key _File:"
+msgstr "Key文件(_F):"
+
+msgid "Mode"
+msgstr "模式"
+
+msgid "Add an additional layer of encryption or HMAC authentication."
+msgstr "添加一个附加的加密层或HMAC认证。"
+
+msgid "Additional TLS authentication or encryption"
+msgstr "附加TLS身份验证或加密"
+
+msgid "TLS Authentication"
+msgstr "TLS身份验证"
+
+msgid ""
+"Proxy type: HTTP or Socks.\n"
+"config: http-proxy or socks-proxy"
+msgstr ""
+"代理类型: HTTP 或 Socks.\n"
+"配置: http-proxy or socks-proxy"
+
+msgid "Proxy _Type:"
+msgstr "代理类型(_T):"
+
+msgid ""
+"<i>Select this option if your organization requires the use of a proxy server to access the Internet.</i>"
+msgstr ""
+"<i>如果您的组织需要使用代理服务器访问Internet，请选择此选项。</i>"
+
+msgid "Server _Address:"
+msgstr "服务器地址(_A):"
+
+msgid ""
+"Connect to remote host through a proxy with this address.\n"
+"config: http-proxy or socks-proxy"
+msgstr ""
+"通过一个带有这个地址的代理连接到远程主机。\n"
+"配置: http-proxy or socks-proxy"
+
+msgid ""
+"Connect to remote host through a proxy with this port.\n"
+"config: http-proxy or socks-proxy"
+msgstr ""
+"通过该端口与代理连接到远程主机。\n"
+"配置: http-proxy or socks-proxy"
+
+msgid "_Retry indefinitely when errors occur"
+msgstr "当错误发生时无限期重试(_R)"
+
+msgid ""
+"Retry indefinitely on proxy errors. It simulates a SIGUSR1 reset.\n"
+"config: http-proxy-retry or socks-proxy-retry"
+msgstr ""
+"对代理错误无限期重试。它模拟SIGUSR1复位。\n"
+"配置: http-proxy-retry or socks-proxy-retry"
+
+msgid "Proxy _Username:"
+msgstr "代理用户名(_U):"
+
+msgid "Proxy Passwor_d:"
+msgstr "代理密码(_D):"
+
+msgid "HTTP/Socks proxy username passed to OpenVPN when prompted for it."
+msgstr "当提示时，HTTP/SOCKS代理用户名传递给OpenVPN。"
+
+msgid "HTTP/Socks proxy password passed to OpenVPN when prompted for it."
+msgstr "当提示时，HTTP/SOCKS代理密码传递给OpenVPN。"
+
+msgid "_Show password"
+msgstr "显示密码(_S)"
+
+msgid "Proxies"
+msgstr "代理"
+
+msgid "Path mtu discovery"
+msgstr "路径MTU发现"
+
+msgid "Misc"
+msgstr "其他"
+
+msgid "Interface"
+msgstr "接口"
+
+msgid "Address (IPv4):"
+msgstr "IPv4地址:"
+
+msgid "Address (IPv6):"
+msgstr "IPv6地址:"
+
+msgid "Listen Port:"
+msgstr "监听端口:"
+
+msgid "Private Key:"
+msgstr "私钥:"
+
+msgid "DNS:"
+msgstr "DNS:"
+
+msgid "MTU:"
+msgstr "MTU:"
+
+msgid "Pre Up:"
+msgstr "Pre Up:"
+
+msgid "Post Up:"
+msgstr "Post Up:"
+
+msgid "Pre Down:"
+msgstr "Pre Down:"
+
+msgid "Post Down:"
+msgstr "Post Down:"
+
+msgid "Peer"
+msgstr "对端"
+
+msgid "Public Key:"
+msgstr "公钥:"
+
+msgid "Allowed IPs:"
+msgstr "允许的IP:"
+
+msgid "Endpoint:"
+msgstr "对端地址:"
+
+msgid "Preshared Key:"
+msgstr "预共享密钥:"
+
+msgid "Persis. Keepalive:"
+msgstr "保持连接:"
+
+# 原文
+msgid " "
+msgstr " "
+
+msgid "<b>Authentication</b>"
+msgstr "<b>身份验证</b>"
+
+msgid "<b>General</b>"
+msgstr "<b>通用</b>"
+
+msgid ""
+"<i>Connect only to servers whose certificate matches the given subject.\n"
+"Example: /CN=myvpn.company.com</i>"
+msgstr ""
+"<i>只连接证书与给定主题匹配的服务器。\n"
+"示列: /CN=myvpn.company.com</i>"
+
+msgid ""
+"Accept connections only from a host with X509 name or common name equal to "
+"the specified one.\n"
+"config: tls-remote"
+msgstr ""
+"只接受具有X509名称或公共名称的主机的连接，与指定的连接相同。\n"
+"配置: tls-remote"
+
+msgid "Ad_vanced..."
+msgstr "高级(_V)..."
+
+msgid "Add an additional layer of HMAC authentication."
+msgstr "添加一个附加的HMAC认证层。"
+
+msgid "Add, Remove, and Edit VPN Connections"
+msgstr "添加、删除和编辑VPN连接"
+
+msgid "Always Ask"
+msgstr "总是询问"
+
+msgid "Authenticate VPN"
+msgstr "验证VPN"
+
+msgid "CA Certificate:"
+msgstr "CA证书:"
+
+msgid ""
+"Certificate authority (CA) file in .pem format.\n"
+"config: ca"
+msgstr ""
+"证书颁发机构(CA)的.pem文件。\n"
+"配置: ca"
+
+msgid "Certificate pass_word:"
+msgstr "证书密码(_W):"
+
+msgid "Certificate password:"
+msgstr "证书密码:"
+
+msgid "Certificates (TLS)"
+msgstr "证书(TLS)"
+
+msgid "Choose a Certificate Authority certificate..."
+msgstr "选择证书颁发机构证书…"
+
+msgid "Choose an OpenVPN static key..."
+msgstr "选择OpenVPN静态密钥…"
+
+msgid "Choose your personal certificate..."
+msgstr "选择您的个人证书…"
+
+msgid "Choose your private key..."
+msgstr "选择您的私钥…"
+
+msgid "Compatible with the OpenVPN server."
+msgstr "与OpenVPN服务器兼容。"
+
+msgid "Could not find the openvpn binary."
+msgstr "找不到OpenVPN二进制。"
+
+msgid ""
+"Could not process the request because the VPN connection settings were "
+"invalid."
+msgstr ""
+"无法处理请求，因为VPN连接设置无效。"
+
+msgid "Default"
+msgstr "默认"
+
+msgid ""
+"Direction for Static Key encryption mode (non-TLS).\n"
+"If key direction is used, it must be the opposite of that used on the VPN "
+"peer.  For example, if the peer uses '1', this connection must use '0'.  If "
+"you are unsure what value to use, contact your system administrator.\n"
+"config: static <file> [direction]"
+msgstr ""
+"静态密钥加密模式(非TLS)的方向。\n"
+"如果使用密钥方向，则必须与VPN对等体上使用的方向相反。例如，如果对等体使用“1”，"
+"则该连接必须使用“0”。如果不确定使用什么值，请与系统管理员联系。\n"
+"配置: static <文件> [方向]"
+
+msgid "Don't quit when VPN connection terminates"
+msgstr "VPN连接终止时不要退出"
+
+msgid "Enable verbose debug logging (may expose passwords)"
+msgstr "启用详细调试日志记录(可能会暴露密码)"
+
+msgid "HTTP"
+msgstr "HTTP"
+
+msgid ""
+"IP address of the local VPN endpoint.\n"
+"config: ifconfig <l> <rn>"
+msgstr ""
+"本地VPN端点的IP地址。\n"
+"配置: ifconfig <l> <rn>"
+
+msgid ""
+"IP address of the remote VPN endpoint.\n"
+"config: ifconfig <l> <rn>"
+msgstr ""
+"远程VPN端点的IP地址。\n"
+"配置: ifconfig <l> <rn>"
+
+msgid "Invalid HMAC auth."
+msgstr "HMAC身份验证无效。"
+
+msgid "Invalid TUN MTU size '%s'."
+msgstr "TUN MTU大小“%s”无效。"
+
+msgid "Invalid connection type."
+msgstr "连接类型无效。"
+
+msgid "Invalid fragment size '%s'."
+msgstr "碎片大小“%s”无效。"
+
+msgid "Invalid port number '%s'."
+msgstr "端口号“%s”无效。"
+
+msgid "Invalid proxy type '%s'."
+msgstr "代理类型“%s”无效。"
+
+msgid "Invalid reneg seconds '%s'."
+msgstr "重协商秒数“%s”无效。"
+
+msgid "Key Direction:"
+msgstr "Key方向:"
+
+msgid "Local IP Address:"
+msgstr "本地IP地址:"
+
+msgid ""
+"Local peer's private key in .pem format.\n"
+"config: key"
+msgstr ""
+"本地对等方的.pem格式私钥。\n"
+"配置: key"
+
+msgid ""
+"Local peer's signed certificate in .pem format (signed by CA of CA "
+"Certificate).\n"
+"config: cert"
+msgstr ""
+"本地对等方的.pem格式签名证书(由证书颁发机构的CA证书签名)。\n"
+"配置: cert"
+
+msgid "MD-5"
+msgstr "MD-5"
+
+msgid "Missing required local IP address for static key mode."
+msgstr "缺少静态密钥模式所需的本地IP地址。"
+
+msgid "Missing required remote IP address for static key mode."
+msgstr "缺少静态密钥模式所需的远程IP地址。"
+
+msgid "No VPN configuration options."
+msgstr "没有VPN配置选项。"
+
+msgid "None"
+msgstr "None"
+
+msgid "OpenVPN"
+msgstr "OpenVPN"
+
+msgid "OpenVPN Static Keys (*.key)"
+msgstr "OpenVPN静态密钥(*.key)"
+
+msgid "PEM certificates (*.pem, *.crt, *.key, *.cer)"
+msgstr "PEM证书(*.pem, *.crt, *.key, *.cer)"
+
+msgid "PEM or PKCS#12 certificates (*.pem, *.crt, *.key, *.cer, *.p12)"
+msgstr "PEM或PKCS#12证书(*.pem, *.crt, *.key, *.cer, *.p12)"
+
+msgid "Password"
+msgstr "密码"
+
+msgid "Password for private key"
+msgstr "私钥密码"
+
+msgid ""
+"Password passed to OpenVPN when prompted for it.\n"
+"config: auth-user-pass"
+msgstr ""
+"提示输入时传递给OpenVPN的密码。\n"
+"配置: auth-user-pass"
+
+msgid "Password with Certificates (TLS)"
+msgstr "带密码的证书(TLS)"
+
+msgid "Password:"
+msgstr "密码:"
+
+msgid ""
+"Pre-shared file for Static Key encryption mode (non-TLS).\n"
+"config: static <file>"
+msgstr ""
+"用于静态密钥加密模式(非TLS)的预共享文件。\n"
+"配置: static <文件>"
+
+msgid "Private Key Password:"
+msgstr "私钥密码:"
+
+msgid "RIPEMD-160"
+msgstr "RIPEMD-160"
+
+msgid "RSA MD-4"
+msgstr "RSA MD-4"
+
+msgid "Remote IP Address:"
+msgstr "远程IP地址:"
+
+msgid "SHA-1"
+msgstr "SHA-1"
+
+msgid "SHA-224"
+msgstr "SHA-224"
+
+msgid "SHA-256"
+msgstr "SHA-256"
+
+msgid "SHA-384"
+msgstr "SHA-384"
+
+msgid "SHA-512"
+msgstr "SHA-512"
+
+msgid "SOCKS"
+msgstr "SOCKS"
+
+msgid "Saved"
+msgstr "保存的"
+
+msgid "Select an authentication mode."
+msgstr "选择身份验证模式。"
+
+msgid "Static Key"
+msgstr "静态密钥"
+
+msgid "Static Key:"
+msgstr "静态密钥:"
+
+msgid "TAP"
+msgstr "TAP"
+
+msgid ""
+"TCP/UDP port number for local peer.\n"
+"config: port"
+msgstr ""
+"本地对等端的TCP/UDP端口号。\n"
+"配置: port"
+
+msgid "TUN"
+msgstr "TUN"
+
+msgid "Type:"
+msgstr "类型:"
+
+msgid "Unknown connection type '%s'."
+msgstr "连接类型“%s”未知。"
+
+msgid ""
+"Use TCP for communicating with remote host.\n"
+"config: proto tcp-client | udp"
+msgstr ""
+"使用TCP与远程主机通信。\n"
+"配置: proto tcp-client | udp"
+
+msgid "Use additional _TLS authentication"
+msgstr "使用附加的TLS认证(_T)"
+
+msgid "User Certificate:"
+msgstr "用户证书 :"
+
+msgid "User name:"
+msgstr "用户名:"
+
+msgid ""
+"Username passed to OpenVPN when prompted for it.\n"
+"config: auth-user-pass"
+msgstr ""
+"当提示时，传递给OpenVPN的用户名。\n"
+"配置: auth-user-pass"
+
+msgid "VPN Connection Manager (OpenVPN)"
+msgstr "VPN连接管理器(OpenVPN)"
+
+msgid "You need to authenticate to access the Virtual Private Network '%s'."
+msgstr "要访问虚拟专用网络“%s”，需要进行身份验证。"
+
+msgid "_Gateway:"
+msgstr "网关(_G):"
+
+msgid "_Port:"
+msgstr "端口(_P):"
+
+msgid "_Show passwords"
+msgstr "显示密码(_S)"
+
+msgid "invalid address '%s'"
+msgstr "地址“%s”无效。"
+
+msgid "invalid boolean property '%s' (not yes or no)"
+msgstr "布尔属性“%s”无效。(不是 yes 或 no)"
+
+msgid "invalid integer property '%s' or out of range [%d -> %d]"
+msgstr "整型属性“%s”无效或超出范围[%d到%d]"
+
+msgid ""
+"nm-openvpn-service provides integrated OpenVPN capability to NetworkManager."
+msgstr ""
+"nm-openvpn-servicenm为NetworkManager提供了完整的OpenVPN能力。"
+
+msgid "property '%s' invalid or not supported"
+msgstr "属性“%s”无效或不支持"
+
+msgid "unhandled property '%s' type %s"
+msgstr "未处理的属性“%s”类型%s"
+
+msgid "Used to set up client-side Wireguard connections."
+msgstr "用于设置客户端 Wireguard 连接"
+
