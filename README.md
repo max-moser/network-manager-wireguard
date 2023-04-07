@@ -3,7 +3,12 @@
 This project is a VPN Plugin for NetworkManager that handles client-side WireGuard connections.  
 It is based on the [OpenVPN Plugin](https://git.gnome.org/browse/network-manager-openvpn) and was started as a Bachelor's Thesis at [SBA Research](https://www.sba-research.org/).
 
+## Users with Ubuntu >=22.04
+For users with Ubuntu >=22.04 there is a native way to achive a similar integration:
 
+`nmcli connection import type wireguard file <configuration_file>.conf`
+
+Form now on the wireguard VPN connection should now be present to Gnome.
 
 ## Guide
 
