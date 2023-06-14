@@ -173,7 +173,7 @@ get_property (GObject *object, guint prop_id,
 		g_value_set_string (value, WIREGUARD_PLUGIN_NAME);
 		break;
 	case PROP_DESC:
-		g_value_set_string (value, WIREGUARD_PLUGIN_DESC);
+		g_value_set_string (value, _(WIREGUARD_PLUGIN_DESC));
 		break;
 	case PROP_SERVICE:
 		g_value_set_string (value, NM_VPN_SERVICE_TYPE_WIREGUARD);
